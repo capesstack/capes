@@ -1,7 +1,6 @@
 # Cyber Analytics Platform and Examination System (CAPES)
 This is the project page for the CAPES project.
 
-## Roadmap
 * Etherpad
 * TheHive
 * MISP
@@ -11,6 +10,7 @@ This is the project page for the CAPES project.
 * FreeIPA
 * Rocketchat
 
+## Roadmap
 1. Get working shell script for all services
 1. Convert shell script to Ansible
 1. Convert CAPES to Docker
@@ -18,4 +18,4 @@ This is the project page for the CAPES project.
 ## Done
 
 * Working shell scripts
-- Rocketchat
+  - Rocketchat
