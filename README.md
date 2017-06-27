@@ -12,6 +12,7 @@ This is the project page for the CAPES project.
 
 ## Roadmap
 1. Get working shell script for all services
+1. Documentation
 1. Convert shell script to Ansible
 1. Convert CAPES to Docker
 
@@ -19,3 +20,4 @@ This is the project page for the CAPES project.
 
 * Working shell scripts
   - Rocketchat
+  - Etherpad
