@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Admin note: on lines 13 & 42, you need to ensure that you change the password from "changeme" to something more secure.
+
 # Install dependencies
 sudo yum install gzip git curl python openssl-devel epel-release expect -y && sudo yum groupinstall "Development Tools" -y
 sudo yum install nodejs mariadb-server -y
@@ -8,7 +10,7 @@ sudo yum install nodejs mariadb-server -y
 sudo systemctl start mariadb.service
 sudo systemctl enable mariadb.service
 mysql -u root -e "CREATE DATABASE etherpad;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY 'password';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY 'changeme';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
 # Need to automate this. This works as is, but requires interaction. Using the "expect" package should work
@@ -37,7 +39,7 @@ sudo cat << __EOF | sudo tee /opt/etherpad/settings.json
    "dbSettings" : {
                     "user"    : "etherpad",
                     "host"    : "localhost",
-                    "password": "password",
+                    "password": "changeme",
                     "database": "etherpad",
                     "charset" : "utf8mb4"
                   },
