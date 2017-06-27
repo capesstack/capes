@@ -1,14 +1,14 @@
 # Cyber Analytics Platform and Examination System (CAPES)
-This is the project page for the CAPES project.
+This is the project page for the CAPES project (in order of priority).
 
-* Etherpad
-* TheHive
-* MISP
-* CyberChef
-* GoGS
-* Mumble
-* FreeIPA
-* Rocketchat
+1. Rocketchat
+1. Etherpad
+1. GoGS
+1. TheHive
+1. Mumble
+1. MISP
+1. CyberChef
+1. FreeIPA
 
 ## Roadmap
 1. Get working shell script for all services
@@ -17,7 +17,6 @@ This is the project page for the CAPES project.
 1. Convert CAPES to Docker
 
 ## Done
-
 * Working shell scripts
   - Rocketchat
   - Etherpad
