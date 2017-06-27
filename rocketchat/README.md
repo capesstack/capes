@@ -1,2 +1,9 @@
-# rocketchat
-The Rocketchat build script for CentOS 7.0.
+# Rocketchat
+
+The Etherpad build script for CentOS 7.3.
+
+## Usage
+`$ ./rocketchat_deploy.sh`
+
+## Notes
+You'll need to enter your `sudo` credentials to install the dependencies.
