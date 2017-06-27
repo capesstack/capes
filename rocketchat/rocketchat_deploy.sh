@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sudo yum -y install epel-release && sudo yum -y update
 sudo cat << __EOF | sudo tee /etc/yum.repos.d/mongodb.repo
 [mongodb-org-3.4]
