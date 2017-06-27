@@ -1,6 +1,6 @@
 # Rocketchat
 
-The Etherpad build script for CentOS 7.3.
+The Rocketchat build script for CentOS 7.3.
 
 ## Usage
 `$ ./rocketchat_deploy.sh`
