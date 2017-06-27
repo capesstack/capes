@@ -1,5 +1,4 @@
 # Etherpad
-
 The Etherpad build script for CentOS 7.3.
 
 ## Usage
