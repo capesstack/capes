@@ -28,7 +28,7 @@ sudo mkdir -p /opt/etherpad
 sudo git clone https://github.com/ether/etherpad-lite.git /opt/etherpad
 
 # Configure the Etherpad settings
-sudo cat << __EOF | sudo tee /opt/etherpad/settings.json
+sudo cat > /opt/etherpad/settings.json <<EOF
 {
   "title": "CAPES Etherpad",
   "favicon": "favicon.ico",
@@ -130,13 +130,13 @@ sudo cat << __EOF | sudo tee /opt/etherpad/settings.json
       ]
     }
 }
-__EOF
+EOF
 
 # Give the Etherpad user ownership of the /opt/etherpad directory
 sudo chown -R etherpad:etherpad /opt/etherpad
 
 # Create the systemd Etherpad service
-sudo cat << __EOF | sudo tee /usr/lib/systemd/system/etherpad.service
+sudo cat > /usr/lib/systemd/system/etherpad.service <<EOF
 [Unit]
 Description=The Etherpad server
 After=network.target remote-fs.target nss-lookup.target
@@ -148,7 +148,7 @@ SyslogIdentifier=etherpad
 User=etherpad
 [Install]
 WantedBy=multi-user.target
-__EOF
+EOF
 
 # Configure the Etherpad service to start on boot and start it
 # Your first boot will take a few minutes while the final npm dependencies are grabbed
