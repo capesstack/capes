@@ -5,14 +5,14 @@ sudo yum install epel-release && sudo yum -y update
 sudo yum install -y nodejs curl GraphicsMagick npm mongodb-org gcc-c++
 
 # Configure MongoDB
-sudo cat > /etc/yum.repos.d/mongodb.repo <<EOF
+sudo bash -c 'cat > /etc/yum.repos.d/mongodb.repo <<EOF
 [mongodb-org-3.4]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.4/x86_64/
 gpgcheck=1
 enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
-EOF
+EOF'
 
 # Configure npm
 sudo npm install -g inherits n
@@ -28,7 +28,7 @@ cd /opt/rocketchat/Rocket.Chat/programs/server
 sudo npm install
 
 # Create the Rocketchat service
-sudo cat > /usr/lib/systemd/system/rocketchat.service <<EOF
+sudo bash -c 'cat > /usr/lib/systemd/system/rocketchat.service <<EOF
 [Unit]
 Description=The Rocket.Chat server
 After=network.target remote-fs.target nss-lookup.target nginx.target mongod.target
@@ -41,7 +41,7 @@ User=root
 Environment=MONGO_URL=mongodb://localhost:27017/rocketchat ROOT_URL=http://localhost:3000/ PORT=3000
 [Install]
 WantedBy=multi-user.target
-EOF
+EOF'
 
 # Configure the firewall
 sudo firewall-cmd --add-port=3000/tcp --permanent

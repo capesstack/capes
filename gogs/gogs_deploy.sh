@@ -10,9 +10,9 @@ mysql -u root -e "CREATE DATABASE gogs;"
 mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY 'changeme';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
-sudo mysql_secure_installation
+mysql_secure_installation
 
-sudo useradd --disabled-login gogs
+sudo useradd gogs
 
 sudo firewall-cmd --add-port=3000/tcp --permanent
 sudo firewall-cmd --reload
@@ -24,8 +24,8 @@ rm gogs.zip
 
 sudo chown -R gogs:gogs /opt/gogs
 
-# replaced once the service works
-sudo runuser -l gogs -c "/opt/gogs/gogs web"
+# may be needed to run for the first time
+# sudo runuser -l gogs -c "/opt/gogs/gogs web"
 
 sudo bash -c 'cat > /usr/lib/systemd/system/gogs.service <<EOF
 [Unit]
@@ -43,8 +43,12 @@ Environment=USER=gogs HOME=/home/gogs
 WantedBy=multi-user.target
 EOF'
 
-# sudo systemctl enable gogs.service
-# sudo systemctl start gogs.service
+sudo systemctl enable gogs.service
+sudo systemctl start gogs.service
+
+echo "GoGS Successfully Installed!"
+echo "Your First boot will take a couple minutes while the final npm dependencies are grabbed."
+echo "Browse to http://etherpad_server:3000 to get started."
 
 # update to this to avoid hard links to versions (line 20)
 # https://gogs.io/docs/installation/install_from_source.html
