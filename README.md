@@ -20,3 +20,4 @@ This is the project page for the CAPES project (in order of priority).
 * Working shell scripts
   - Rocketchat
   - Etherpad
+  - GoGS
