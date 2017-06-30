@@ -27,8 +27,7 @@ sudo chown -R gogs:gogs /opt/gogs
 # replaced once the service works
 sudo runuser -l gogs -c "/opt/gogs/gogs web"
 
-# EOF not working, manual does
-sudo cat > /usr/lib/systemd/system/gogs.service <<EOF
+sudo bash -c 'cat > /usr/lib/systemd/system/gogs.service <<EOF
 [Unit]
 Description=GoGS
 After=syslog.target network.target mariadb.service
@@ -42,7 +41,7 @@ Restart=always
 Environment=USER=gogs HOME=/home/gogs
 [Install]
 WantedBy=multi-user.target
-EOF
+EOF'
 
 # sudo systemctl enable gogs.service
 # sudo systemctl start gogs.service
