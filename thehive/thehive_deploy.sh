@@ -3,9 +3,6 @@
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
-# Set your hostname, this is crucial. If you have already set your hostname in accordance with your local standards, you may comment this out.
-sudo hostnamectl set-hostname
-
 # Set your time to UTC, this is crucial. If you have already set your time in accordance with your local standards, you may comment this out.
 # If you're not using UTC, I strongly recommend reading this: http://yellerapp.com/posts/2015-01-12-the-worst-server-setup-you-can-make.html
 sudo timedatectl set-timezone UTC
@@ -102,6 +99,7 @@ sudo systemctl start elasticsearch.service
 sudo systemctl start thehive.service
 
 # Success
+clear
 cat << "EOF"
                `          `
              ``   `    `   ``
