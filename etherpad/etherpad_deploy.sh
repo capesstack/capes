@@ -2,6 +2,68 @@
 
 # Admin note: on lines 13 & 42, you need to ensure that you change the password from "changeme" to something more secure.
 
+# Set your IP address as a variable. This is for instructions below.
+IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
+
+# Set your hostname, this is crucial. If you have already set your hostname in accordance with your local standards, you may comment this out.
+sudo hostnamectl set-hostname
+
+# Set your time to UTC, this is crucial. If you have already set your time in accordance with your local standards, you may comment this out.
+# If you're not using UTC, I strongly recommend reading this: http://yellerapp.com/posts/2015-01-12-the-worst-server-setup-you-can-make.html
+sudo timedatectl set-timezone UTC
+
+# Set NTP. If you have already set your NTP in accordance with your local standards, you may comment this out.
+sudo bash -c 'cat > /etc/chrony.conf <<EOF
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+server 0.centos.pool.ntp.org iburst
+server 1.centos.pool.ntp.org iburst
+server 2.centos.pool.ntp.org iburst
+server 3.centos.pool.ntp.org iburst
+
+# Ignore stratum in source selection.
+stratumweight 0
+
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+
+# Enable kernel RTC synchronization.
+rtcsync
+
+# In first three updates step the system clock instead of slew
+# if the adjustment is larger than 10 seconds.
+makestep 10 3
+
+# Allow NTP client access from local network.
+#allow 192.168/16
+
+# Listen for commands only on localhost.
+bindcmdaddress 127.0.0.1
+bindcmdaddress ::1
+
+# Serve time even if not synchronized to any NTP server.
+#local stratum 10
+
+keyfile /etc/chrony.keys
+
+# Specify the key used as password for chronyc.
+commandkey 1
+
+# Generate command key if missing.
+generatecommandkey
+
+# Disable logging of client accesses.
+noclientlog
+
+# Send a message to syslog if a clock adjustment is larger than 0.5 seconds.
+logchange 0.5
+
+logdir /var/log/chrony
+#log measurements statistics tracking
+EOF'
+sudo systemctl enable chronyd.service
+sudo systemctl start chronyd.service
+
 # Install dependencies
 sudo yum install gzip git curl python openssl-devel epel-release expect -y && sudo yum groupinstall "Development Tools" -y
 sudo yum install nodejs mariadb-server -y
@@ -156,35 +218,36 @@ sudo systemctl enable etherpad.service
 sudo systemctl start etherpad.service
 
 # Install success
+clear
 cat << "EOF"
-            :sssso.                      
-           sy`:+--d-                     
-           h+`hms`h+                     
-           .o sM:.o                      
-             .mMh`                       
-             sMMM:                       
-            `NNMNh                       
-            sMdNdM/                      
-           .moNMmsd                      
-           oNs+N/hM/                     
-          .doyhMysod`                    
-          oy+yyNsy/m:                    
-         `Nm: -N `oMd`                   
-         os:syyNsyo-d/                   
-        .m``/yhMhs: :d                   
-        ohyy/`-N .+ysm/                  
-       .dds:` -N  ./hdd`                 
-       oo ./sysNoso:` d:                 
-      `d.`-/ymMMMds/. /h`                
-      omhNMms/:N./ymMmyN/                
-     `Nms/.   -N    ./yNd                
-      -+ys+-` -N  `:oss/`                
-          -+sssNoss/.                    
-             `./` 
+            :sssso.
+           sy`:+--d-
+           h+`hms`h+
+           .o sM:.o
+             .mMh`
+             sMMM:
+            `NNMNh
+            sMdNdM/
+           .moNMmsd
+           oNs+N/hM/
+          .doyhMysod`
+          oy+yyNsy/m:
+         `Nm: -N `oMd`
+         os:syyNsyo-d/
+        .m``/yhMhs: :d
+        ohyy/`-N .+ysm/
+       .dds:` -N  ./hdd`
+       oo ./sysNoso:` d:
+      `d.`-/ymMMMds/. /h`
+      omhNMms/:N./ymMmyN/
+     `Nms/.   -N    ./yNd
+      -+ys+-` -N  `:oss/`
+          -+sssNoss/.
+             `./`
 EOF
 echo "Etherpad successfully installed!"
 echo "Your First boot will take a couple minutes while the final npm dependencies are grabbed."
-echo "Browse to http://etherpad_server:9001 to get started, /admin for administrative functions."
+echo "Browse to http://$HOSTNAME:9001 (or http://$IP:9001 if you don't have DNS set up) to get started, /admin for administrative functions."
 
 # Note
 # Highly recommend the adminpads plugin. You'll need to do it via the web UI at /admin/plugins and then restart Etherpad via `systemctl restart etherpad.service`.
