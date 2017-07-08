@@ -73,15 +73,27 @@ threadpool.search.queue_size: 100000
 threadpool.bulk.queue_size: 1000
 EOF'
 
-# Install TheHive Project
+# Install TheHive Project and Cortex
+# TheHive Project is the incident tracker, Cortex is your analysis engine.
+# If you're going to be using this offline, you can likely comment out Cortex.
 sudo yum install https://dl.bintray.com/cert-bdf/rpm/thehive-project-release-1.0.0-3.noarch.rpm -y
-sudo yum install thehive -y
+sudo yum install thehive cortex -y
 
 # Configure TheHive Project for basic usage
 (cat << _EOF_
 play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)"
 _EOF_
 ) | sudo tee -a /etc/thehive/application.conf
+
+# Configure Cortex for basic usage
+(cat << _EOF_
+# Secret key
+# ~~~~~
+# The secret key is used to secure cryptographics functions.
+# If you deploy your application to several instances be sure to use the same key!
+play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)"
+_EOF_
+) | sudo tee -a /etc/cortex/application.conf
 
 # Make firewall changes to allow for access to TheHive Project web application
 sudo firewall-cmd --add-port=9000/tcp --permanent
@@ -114,4 +126,4 @@ cat << "EOF"
                   ``````
                    ````
 EOF
-echo "TheHive has been successfully deployed. Browse to http://$HOSTNAME:9000 (or http://$IP:9001 if you don't have DNS set up) to begin using the service."
+echo "TheHive has been successfully deployed. Browse to http://$HOSTNAME:9000 (or http://$IP:9000 if you don't have DNS set up) to begin using the service."
