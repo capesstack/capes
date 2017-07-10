@@ -60,8 +60,9 @@ sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
 # Dependencies
-sudo yum install java-1.8.0-openjdk.x86_64 -y
-sudo yum install https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm -y
+sudo yum install java-1.8.0-openjdk.x86_64 epel-release -y
+sudo yum groupinstall "Development Tools" -y
+sudo yum install https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
@@ -75,7 +76,7 @@ EOF'
 
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
-# If you're going to be using this offline, you can likely comment out Cortex.
+# If you're going to be using this offline, you can comment out Cortex.
 sudo yum install https://dl.bintray.com/cert-bdf/rpm/thehive-project-release-1.0.0-3.noarch.rpm -y
 sudo yum install thehive cortex -y
 
@@ -95,20 +96,41 @@ play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head 
 _EOF_
 ) | sudo tee -a /etc/cortex/application.conf
 
-# Make firewall changes to allow for access to TheHive Project web application
-sudo firewall-cmd --add-port=9000/tcp --permanent
+# Make firewall changes to allow for access to TheHive Project and Cortex web applications
+sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
 sudo firewall-cmd --reload
 
-# Ensure that thehive user owns it's directories
+# Collect the Cortex analyzers
+git clone https://github.com/CERT-BDF/Cortex-Analyzers.git
+sudo mv Cortex-Analyzers/ /opt/cortex/
+
+# Add the future Python package and then install the Cortex Python dependencies
+for d in /opt/cortex/Cortex-Analyzers/analyzers/*/ ; do (cd "$d" && sudo echo "future" >> requirements.txt); done
+for d in /opt/cortex/Cortex-Analyzers/analyzers/*/ ; do (cd "$d" && sudo pip install -r requirements.txt); done
+
+# Need to update the location of the analyzers directory in /etc/cortex/applicatin.conf
+https://unix.stackexchange.com/questions/159367/using-sed-to-find-and-replace
+
+# Ensure that thehive and cortex users owns it's directories
 sudo chown -R thehive:thehive /opt/thehive
 sudo chown thehive:thehive /etc/thehive/application.conf
 sudo chmod 640 /etc/thehive/application.conf
+sudo chown -R cortex:cortex /opt/cortex
+sudo chown cortex:cortex /etc/cortex/application.conf
+sudo chmod 640 /etc/cortex/application.conf
 
 # Set Elasticsearch and TheHive Project to start on boot
 sudo systemctl enable elasticsearch.service
 sudo systemctl enable thehive.service
+sudo systemctl enable cortex.service
+
+# Configure Cortex to run on port 9001 instead of the default 9000, which is shared with TheHive
+sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
+
+# Start all services
 sudo systemctl start elasticsearch.service
 sudo systemctl start thehive.service
+sudo systemctl start cortex.service
 
 # Success
 clear
