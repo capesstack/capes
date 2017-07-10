@@ -111,6 +111,8 @@ for d in /opt/cortex/Cortex-Analyzers/analyzers/*/ ; do (cd "$d" && sudo pip ins
 # Need to update the location of the analyzers directory in /etc/cortex/applicatin.conf
 https://unix.stackexchange.com/questions/159367/using-sed-to-find-and-replace
 
+# Need to uncomment Cortex URL in /etc/thehive/application.conf and use $hostname:9001
+
 # Ensure that thehive and cortex users owns it's directories
 sudo chown -R thehive:thehive /opt/thehive
 sudo chown thehive:thehive /etc/thehive/application.conf
