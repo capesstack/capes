@@ -4,7 +4,7 @@ This is the project page for the CAPES project (in order of priority).
 1. Rocketchat
 1. Etherpad
 1. GoGS
-1. TheHive
+1. TheHive (with Cortex)
 1. Mumble
 1. MISP
 1. CyberChef
@@ -21,3 +21,4 @@ This is the project page for the CAPES project (in order of priority).
   - Rocketchat
   - Etherpad
   - GoGS
+  - TheHive (with Cortex)
