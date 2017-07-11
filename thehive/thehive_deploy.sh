@@ -74,6 +74,9 @@ threadpool.search.queue_size: 100000
 threadpool.bulk.queue_size: 1000
 EOF'
 
+# Collect the Cortex analyzers
+sudo git clone https://github.com/CERT-BDF/Cortex-Analyzers.git /opt/cortex/
+
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
 # If you're going to be using this offline, you can comment out Cortex.
@@ -100,18 +103,15 @@ _EOF_
 sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
 sudo firewall-cmd --reload
 
-# Collect the Cortex analyzers
-git clone https://github.com/CERT-BDF/Cortex-Analyzers.git
-sudo mv Cortex-Analyzers/ /opt/cortex/
+# Update Pip...just because it's ludicious that installing it doesn't bring the updated version
+sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
-for d in /opt/cortex/Cortex-Analyzers/analyzers/*/ ; do (cd "$d" && sudo echo "future" >> requirements.txt); done
-for d in /opt/cortex/Cortex-Analyzers/analyzers/*/ ; do (cd "$d" && sudo pip install -r requirements.txt); done
+sudo pip install future
+for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
 
-# Need to update the location of the analyzers directory in /etc/cortex/applicatin.conf
-https://unix.stackexchange.com/questions/159367/using-sed-to-find-and-replace
-
-# Need to uncomment Cortex URL in /etc/thehive/application.conf and use $hostname:9001
+# Update the location of the analyzers
+sudo sed -i 's/path\/to\/Cortex\-Analyzers/\/opt\/cortex/' /etc/cortex/application.conf
 
 # Ensure that thehive and cortex users owns it's directories
 sudo chown -R thehive:thehive /opt/thehive
@@ -128,15 +128,19 @@ sudo systemctl enable cortex.service
 
 # Configure Cortex to run on port 9001 instead of the default 9000, which is shared with TheHive
 sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
+sudo systemctl daemon-reload
+# sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/multi-user.target.wants/cortex.service
 
-# Start all services
-sudo systemctl start elasticsearch.service
-sudo systemctl start thehive.service
-sudo systemctl start cortex.service
+# Start Elasticsearch and Cortex
+# sudo systemctl start elasticsearch.service
+# sudo systemctl start cortex.service
+# sudo systemctl start thehive.service
 
 # Success
 clear
 cat << "EOF"
+
+
                `          `
              ``   `    `   ``
             ``     ````     ``
@@ -150,4 +154,19 @@ cat << "EOF"
                   ``````
                    ````
 EOF
-echo "TheHive has been successfully deployed. Browse to http://$HOSTNAME:9000 (or http://$IP:9000 if you don't have DNS set up) to begin using the service."
+echo "TheHive has been successfully deployed. Browse to http://$HOSTNAME:9000 (or http://$IP:9000 if you don't have DNS set up) to begin using the service.
+"
+echo "Cortex has been successfully deployed. Browse to http://$HOSTNAME:9001 (or http://$IP:9001 if you don't have DNS set up) to begin using the service.
+"
+echo "You'll still need to enter your specific API / service crednentials for the individual analyzers located in "/etc/cortex/application.conf" and then restart Cortex with "sudo systemctl restart cortex.service"
+"
+echo "Prior to connecting TheHive to Cortex, you'll need to update "/etc/thehive/application.conf" with your Cortex server:
+
+# Cortex
+cortex {
+  "CORTEX-SERVER-ID" {
+  url = "http://$HOSTNAME:9001"
+  }
+}
+
+Then reload TheHive service "sudo systemctl restart thehive.service""
