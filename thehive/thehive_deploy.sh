@@ -131,10 +131,10 @@ sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
 sudo systemctl daemon-reload
 # sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/multi-user.target.wants/cortex.service
 
-# Start Elasticsearch and Cortex
-# sudo systemctl start elasticsearch.service
-# sudo systemctl start cortex.service
-# sudo systemctl start thehive.service
+# Start TheHive, Elasticsearch, and Cortex
+sudo systemctl start elasticsearch.service
+sudo systemctl start cortex.service
+sudo systemctl start thehive.service
 
 # Success
 clear
