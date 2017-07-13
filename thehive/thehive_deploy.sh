@@ -77,6 +77,9 @@ EOF'
 # Collect the Cortex analyzers
 sudo git clone https://github.com/CERT-BDF/Cortex-Analyzers.git /opt/cortex/
 
+# Collect the Cortex Report Templates
+sudo curl -Lo /opt/cortex/report-templates.zip https://dl.bintray.com/cert-bdf/thehive/report-templates.zip
+
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
 # If you're going to be using this offline, you can comment out Cortex.
@@ -131,10 +134,10 @@ sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
 sudo systemctl daemon-reload
 # sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/multi-user.target.wants/cortex.service
 
-# Start Elasticsearch and Cortex
-# sudo systemctl start elasticsearch.service
-# sudo systemctl start cortex.service
-# sudo systemctl start thehive.service
+# Start TheHive, Elasticsearch, and Cortex
+sudo systemctl start elasticsearch.service
+sudo systemctl start cortex.service
+sudo systemctl start thehive.service
 
 # Success
 clear
@@ -158,15 +161,3 @@ echo "TheHive has been successfully deployed. Browse to http://$HOSTNAME:9000 (o
 "
 echo "Cortex has been successfully deployed. Browse to http://$HOSTNAME:9001 (or http://$IP:9001 if you don't have DNS set up) to begin using the service.
 "
-echo "You'll still need to enter your specific API / service crednentials for the individual analyzers located in "/etc/cortex/application.conf" and then restart Cortex with "sudo systemctl restart cortex.service"
-"
-echo "Prior to connecting TheHive to Cortex, you'll need to update "/etc/thehive/application.conf" with your Cortex server:
-
-# Cortex
-cortex {
-  "CORTEX-SERVER-ID" {
-  url = "http://$HOSTNAME:9001"
-  }
-}
-
-Then reload TheHive service "sudo systemctl restart thehive.service""
