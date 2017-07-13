@@ -4,6 +4,9 @@ TheHive build script for CentOS 7.3.
 ## Usage
 `$ ./thehive_deploy.sh`
 
+### Notes
+You'll need to enter your `sudo` credentials to install the dependencies.
+
 ## Post Installation
 ### TheHive Project
 Browse to `http://$HOSTNAME:9000` (or `http://$IP:9000` if you don't have DNS set up) to begin using the service.
@@ -30,11 +33,8 @@ Then reload TheHive service `sudo systemctl restart thehive.service`
 1. Go to `Admin` > `Report templates` menu
 1. Click on `Import templates` button and select the `report-templates.zip` file located in `/opt/cortex/`
 
-### Cortex Project First Start
+### Cortex Project
 Browse to `http://$HOSTNAME:9001` (or `http://$IP:9001` if you don't have DNS set up) to begin using the service.
 
-### Cortex Configuration
+#### Cortex Configuration
 You'll still need to enter your specific API / service credentials for the individual analyzers located in `/etc/cortex/application.conf` and then restart Cortex with `sudo systemctl restart cortex.service`.
-
-## Notes
-You'll need to enter your `sudo` credentials to install the dependencies.
