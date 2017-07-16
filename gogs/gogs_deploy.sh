@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Note, change your MariaSQL password on line 10.
-
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
