@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Admin note: on lines 13 & 42, you need to ensure that you change the password from "changeme" to something more secure.
-
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 

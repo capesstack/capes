@@ -59,11 +59,7 @@ EOF'
 sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
-# Install dependencies
-sudo yum install epel-release && sudo yum -y update
-sudo yum install -y nodejs curl GraphicsMagick npm mongodb-org gcc-c++
-
-# Configure MongoDB
+# Configure MongoDB Yum repository
 sudo bash -c 'cat > /etc/yum.repos.d/mongodb.repo <<EOF
 [mongodb-org-3.4]
 name=MongoDB Repository
@@ -72,6 +68,10 @@ gpgcheck=1
 enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
 EOF'
+
+# Install dependencies
+sudo yum install epel-release && sudo yum -y update
+sudo yum install -y nodejs curl GraphicsMagick npm mongodb-org gcc-c++
 
 # Configure npm
 sudo npm install -g inherits n
@@ -105,12 +105,15 @@ EOF'
 # Configure the firewall
 sudo firewall-cmd --add-port=3000/tcp --permanent
 sudo firewall-cmd --reload
-sudo chkconfig mongod on
+# sudo chkconfig mongod on
+sudo systemctl enable mongod.service
 sudo systemctl enable rocketchat.service
-sudo systemctl start mongod
+sudo systemctl start mongod.service
 sudo systemctl start rocketchat.service
 clear
 cat << "EOF"
+
+
 .:+ossyysss+/-.
 `+yyyyyyyyyyyyys/.
   .oyyyyyyyyyyyyyyo++oossssoo++/:-.`
