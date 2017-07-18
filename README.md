@@ -20,7 +20,7 @@ This is the project page for the CAPES project (in order of priority).
 
 ## In Progress (Devel Branch)
 * MISP guide is built, not scripted
-  _ redis may not be working with PHP properly
+  - redis may not be working with PHP properly
   - various PHP modules may need to be enabled in `php.ini`
 
 ## Done
