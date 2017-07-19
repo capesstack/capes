@@ -59,15 +59,9 @@ EOF'
 sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
-# All of these call to be done as root, I'm trying sudo, but let's see how it works.
-
 # Make sure you set your hostname CORRECTLY vs. like an animal (manually in /etc/hostname)
 # Feel free to change the hostname in accordance with your local policy.
 sudo hostnamectl set-hostname misp
-
-# Set your time to UTC, this is crucial. If you have already set your time in accordance with your local standards, you may comment this out.
-# If you're not using UTC, I strongly recommend reading this: http://yellerapp.com/posts/2015-01-12-the-worst-server-setup-you-can-make.html
-sudo timedatectl set-timezone UTC
 
 # We need some packages from the Extra Packages for Enterprise Linux repository
 sudo yum install epel-release -y && sudo yum update -y
@@ -81,18 +75,19 @@ sudo systemctl enable rh-php56-php-fpm.service
 sudo systemctl start rh-php56-php-fpm.service
 
 # Start a new shell with rh-php56 enabled
-scl enable rh-php56 bash
+source /opt/rh/rh-php56/enable
+# scl enable rh-php56 bash <- may not be needed
 pear channel-update pear.php.net
 sudo pear install Crypt_GPG
 
 # GPG needs lots of entropy, haveged provides entropy
 sudo yum install haveged -y
 sudo systemctl enable haveged.service
-sudo systemctl start  haveged.service
+sudo systemctl start haveged.service
 
 # Enable and start redis
 sudo systemctl enable redis.service
-sudo systemctl start  redis.service
+sudo systemctl start redis.service
 
 # Download MISP using git in the /var/www/ directory.
 cd /var/www/
@@ -155,16 +150,16 @@ sudo ln -s ../php-fpm.d/timezone.ini /etc/opt/rh/rh-php56/php.d/99-timezone.ini
 sudo cp -fa /var/www/MISP/INSTALL/setup/config.php /var/www/MISP/app/Plugin/CakeResque/Config/config.php
 
 # Make sure the permissions are set correctly
-sudo chown -R root:apache /var/www/MISP
-sudo find /var/www/MISP -type d -exec chmod g=rx {} \;
-sudo chmod -R g+r,o= /var/www/MISP
-sudo chown apache:apache /var/www/MISP/app/files
-sudo chown apache:apache /var/www/MISP/app/files/terms
-sudo chown apache:apache /var/www/MISP/app/files/scripts/tmp
-sudo chown apache:apache /var/www/MISP/app/Plugin/CakeResque/tmp
-sudo chown -R apache:apache /var/www/MISP/app/tmp
-sudo chown -R apache:apache /var/www/MISP/app/webroot/img/orgs
-sudo chown -R apache:apache /var/www/MISP/app/webroot/img/custom
+# sudo chown -R root:apache /var/www/MISP
+# sudo find /var/www/MISP -type d -exec chmod g=rx {} \;
+# sudo chmod -R g+r,o= /var/www/MISP
+# sudo chown apache:apache /var/www/MISP/app/files
+# sudo chown apache:apache /var/www/MISP/app/files/terms
+# sudo chown apache:apache /var/www/MISP/app/files/scripts/tmp
+# sudo chown apache:apache /var/www/MISP/app/Plugin/CakeResque/tmp
+# sudo chown -R apache:apache /var/www/MISP/app/tmp
+# sudo chown -R apache:apache /var/www/MISP/app/webroot/img/orgs
+# sudo chown -R apache:apache /var/www/MISP/app/webroot/img/custom
 
 # Enable and start your mysql database server
 sudo systemctl enable mariadb.service
@@ -175,27 +170,24 @@ sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 
-# Try this first to avoid the shell below
+# Add the misp user and database
 # may need to add the grant usage from below...not sure though
-# mysql -u root -e "CREATE DATABASE misp;"
-# mysql -u root -e "GRANT ALL PRIVILEGES ON misp.* TO 'misp'@'localhost' IDENTIFIED BY 'changeme';"
-# mysql -u root -e "FLUSH PRIVILEGES;"
+mysql -u root -e "CREATE DATABASE misp;"
+# moved to end mysql -u root -e "GRANT ALL PRIVILEGES ON misp.* TO 'misp'@'localhost' IDENTIFIED BY 'changeme';"
+mysql -u root -e "FLUSH PRIVILEGES;"
 
-# Enter the mysql shell
-sudo mysql -u root -p
+# Enter the mysql shell <- historical
+# sudo mysql -u root -p
 
-MariaDB [(none)]> create database misp;
-MariaDB [(none)]> grant usage on *.* to misp@localhost identified by 'XXXXXXXXX';
-MariaDB [(none)]> grant all privileges on misp.* to misp@localhost;
-MariaDB [(none)]> exit
+# MariaDB [(none)]> create database misp;
+# MariaDB [(none)]> grant usage on *.* to misp@localhost identified by 'XXXXXXXXX';
+# MariaDB [(none)]> grant all privileges on misp.* to misp@localhost;
+# MariaDB [(none)]> exit
 
 cd /var/www/MISP
 
 # Import the empty MySQL database from MYSQL.sql
-mysql -u misp -p misp < INSTALL/MYSQL.sql
-
-# Secure MySQL
-sudo mysql_secure_installation
+mysql -u root misp < INSTALL/MYSQL.sql
 
 # Final MySQL config
 sudo cp /var/www/MISP/INSTALL/apache.misp.centos7 /etc/httpd/conf.d/misp.conf
@@ -240,6 +232,8 @@ sudo cp -a bootstrap.default.php bootstrap.php
 sudo cp -a database.default.php database.php
 sudo cp -a core.default.php core.php
 sudo cp -a config.default.php config.php
+
+####### autobuild works to here 7/18
 
 # Configure the fields in the newly created files:
 # Need to sed the shit out of this
@@ -291,6 +285,22 @@ sudo vi /etc/rc.local
 su -s /bin/bash apache -c 'scl enable rh-php56 /var/www/MISP/app/Console/worker/start.sh'
 # and make sure it will execute
 sudo chmod +x /etc/rc.local
+
+# Make sure the permissions are set correctly
+sudo chown -R root:apache /var/www/MISP
+sudo find /var/www/MISP -type d -exec chmod g=rx {} \;
+sudo chmod -R g+r,o= /var/www/MISP
+sudo chown apache:apache /var/www/MISP/app/files
+sudo chown apache:apache /var/www/MISP/app/files/terms
+sudo chown apache:apache /var/www/MISP/app/files/scripts/tmp
+sudo chown apache:apache /var/www/MISP/app/Plugin/CakeResque/tmp
+sudo chown -R apache:apache /var/www/MISP/app/tmp
+sudo chown -R apache:apache /var/www/MISP/app/webroot/img/orgs
+sudo chown -R apache:apache /var/www/MISP/app/webroot/img/custom
+
+# Secure MySQL
+mysql -u root -e "GRANT ALL PRIVILEGES ON misp.* TO 'misp'@'localhost' IDENTIFIED BY 'changeme';"
+sudo mysql_secure_installation
 
 # Now log in using the webinterface: http://misp/users/login
 # The default user/pass = admin@admin.test/admin
