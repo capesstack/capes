@@ -5,11 +5,11 @@ This is the project page for the CAPES project (in order of priority).
 1. Etherpad
 1. GoGS
 1. TheHive (with Cortex)
+1. Landing Page *
 1. MISP
-1. Landing Page
-1. Mumble
 1. CyberChef
 1. Hippocampe
+1. Mumble
 1. FreeIPA
 
 ## Roadmap
@@ -29,3 +29,6 @@ This is the project page for the CAPES project (in order of priority).
   - Etherpad
   - GoGS
   - TheHive (with Cortex)
+
+## Note
+\* designates current effort
