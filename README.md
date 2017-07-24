@@ -18,11 +18,6 @@ This is the project page for the CAPES project (in order of priority).
 1. Convert shell script to Ansible
 1. Convert CAPES to Docker
 
-## In Progress (Devel Branch)
-* MISP guide is built, not scripted
-  - redis may not be working with PHP properly
-  - various PHP modules may need to be enabled in `php.ini`
-
 ## Done
 * Working shell scripts
   - Rocketchat
