@@ -3,6 +3,10 @@
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
+################################
+######## Configure NTP #########
+################################
+
 # Set your time to UTC, this is crucial. If you have already set your time in accordance with your local standards, you may comment this out.
 # If you're not using UTC, I strongly recommend reading this: http://yellerapp.com/posts/2015-01-12-the-worst-server-setup-you-can-make.html
 sudo timedatectl set-timezone UTC
@@ -59,17 +63,27 @@ EOF'
 sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
+################################
+### Install the GoGS Service ###
+################################
+
+# Create your GoGS password
+echo "Set your GoGS password and press [Enter]"
+read gogspassword
+
 sudo yum install -y mariadb-server git unzip
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
 
 mysql -u root -e "CREATE DATABASE gogs;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY 'changeme';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassword';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
-mysql_secure_installation
+# mysql_secure_installation
 
-sudo useradd gogs
+sudo useradd -s /usr/sbin/nologin gogs
+
+# sudo useradd -s /usr/sbin/nologin -r -M -d /dev/null gogs
 
 sudo firewall-cmd --add-port=3000/tcp --permanent
 sudo firewall-cmd --reload
@@ -107,5 +121,4 @@ echo "GoGS Successfully Installed!"
 echo "Your First boot will take a couple minutes while the final npm dependencies are grabbed."
 echo "Browse to http://$HOSTNAME:3000 (or http://$IP:3000 if you don't have DNS set up) to get started."
 
-# update to this to avoid hard links to versions (line 20)
 # https://gogs.io/docs/installation/install_from_source.html
