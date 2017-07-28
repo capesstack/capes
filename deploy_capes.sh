@@ -87,10 +87,11 @@ sudo n 4.5
 
 # Build RocketChat
 sudo mkdir /opt/rocketchat
-sudo curl -L https://rocket.chat/releases/latest/download -o /opt/rocketchat/rocket.chat.tgz
+curl -L https://rocket.chat/releases/latest/download -o rocketchat.tar.gz
 echo "This next part takes a few minutes, everything is okay...go have a scone."
-sudo tar zxf /opt/rocketchat/rocket.chat.tgz -C /opt/rocketchat/
+sudo tar zxf rocketchat.tar.gz -C /opt/rocketchat/
 sudo mv /opt/rocketchat/bundle /opt/rocketchat/Rocket.Chat
+rm rocketchat.tar.gz
 # cd /opt/rocketchat/Rocket.Chat/programs/server
 sudo npm --prefix /opt/rocketchat/Rocket.Chat/programs/server install
 
@@ -116,9 +117,55 @@ Environment=MONGO_URL=mongodb://localhost:27017/rocketchat ROOT_URL=http://local
 WantedBy=multi-user.target
 EOF'
 
-# Configure RocketChat services
-sudo systemctl enable mongod.service
-sudo systemctl enable rocketchat.service
+################################
+############# GoGS #############
+################################
+
+# Create your GoGS password
+echo "Set your GoGS password and press [Enter]"
+read gogspassword
+
+# Install dependencies
+sudo yum install -y mariadb-server git unzip
+sudo systemctl start mariadb.service
+
+# Configure MySQL
+mysql -u root -e "CREATE DATABASE gogs;"
+mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassword';"
+mysql -u root -e "FLUSH PRIVILEGES;"
+
+# Secure MySQL
+sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
+sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
+sudo systemctl restart mariadb.service
+
+# Add the GoGS user with no login
+sudo useradd -s /usr/sbin/nologin gogs
+
+# Build GoGS
+sudo mkdir /opt/gogs
+curl -L https://dl.gogs.io/0.11.19/linux_amd64.zip -o gogs.zip
+sudo unzip gogs.zip -d /opt/
+rm gogs.zip
+
+# Set directory permissions for GoGS
+sudo chown -R gogs:gogs /opt/gogs
+
+sudo bash -c 'cat > /usr/lib/systemd/system/gogs.service <<EOF
+[Unit]
+Description=GoGS
+After=syslog.target network.target mariadb.service
+[Service]
+Type=simple
+User=gogs
+Group=gogs
+WorkingDirectory=/opt/gogs/
+ExecStart=/opt/gogs/gogs web -port 4000
+Restart=always
+Environment=USER=gogs HOME=/home/gogs
+[Install]
+WantedBy=multi-user.target
+EOF'
 
 ################################
 ############ Nginx #############
@@ -140,14 +187,23 @@ sudo cp -r landing_page/* /usr/share/nginx/html/
 # Port 9000 - TheHive
 # Port 9001 - Cortex (TheHive Analyzer Plugins)
 # Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --permanent
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --permanent
 sudo firewall-cmd --reload
 
-# Configure services
-sudo systemctl enable nginx
+# Configure services for autostart
+sudo systemctl enable nginx.service
+sudo systemctl enable mariadb.service
+sudo systemctl enable mongod.service
+sudo systemctl enable rocketchat.service
+
+# Start all the services
 sudo systemctl start mongod.service
 sudo systemctl start rocketchat.service
-sudo systemctl start nginx
+sudo systemctl start gogs.service
+sudo systemctl start nginx.service
+
+# Secure MySQL installtion
+# mysql_secure_installation
 
 # Success page
 clear
