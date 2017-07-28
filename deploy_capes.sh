@@ -131,7 +131,16 @@ sed -i "s/your-hostname/$HOSTNAME/" landing_page/index.html
 sudo cp -r landing_page/* /usr/share/nginx/html/
 
 # Configure the firewall
-sudo firewall-cmd --add-port=80/tcp --permanent
+# Port 80 - Nginx
+# Port 3000 - RocketChat
+# Port 4000 - GoGS
+# Port 5000 - Etherpad
+# Port 6000 - MISP
+# Port 7000 - CyberChef
+# Port 9000 - TheHive
+# Port 9001 - Cortex (TheHive Analyzer Plugins)
+# Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --permanent
 sudo firewall-cmd --reload
 
 # Configure services
