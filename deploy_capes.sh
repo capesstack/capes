@@ -1,5 +1,12 @@
 #!/bin/bash
 
+################################
+##### Collect Credentials ######
+################################
+# Create your GoGS password
+echo "Set your GoGS password and press [Enter]"
+read gogspassword
+
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
@@ -121,10 +128,6 @@ EOF'
 ############# GoGS #############
 ################################
 
-# Create your GoGS password
-echo "Set your GoGS password and press [Enter]"
-read gogspassword
-
 # Install dependencies
 sudo yum install -y mariadb-server git unzip
 sudo systemctl start mariadb.service
@@ -140,7 +143,7 @@ sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 
 # Add the GoGS user with no login
-sudo useradd -s /usr/sbin/nologin gogs
+sudo useradd -s /usr/sbin/nologin git
 
 # Build GoGS
 sudo mkdir /opt/gogs
@@ -149,7 +152,7 @@ sudo unzip gogs.zip -d /opt/
 rm gogs.zip
 
 # Set directory permissions for GoGS
-sudo chown -R gogs:gogs /opt/gogs
+sudo chown -R git:git /opt/gogs
 
 sudo bash -c 'cat > /usr/lib/systemd/system/gogs.service <<EOF
 [Unit]
@@ -157,12 +160,12 @@ Description=GoGS
 After=syslog.target network.target mariadb.service
 [Service]
 Type=simple
-User=gogs
-Group=gogs
+User=git
+Group=git
 WorkingDirectory=/opt/gogs/
 ExecStart=/opt/gogs/gogs web -port 4000
 Restart=always
-Environment=USER=gogs HOME=/home/gogs
+Environment=USER=git HOME=/home/git
 [Install]
 WantedBy=multi-user.target
 EOF'
