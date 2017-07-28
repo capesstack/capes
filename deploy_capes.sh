@@ -92,7 +92,7 @@ echo "This next part takes a few minutes, everything is okay...go have a scone."
 sudo tar zxf /opt/rocketchat/rocket.chat.tgz -C /opt/rocketchat/
 sudo mv /opt/rocketchat/bundle /opt/rocketchat/Rocket.Chat
 cd /opt/rocketchat/Rocket.Chat/programs/server
-sudo npm install
+sudo npm --prefix /opt/rocketchat/Rocket.Chat/programs/server install
 
 # Add the RocketChat user with no login
 sudo useradd -s /usr/sbin/nologin rocketchat
@@ -125,10 +125,10 @@ sudo systemctl enable rocketchat.service
 ################################
 
 # Update the landing page index file
-sed -i 's/your-hostname/$HOSTNAME/' landing_page/index.html
+sed -i "s/your-hostname/$HOSTNAME/" capes/landing_page/index.html
 
 # Move landing page framework into Nginx's working directory
-sudo cp -r . /usr/share/nginx/html/
+sudo cp -r capes/landing_page/* /usr/share/nginx/html/
 
 # Configure the firewall
 sudo firewall-cmd --add-port=80/tcp --permanent
