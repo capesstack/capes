@@ -20,10 +20,13 @@ This is the project page for the CAPES project (in order of priority).
 
 ## Done
 * Working shell scripts
-  - Rocketchat
+  - RocketChat
   - Etherpad
   - GoGS
   - TheHive (with Cortex)
+  - CAPES Landing Page
+  - CAPES deploy script with Landing Page presenting
+    - RocketChat
 
 ## Note
 \* designates current effort
