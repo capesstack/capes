@@ -313,6 +313,89 @@ WantedBy=multi-user.target
 EOF'
 
 ################################
+########### TheHive ############
+################################
+
+# Install Dependencies
+sudo yum install java-1.8.0-openjdk.x86_64  -y
+sudo yum install https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
+
+# Configure Elasticsearch
+sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
+network.host: 127.0.0.1
+script.inline: on
+cluster.name: hive
+threadpool.index.queue_size: 100000
+threadpool.search.queue_size: 100000
+threadpool.bulk.queue_size: 1000
+EOF'
+
+# Collect the Cortex analyzers
+sudo git clone https://github.com/CERT-BDF/Cortex-Analyzers.git /opt/cortex/
+
+# Collect the Cortex Report Templates
+sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
+
+# Install TheHive Project and Cortex
+# TheHive Project is the incident tracker, Cortex is your analysis engine.
+# If you're going to be using this offline, you can remove the Cortex install (sudo yum install thehive -y).
+sudo yum install https://dl.bintray.com/cert-bdf/rpm/thehive-project-release-1.0.0-3.noarch.rpm -y
+sudo yum install thehive cortex -y
+
+# Configure TheHive Project secret key
+(cat << _EOF_
+# Secret key
+# ~~~~~
+# The secret key is used to secure cryptographics functions.
+# If you deploy your application to several instances be sure to use the same key!
+play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)"
+_EOF_
+) | sudo tee -a /etc/thehive/application.conf
+
+# Configure Cortex secret key
+(cat << _EOF_
+# Secret key
+# ~~~~~
+# The secret key is used to secure cryptographics functions.
+# If you deploy your application to several instances be sure to use the same key!
+play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)"
+_EOF_
+) | sudo tee -a /etc/cortex/application.conf
+
+# Update Pip...just because it's ludicious that installing it doesn't bring the updated version
+sudo pip install --upgrade pip
+
+# Add the future Python package and then install the Cortex Python dependencies
+sudo pip install future
+for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
+
+# Update the location of the analyzers
+sudo sed -i 's/path\/to\/Cortex\-Analyzers/\/opt\/cortex/' /etc/cortex/application.conf
+
+# Ensure that thehive and cortex users owns it's directories
+sudo chown -R thehive:thehive /opt/thehive
+sudo chown thehive:thehive /etc/thehive/application.conf
+sudo chmod 640 /etc/thehive/application.conf
+sudo chown -R cortex:cortex /opt/cortex
+sudo chown cortex:cortex /etc/cortex/application.conf
+sudo chmod 640 /etc/cortex/application.conf
+
+# Configure Cortex to run on port 9001 instead of the default 9000, which is shared with TheHive
+sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
+sudo systemctl daemon-reload
+
+# Connect TheHive to Cortex
+sudo bash -c 'cat >> /etc/thehive/application.conf <<EOF
+# Cortex
+play.modules.enabled += connectors.cortex.CortexConnector
+cortex {
+  "CORTEX-SERVER-ID" {
+  url = "http://$HOSTNAME:9001"
+  }
+}
+EOF'
+
+################################
 ############ Nginx #############
 ################################
 
@@ -335,7 +418,7 @@ sudo cp -r landing_page/* /usr/share/nginx/html/
 # Port 9000 - TheHive
 # Port 9001 - Cortex (TheHive Analyzer Plugins)
 # Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --permanent
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=9000/tcp --add-port=9001/tcp --permanent
 sudo firewall-cmd --reload
 
 # Configure services for autostart
@@ -345,8 +428,14 @@ sudo systemctl enable mongod.service
 sudo systemctl enable gogs.service
 sudo systemctl enable rocketchat.service
 sudo systemctl enable etherpad.service
+sudo systemctl enable elasticsearch.service
+sudo systemctl enable thehive.service
+sudo systemctl enable cortex.service
 
 # Start all the services
+sudo systemctl start elasticsearch.service
+sudo systemctl start cortex.service
+sudo systemctl start thehive.service
 sudo systemctl start mongod.service
 sudo systemctl start etherpad.service
 sudo systemctl start rocketchat.service
