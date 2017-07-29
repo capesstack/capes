@@ -86,7 +86,7 @@ EOF'
 
 # Install dependencies
 sudo yum install epel-release -y && sudo yum update -y
-sudo yum install nodejs curl GraphicsMagick npm mongodb-org gcc-c++ nginx -y
+sudo yum install nodejs curl GraphicsMagick npm mongodb-org gcc-c++ -y
 
 # Configure npm
 sudo npm install -g inherits n
@@ -137,7 +137,7 @@ mysql -u root -e "CREATE DATABASE gogs;"
 mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassword';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
-# Secure MySQL
+# Prevent remote access to MySQL
 sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
@@ -174,6 +174,9 @@ EOF'
 ############ Nginx #############
 ################################
 
+# Install dependencies
+sudo yum install nginx -y
+
 # Update the landing page index file
 sed -i "s/your-hostname/$HOSTNAME/" landing_page/index.html
 
@@ -206,7 +209,7 @@ sudo systemctl start gogs.service
 sudo systemctl start nginx.service
 
 # Secure MySQL installtion
-# mysql_secure_installation
+mysql_secure_installation
 
 # Success page
 clear
