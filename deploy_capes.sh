@@ -3,9 +3,14 @@
 ################################
 ##### Collect Credentials ######
 ################################
+
 # Create your GoGS password
-echo "Set your GoGS password and press [Enter]"
+echo "Create your GoGS password for the MySQL database and press [Enter]"
 read -s gogspassword
+
+# Create Etherpad password
+echo "Create your Etherpad password for the MySQL database and the service admin account then press [Enter]"
+read -s etherpadpassword
 
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
@@ -130,17 +135,12 @@ EOF'
 
 # Install dependencies
 sudo yum install -y mariadb-server git unzip
-sudo systemctl start mariadb.service
 
 # Configure MySQL
+sudo systemctl start mariadb.service
 mysql -u root -e "CREATE DATABASE gogs;"
 mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassword';"
 mysql -u root -e "FLUSH PRIVILEGES;"
-
-# Prevent remote access to MySQL
-sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
-sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
-sudo systemctl restart mariadb.service
 
 # Add the GoGS user with no login
 sudo useradd -s /usr/sbin/nologin gogs
@@ -171,6 +171,149 @@ WantedBy=multi-user.target
 EOF'
 
 ################################
+########### Etherpad ###########
+################################
+
+# Install dependencies
+sudo yum install gzip openssl-devel -y && sudo yum groupinstall "Development Tools" -y
+
+# Configure MySQL
+mysql -u root -e "CREATE DATABASE etherpad;"
+mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassword';"
+mysql -u root -e "FLUSH PRIVILEGES;"
+
+# Add the Etherpad user
+sudo useradd -s /usr/sbin/nologin etherpad
+
+# Get the Etherpad packages
+sudo mkdir -p /opt/etherpad
+sudo git clone https://github.com/ether/etherpad-lite.git /opt/etherpad
+
+# Configure the Etherpad settings
+sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
+{
+  "title": "CAPES Etherpad",
+  "favicon": "favicon.ico",
+  "ip": "0.0.0.0",
+  "port" : 5000,
+  "showSettingsInAdminPage" : true,
+   "dbType" : "mysql",
+   "dbSettings" : {
+                    "user"    : "etherpad",
+                    "host"    : "localhost",
+                    "password": "etherpadpassword",
+                    "database": "etherpad",
+                    "charset" : "utf8mb4"
+                  },
+  "defaultPadText" : "Welcome to the CAPES Etherpad.\n\nThis pad text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents.",
+  "padOptions": {
+    "noColors": false,
+    "showControls": true,
+    "showChat": true,
+    "showLineNumbers": true,
+    "useMonospaceFont": false,
+    "userName": false,
+    "userColor": false,
+    "rtl": false,
+    "alwaysShowChat": false,
+    "chatAndUsers": false,
+    "lang": "en-gb"
+  },
+  "padShortcutEnabled" : {
+    "altF9"     : true, /* focus on the File Menu and/or editbar */
+    "altC"      : true, /* focus on the Chat window */
+    "cmdShift2" : true, /* shows a gritter popup showing a line author */
+    "delete"    : true,
+    "return"    : true,
+    "esc"       : true, /* in mozilla versions 14-19 avoid reconnecting pad */
+    "cmdS"      : true, /* save a revision */
+    "tab"       : true, /* indent */
+    "cmdZ"      : true, /* undo/redo */
+    "cmdY"      : true, /* redo */
+    "cmdI"      : true, /* italic */
+    "cmdB"      : true, /* bold */
+    "cmdU"      : true, /* underline */
+    "cmd5"      : true, /* strike through */
+    "cmdShiftL" : true, /* unordered list */
+    "cmdShiftN" : true, /* ordered list */
+    "cmdShift1" : true, /* ordered list */
+    "cmdShiftC" : true, /* clear authorship */
+    "cmdH"      : true, /* backspace */
+    "ctrlHome"  : true, /* scroll to top of pad */
+    "pageUp"    : true,
+    "pageDown"  : true
+  },
+  "suppressErrorsInPadText" : false,
+  "requireSession" : false,
+  "editOnly" : false,
+  "sessionNoPassword" : false,
+  "minify" : true,
+  "maxAge" : 21600, // 60 * 60 * 6 = 6 hours
+  "abiword" : null,
+  "soffice" : null,
+  "tidyHtml" : null,
+  "allowUnknownFileEnds" : true,
+  "requireAuthentication" : false,
+  "requireAuthorization" : false,
+  "trustProxy" : true,
+  "disableIPlogging" : false,
+  "automaticReconnectionTimeout" : 0,
+  "users": {
+    "admin": {
+      "password": "etherpadpassword",
+      "is_admin": true
+    },
+  },
+  "socketTransportProtocols" : ["xhr-polling", "jsonp-polling", "htmlfile"],
+  "loadTest": false,
+  "indentationOnNewLine": true,
+  "toolbar": {
+    "left": [
+      ["bold", "italic", "underline", "strikethrough"],
+      ["orderedlist", "unorderedlist", "indent", "outdent"],
+      ["undo", "redo"],
+      ["clearauthorship"]
+    ],
+    "right": [
+      ["importexport", "timeslider", "savedrevision"],
+      ["settings", "embed"],
+      ["showusers"]
+    ],
+    "timeslider": [
+      ["timeslider_export", "timeslider_returnToPad"]
+    ]
+  },
+  "loglevel": "INFO",
+  "logconfig" :
+    { "appenders": [
+        { "type": "console"
+        //, "category": "access"// only logs pad access
+        }
+      ]
+    }
+}
+EOF'
+sudo sed -i "s/etherpadpassword/$etherpadpassword/" /opt/etherpad/settings.json
+
+# Give the Etherpad user ownership of the /opt/etherpad directory
+sudo chown -R etherpad:etherpad /opt/etherpad
+
+# Create the systemd Etherpad service
+sudo bash -c 'cat > /usr/lib/systemd/system/etherpad.service <<EOF
+[Unit]
+Description=The Etherpad server
+After=network.target remote-fs.target nss-lookup.target
+[Service]
+ExecStart=/opt/etherpad/bin/run.sh
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=etherpad
+User=etherpad
+[Install]
+WantedBy=multi-user.target
+EOF'
+
+################################
 ############ Nginx #############
 ################################
 
@@ -193,7 +336,7 @@ sudo cp -r landing_page/* /usr/share/nginx/html/
 # Port 9000 - TheHive
 # Port 9001 - Cortex (TheHive Analyzer Plugins)
 # Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --permanent
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --permanent
 sudo firewall-cmd --reload
 
 # Configure services for autostart
@@ -201,14 +344,19 @@ sudo systemctl enable nginx.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable mongod.service
 sudo systemctl enable rocketchat.service
+sudo systemctl enable etherpad.service
 
 # Start all the services
 sudo systemctl start mongod.service
+sudo systemctl start etherpad.service
 sudo systemctl start rocketchat.service
 sudo systemctl start gogs.service
 sudo systemctl start nginx.service
 
 # Secure MySQL installtion
+sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
+sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
+sudo systemctl restart mariadb.service
 mysql_secure_installation
 
 # Success page

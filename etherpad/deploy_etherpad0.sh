@@ -1,71 +1,8 @@
 #!/bin/bash
 
 # Create Etherpad password
-echo "Create your Etherpad password for the MySQL database and the service admin account then press [Enter]"
+echo "Create your Etherpad password for the MySQL database and press [Enter]"
 read -s etherpadpassword
-
-# Set your IP address as a variable. This is for instructions below.
-IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
-
-# Set your time to UTC, this is crucial. If you have already set your time in accordance with your local standards, you may comment this out.
-# If you're not using UTC, I strongly recommend reading this: http://yellerapp.com/posts/2015-01-12-the-worst-server-setup-you-can-make.html
-sudo timedatectl set-timezone UTC
-
-# Set NTP. If you have already set your NTP in accordance with your local standards, you may comment this out.
-sudo bash -c 'cat > /etc/chrony.conf <<EOF
-# Use public servers from the pool.ntp.org project.
-# Please consider joining the pool (http://www.pool.ntp.org/join.html).
-server 0.centos.pool.ntp.org iburst
-server 1.centos.pool.ntp.org iburst
-server 2.centos.pool.ntp.org iburst
-server 3.centos.pool.ntp.org iburst
-
-# Ignore stratum in source selection.
-stratumweight 0
-
-# Record the rate at which the system clock gains/losses time.
-driftfile /var/lib/chrony/drift
-
-# Enable kernel RTC synchronization.
-rtcsync
-
-# In first three updates step the system clock instead of slew
-# if the adjustment is larger than 10 seconds.
-makestep 10 3
-
-# Allow NTP client access from local network.
-#allow 192.168/16
-
-# Listen for commands only on localhost.
-bindcmdaddress 127.0.0.1
-bindcmdaddress ::1
-
-# Serve time even if not synchronized to any NTP server.
-#local stratum 10
-
-keyfile /etc/chrony.keys
-
-# Specify the key used as password for chronyc.
-commandkey 1
-
-# Generate command key if missing.
-generatecommandkey
-
-# Disable logging of client accesses.
-noclientlog
-
-# Send a message to syslog if a clock adjustment is larger than 0.5 seconds.
-logchange 0.5
-
-logdir /var/log/chrony
-#log measurements statistics tracking
-EOF'
-sudo systemctl enable chronyd.service
-sudo systemctl start chronyd.service
-
-################################
-########### Etherpad ###########
-################################
 
 # Install dependencies
 sudo yum install gzip git curl python openssl-devel epel-release expect -y && sudo yum groupinstall "Development Tools" -y
@@ -73,7 +10,7 @@ sudo yum install nodejs mariadb-server -y
 
 # Configure MySQL
 sudo systemctl start mariadb.service
-mysql -u root -e "CREATE DATABASE etherpad;"
+mysql -u root -e "CREATE DATABASE gogs;"
 mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassword';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
@@ -155,7 +92,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
   "automaticReconnectionTimeout" : 0,
   "users": {
     "admin": {
-      "password": "etherpadpassword",
+      "password": "password",
       "is_admin": true
     },
   },
@@ -216,9 +153,6 @@ sudo firewall-cmd --reload
 # Your first boot will take a few minutes while the final npm dependencies are grabbed
 sudo systemctl enable etherpad.service
 sudo systemctl start etherpad.service
-
-# Secure MySQL
-mysql_secure_installation
 
 # Install success
 clear
