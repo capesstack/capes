@@ -5,7 +5,7 @@
 ################################
 # Create your GoGS password
 echo "Set your GoGS password and press [Enter]"
-read gogspassword
+read -s gogspassword
 
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
