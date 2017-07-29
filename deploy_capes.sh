@@ -143,7 +143,7 @@ sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 
 # Add the GoGS user with no login
-sudo useradd -s /usr/sbin/nologin git
+sudo useradd -s /usr/sbin/nologin gogs
 
 # Build GoGS
 sudo mkdir /opt/gogs
@@ -152,7 +152,7 @@ sudo unzip gogs.zip -d /opt/
 rm gogs.zip
 
 # Set directory permissions for GoGS
-sudo chown -R git:git /opt/gogs
+sudo chown -R gogs:gogs /opt/gogs
 
 sudo bash -c 'cat > /usr/lib/systemd/system/gogs.service <<EOF
 [Unit]
@@ -160,12 +160,12 @@ Description=GoGS
 After=syslog.target network.target mariadb.service
 [Service]
 Type=simple
-User=git
-Group=git
+User=gogs
+Group=gogs
 WorkingDirectory=/opt/gogs/
 ExecStart=/opt/gogs/gogs web -port 4000
 Restart=always
-Environment=USER=git HOME=/home/git
+Environment=USER=gogs HOME=/home/gogs
 [Install]
 WantedBy=multi-user.target
 EOF'
