@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Create Etherpad password
-echo "Create your Etherpad password for the MySQL database and the service admin account then press [Enter]"
+echo "Create your Etherpad password for the MySQL database and the service administration account then press [Enter]"
 read -s etherpadpassword
 
 # Set your IP address as a variable. This is for instructions below.

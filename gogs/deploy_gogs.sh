@@ -3,8 +3,9 @@
 ################################
 ##### Collect Credentials ######
 ################################
+
 # Create your GoGS password
-echo "Set your GoGS password and press [Enter]"
+echo "Create your GoGS password for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
 read -s gogspassword
 
 # Set your IP address as a variable. This is for instructions below.

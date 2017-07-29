@@ -5,11 +5,11 @@
 ################################
 
 # Create your GoGS password
-echo "Create your GoGS password for the MySQL database and press [Enter]"
+echo "Create your GoGS password for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
 read -s gogspassword
 
 # Create Etherpad password
-echo "Create your Etherpad password for the MySQL database and the service admin account then press [Enter]"
+echo "Create your Etherpad password for the MySQL database and the service administration account then press [Enter]"
 read -s etherpadpassword
 
 # Set your IP address as a variable. This is for instructions below.
@@ -104,7 +104,6 @@ echo "This next part takes a few minutes, everything is okay...go have a scone."
 sudo tar zxf rocketchat.tar.gz -C /opt/rocketchat/
 sudo mv /opt/rocketchat/bundle /opt/rocketchat/Rocket.Chat
 rm rocketchat.tar.gz
-# cd /opt/rocketchat/Rocket.Chat/programs/server
 sudo npm --prefix /opt/rocketchat/Rocket.Chat/programs/server install
 
 # Add the RocketChat user with no login
@@ -343,6 +342,7 @@ sudo firewall-cmd --reload
 sudo systemctl enable nginx.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable mongod.service
+sudo systemctl enable gogs.service
 sudo systemctl enable rocketchat.service
 sudo systemctl enable etherpad.service
 
