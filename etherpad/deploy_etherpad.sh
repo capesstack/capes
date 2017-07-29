@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Create Etherpad password
+echo "Create your Etherpad password for the MySQL database and the service administration account then press [Enter]"
+read -s etherpadpassword
+
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
@@ -59,26 +63,22 @@ EOF'
 sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
+################################
+########### Etherpad ###########
+################################
+
 # Install dependencies
 sudo yum install gzip git curl python openssl-devel epel-release expect -y && sudo yum groupinstall "Development Tools" -y
 sudo yum install nodejs mariadb-server -y
 
 # Configure MySQL
 sudo systemctl start mariadb.service
-sudo systemctl enable mariadb.service
 mysql -u root -e "CREATE DATABASE etherpad;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY 'changeme';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassword';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
-# Need to automate this. This works as is, but requires interaction. Using the "expect" package should work
-mysql_secure_installation
-
 # Add the Etherpad user
-sudo adduser etherpad
-
-# Make firewall configurations
-sudo firewall-cmd --add-port=9001/tcp --permanent
-sudo firewall-cmd --reload
+sudo useradd -s /usr/sbin/nologin etherpad
 
 # Get the Etherpad packages
 sudo mkdir -p /opt/etherpad
@@ -90,13 +90,13 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
   "title": "CAPES Etherpad",
   "favicon": "favicon.ico",
   "ip": "0.0.0.0",
-  "port" : 9001,
+  "port" : 5000,
   "showSettingsInAdminPage" : true,
    "dbType" : "mysql",
    "dbSettings" : {
                     "user"    : "etherpad",
                     "host"    : "localhost",
-                    "password": "changeme",
+                    "password": "etherpadpassword",
                     "database": "etherpad",
                     "charset" : "utf8mb4"
                   },
@@ -155,7 +155,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
   "automaticReconnectionTimeout" : 0,
   "users": {
     "admin": {
-      "password": "password",
+      "password": "etherpadpassword",
       "is_admin": true
     },
   },
@@ -188,6 +188,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
     }
 }
 EOF'
+sudo sed -i "s/etherpadpassword/$etherpadpassword/" /opt/etherpad/settings.json
 
 # Give the Etherpad user ownership of the /opt/etherpad directory
 sudo chown -R etherpad:etherpad /opt/etherpad
@@ -207,10 +208,17 @@ User=etherpad
 WantedBy=multi-user.target
 EOF'
 
+# Make firewall configurations
+sudo firewall-cmd --add-port=5000/tcp --permanent
+sudo firewall-cmd --reload
+
 # Configure the Etherpad service to start on boot and start it
 # Your first boot will take a few minutes while the final npm dependencies are grabbed
 sudo systemctl enable etherpad.service
 sudo systemctl start etherpad.service
+
+# Secure MySQL
+mysql_secure_installation
 
 # Install success
 clear
@@ -242,8 +250,8 @@ cat << "EOF"
 EOF
 echo "Etherpad successfully installed!"
 echo "Your First boot will take a couple minutes while the final npm dependencies are grabbed."
-echo "Browse to http://$HOSTNAME:9001 (or http://$IP:9001 if you don't have DNS set up) to get started, /admin for administrative functions."
+echo "Browse to http://$HOSTNAME:5000 (or http://$IP:5000 if you don't have DNS set up) to get started, /admin for administrative functions."
 
 # Note
-# Highly recommend the adminpads plugin. You'll need to do it via the web UI at /admin/plugins and then restart Etherpad via `systemctl restart etherpad.service`.
+# Highly recommend the adminpads plugin. You'll need to do it via the web UI at /admin/plugins and then restart Etherpad via `sudo systemctl restart etherpad.service`.
 # The adminpads plugin should be able to be installed via `npm install ep_adminpads`, but it isn't working. Have entered an issue with developer.

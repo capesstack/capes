@@ -3,6 +3,10 @@
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
+################################
+######## Configure NTP #########
+################################
+
 # Set your time to UTC, this is crucial. If you have already set your time in accordance with your local standards, you may comment this out.
 # If you're not using UTC, I strongly recommend reading this: http://yellerapp.com/posts/2015-01-12-the-worst-server-setup-you-can-make.html
 sudo timedatectl set-timezone UTC
@@ -59,8 +63,12 @@ EOF'
 sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
+################################
+########### TheHive ############
+################################
+
 # Dependencies
-sudo yum install java-1.8.0-openjdk.x86_64 epel-release -y
+sudo yum install java-1.8.0-openjdk.x86_64 epel-release -y && sudo yum update -y
 sudo yum groupinstall "Development Tools" -y
 sudo yum install https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
@@ -78,21 +86,25 @@ EOF'
 sudo git clone https://github.com/CERT-BDF/Cortex-Analyzers.git /opt/cortex/
 
 # Collect the Cortex Report Templates
-sudo curl -Lo /opt/cortex/report-templates.zip https://dl.bintray.com/cert-bdf/thehive/report-templates.zip
+sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
 
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
-# If you're going to be using this offline, you can comment out Cortex.
+# If you're going to be using this offline, you can remove the Cortex install (sudo yum install thehive -y).
 sudo yum install https://dl.bintray.com/cert-bdf/rpm/thehive-project-release-1.0.0-3.noarch.rpm -y
 sudo yum install thehive cortex -y
 
-# Configure TheHive Project for basic usage
+# Configure TheHive Project secret key
 (cat << _EOF_
+# Secret key
+# ~~~~~
+# The secret key is used to secure cryptographics functions.
+# If you deploy your application to several instances be sure to use the same key!
 play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)"
 _EOF_
 ) | sudo tee -a /etc/thehive/application.conf
 
-# Configure Cortex for basic usage
+# Configure Cortex secret key
 (cat << _EOF_
 # Secret key
 # ~~~~~
@@ -124,15 +136,25 @@ sudo chown -R cortex:cortex /opt/cortex
 sudo chown cortex:cortex /etc/cortex/application.conf
 sudo chmod 640 /etc/cortex/application.conf
 
+# Configure Cortex to run on port 9001 instead of the default 9000, which is shared with TheHive
+sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
+sudo systemctl daemon-reload
+
+# Connect TheHive to Cortex
+sudo bash -c 'cat >> /etc/thehive/application.conf <<EOF
+# Cortex
+play.modules.enabled += connectors.cortex.CortexConnector
+cortex {
+  "CORTEX-SERVER-ID" {
+  url = "http://$HOSTNAME:9001"
+  }
+}
+EOF'
+
 # Set Elasticsearch and TheHive Project to start on boot
 sudo systemctl enable elasticsearch.service
 sudo systemctl enable thehive.service
 sudo systemctl enable cortex.service
-
-# Configure Cortex to run on port 9001 instead of the default 9000, which is shared with TheHive
-sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
-sudo systemctl daemon-reload
-# sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/multi-user.target.wants/cortex.service
 
 # Start TheHive, Elasticsearch, and Cortex
 sudo systemctl start elasticsearch.service

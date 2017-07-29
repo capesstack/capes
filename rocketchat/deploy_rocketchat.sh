@@ -59,6 +59,10 @@ EOF'
 sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
+################################
+########## RocketChat ##########
+################################
+
 # Configure MongoDB Yum repository
 sudo bash -c 'cat > /etc/yum.repos.d/mongodb.repo <<EOF
 [mongodb-org-3.4]
@@ -70,21 +74,27 @@ gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
 EOF'
 
 # Install dependencies
-sudo yum install epel-release && sudo yum -y update
-sudo yum install -y nodejs curl GraphicsMagick npm mongodb-org gcc-c++
+sudo yum install epel-release -y && sudo yum update -y
+sudo yum install nodejs curl GraphicsMagick npm mongodb-org gcc-c++ nginx -y
 
 # Configure npm
 sudo npm install -g inherits n
 sudo n 4.5
 
-# Build Rocketchat
+# Build RocketChat
 sudo mkdir /opt/rocketchat
 sudo curl -L https://rocket.chat/releases/latest/download -o /opt/rocketchat/rocket.chat.tgz
 echo "This next part takes a few minutes, everything is okay...go have a scone."
 sudo tar zxf /opt/rocketchat/rocket.chat.tgz -C /opt/rocketchat/
 sudo mv /opt/rocketchat/bundle /opt/rocketchat/Rocket.Chat
 cd /opt/rocketchat/Rocket.Chat/programs/server
-sudo npm install
+sudo npm --prefix /opt/rocketchat/Rocket.Chat/programs/server install
+
+# Add the RocketChat user with no login
+sudo useradd -s /usr/sbin/nologin rocketchat
+
+# Set directory permissions for RocketChat
+sudo chown -R rocketchat:rocketchat /opt/rocketchat
 
 # Create the Rocketchat service
 sudo bash -c 'cat > /usr/lib/systemd/system/rocketchat.service <<EOF
@@ -96,18 +106,21 @@ ExecStart=/usr/local/bin/node /opt/rocketchat/Rocket.Chat/main.js
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=rocketchat
-User=root
+User=rocketchat
 Environment=MONGO_URL=mongodb://localhost:27017/rocketchat ROOT_URL=http://localhost:3000/ PORT=3000
 [Install]
 WantedBy=multi-user.target
 EOF'
 
+# Configure RocketChat services
+sudo systemctl enable mongod.service
+sudo systemctl enable rocketchat.service
+
 # Configure the firewall
 sudo firewall-cmd --add-port=3000/tcp --permanent
 sudo firewall-cmd --reload
-# sudo chkconfig mongod on
-sudo systemctl enable mongod.service
-sudo systemctl enable rocketchat.service
+
+# Start RocketChat and MongoDB services
 sudo systemctl start mongod.service
 sudo systemctl start rocketchat.service
 clear
