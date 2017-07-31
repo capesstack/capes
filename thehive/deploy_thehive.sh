@@ -68,7 +68,7 @@ sudo systemctl start chronyd.service
 ################################
 
 # Dependencies
-sudo yum install java-1.8.0-openjdk.x86_64 epel-release -y && sudo yum update -y
+sudo yum install java-1.8.0-openjdk.x86_64 epel-release firewalld -y && sudo yum update -y
 sudo yum groupinstall "Development Tools" -y
 sudo yum install https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
