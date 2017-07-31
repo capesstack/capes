@@ -64,7 +64,7 @@ sudo systemctl start chronyd.service
 sudo hostnamectl set-hostname misp
 
 # We need some packages from the Extra Packages for Enterprise Linux repository
-sudo yum install epel-release -y && sudo yum update -y
+sudo yum install epel-release firewalld -y && sudo yum update -y
 sudo yum install centos-release-scl -y
 
 # Install the dependencies:

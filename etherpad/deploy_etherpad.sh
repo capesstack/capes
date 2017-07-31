@@ -68,7 +68,7 @@ sudo systemctl start chronyd.service
 ################################
 
 # Install dependencies
-sudo yum install gzip git curl python openssl-devel epel-release expect -y && sudo yum groupinstall "Development Tools" -y
+sudo yum install gzip git curl python openssl-devel epel-release expect firewalld -y && sudo yum groupinstall "Development Tools" -y
 sudo yum install nodejs mariadb-server -y
 
 # Configure MySQL

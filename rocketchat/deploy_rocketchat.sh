@@ -74,7 +74,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
 EOF'
 
 # Install dependencies
-sudo yum install epel-release -y && sudo yum update -y
+sudo yum install epel-release firewalld -y && sudo yum update -y
 sudo yum install nodejs curl GraphicsMagick npm mongodb-org gcc-c++ nginx -y
 
 # Configure npm

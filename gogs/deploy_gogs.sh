@@ -76,7 +76,7 @@ sudo systemctl start chronyd.service
 ################################
 
 # Install dependencies
-sudo yum install -y mariadb-server git unzip
+sudo yum install mariadb-server git unzip firewalld -y
 sudo systemctl start mariadb.service
 
 # Configure MySQL

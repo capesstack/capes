@@ -1,6 +1,9 @@
 # Cyber Analytics Platform and Examination System (CAPES)
 This is the project page for the CAPES project (in order of priority).
 
+CAPES is an operational-focused service hub for segmented, self-hosted, and offline (if necessary) incident response, intelligence analysis, and/or hunt operations.
+
+## Services
 1. Rocketchat
 1. Etherpad
 1. GoGS
@@ -11,7 +14,6 @@ This is the project page for the CAPES project (in order of priority).
 1. CyberChef
 1. Hippocampe
 1. Mumble
-1. FreeIPA
 
 ## Roadmap
 1. Get working shell script for all services
@@ -37,3 +39,6 @@ This is the project page for the CAPES project (in order of priority).
 
 ## Note
 \* designates current effort
+
+## Documentation
+See [docs](docs/README.md)
