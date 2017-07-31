@@ -88,14 +88,14 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
 1. Create a user, but ensure that you toggle the `Make this user administrator` checkbox
 1. Once the installation is done, click the `Reboot` button in the bottom right to...well...reboot
 1. Login using the account you created during the Anaconda setup
-    - Run the following commands
-      ```
-      sudo yum update -y && sudo yum install git firewall-cmd -y` (Enter the password you created in Anaconda)
-      sudo firwall-cmd --add-port=22/tcp --permanent
-      sudo firewall-cmd --reload
-      sudo sed '$s/^/\#/' /etc/ssh/sshd_config
-      sudo systemctl restart sshd.service
-      ```
+  - Run the following commands
+    ```
+    sudo yum update -y && sudo yum install git firewall-cmd -y` (Enter the password you created in Anaconda)
+    sudo firwall-cmd --add-port=22/tcp --permanent
+    sudo firewall-cmd --reload
+    sudo sed '$s/^/\#/' /etc/ssh/sshd_config
+    sudo systemctl restart sshd.service
+    ```
 1. Secure ssh
   - On your management system, create an SSH keypair
     ```
@@ -116,7 +116,6 @@ sudo sh deploy_capes.sh
 ```
 This will start the automated build of:
 * Configure NTP (likely already done, but in the event you skipped the [Build your OS](#build-your-os) above)
-* Configure a hostname (again, likely already done, but just to be sure)
 * Install Rocketchat
 * Install GoGS
 * Install Etherpad
