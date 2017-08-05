@@ -40,5 +40,5 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 ## Note
 \* designates current effort
 
-## Documentation
+## Documentation / Installation
 See [docs](docs/README.md)
