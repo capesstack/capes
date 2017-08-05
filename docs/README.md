@@ -1,5 +1,5 @@
 # Documentation
-Please see below for specifics on the different web apps
+Please see below for Build, Operate, Maintain specifics on the different web applications
 * [CAPES Landing Page](landing_page)  
 * [CyberChef](CyberChef)  
 * [Etherpad](etherpad)  
@@ -37,9 +37,9 @@ While there are a lot of projects that are developed using Ubuntu (many of these
     - AppArmor uses prescripted rules to define security controls (for example, I know that a text editor shouldn't talk to the Internet because someone told me it shouldn't)
 
 #### Implementation
-While the `iptables` is running on CAPES and the only ports listening have services attached to them, you should still consider using a Web Application Firewall, an Intrusion Detection System (IDS) or a Network Security Monitor (like [ROCKNSM](rocknsm.io) - which has an IDS integrated on top of a litany of other goodies) to ensure that your CAPES stack isn't being targeted.
+While the `iptables` service is running on CAPES and the only ports listening have services attached to them, you should still consider using a Web Application Firewall (WAF), an Intrusion Detection System (IDS) or a Network Security Monitor (like [ROCKNSM](rocknsm.io) - which has an IDS integrated on top of a litany of other goodies) to ensure that your CAPES stack isn't being targeted.
 
-If possible, CAPES, just like a passive NSM, should *not* be on the contested network. This will prevent it from being targeted by aggressors. On net responses (re: enhanced web application security) are a roadmap item.
+If possible, CAPES, just like a passive NSM, should **not** be on the contested network. This will prevent it from being targeted by aggressors. On net implementations (re: enhanced web application security) are a roadmap item.
 
 #### Securing the Landing Page
 We are going to implement a login for the CAPES landing page. Right now, CAPES should not be deployed where an aggressor can get at it...however, that's not really an excuse. We're working on it. **All services have authentication requirements.**
@@ -52,7 +52,7 @@ Generally, the CAPES ecosystem is meant to run as a whole, so the preferred usag
 That said, there is a deploy script for each of the services that you should be able to run individually if your use case requires that.
 
 ### Build your OS
-This is meant to help those who need a step-by-step build of CentOS, securing SSH, and getting ready to grab CAPES. If you don't need this guide, skip on down to [Get CAPES](#get-capes).
+This is meant to help those who need a step-by-step build of CentOS, securing SSh, and getting ready to grab CAPES. If you don't need this guide, skip on down to [Get CAPES](#get-capes).
 1. Download the latest version of [CentOS Minimal](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1611.iso)
 1. Build a VM or a physical system with 4 cores, 8 GB of RAM, and a 20 GB HDD at a minimum
     - Don't use any of the "easy install" options when setting up a VM, we're going to make some config changes in the build process
@@ -97,7 +97,7 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
     sudo systemctl restart sshd.service
     ```
 1. Secure ssh
-  - On your management system, create an SSH keypair
+  - On your management system, create an SSh key pair
     ```
     ssh-keygen -t rsa` accept the defaults, but enter a passphrase for your keys
     ssh-copy-id your_created_user@<ip of CAPES>
@@ -126,3 +126,6 @@ This will start the automated build of:
 * Secure the MySQL installation
 * Make firewall changes
 * Set everything to autostart
+
+## Get Started
+After the CAPES installation, you should be able to browse to `http://capes_system` (or `http://capes_IP` if you don't have DNS set up) get get to the CAPES landing page and start setting up services.
