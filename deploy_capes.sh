@@ -91,7 +91,7 @@ EOF'
 
 # Install dependencies
 sudo yum install epel-release firewalld -y && sudo yum update -y
-sudo yum install nodejs curl GraphicsMagick npm mongodb-org gcc-c++ -y
+sudo yum install nodejs GraphicsMagick npm mongodb-org gcc-c++ -y
 
 # Configure npm
 sudo npm install -g inherits n
