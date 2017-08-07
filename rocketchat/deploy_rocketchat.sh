@@ -150,3 +150,4 @@ cat << "EOF"
 .:+osssssso+/-`
 EOF
 echo "Rocketchat has been successfully deployed. Browse to http://$HOSTNAME:3000 (or http://$IP:3000 if you don't have DNS set up) to begin using the service."
+echo "See the "Build, Operate, Maintain" document of the capesstack/capes/rocketchat repository on GitHub."

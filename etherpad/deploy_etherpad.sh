@@ -251,6 +251,7 @@ EOF
 echo "Etherpad successfully installed!"
 echo "Your First boot will take a couple minutes while the final npm dependencies are grabbed."
 echo "Browse to http://$HOSTNAME:5000 (or http://$IP:5000 if you don't have DNS set up) to get started, /admin for administrative functions."
+echo "See the "Build, Operate, Maintain" document of the capesstack/capes/etherpad repository on GitHub."
 
 # Note
 # Highly recommend the adminpads plugin. You'll need to do it via the web UI at /admin/plugins and then restart Etherpad via `sudo systemctl restart etherpad.service`.
