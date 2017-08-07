@@ -135,3 +135,4 @@ mysql_secure_installation
 # Success page
 clear
 echo "GoGS has been successfully deployed. Browse to http://$HOSTNAME:4000 (or http://$IP:4000 if you don't have DNS set up) to begin using the services."
+echo "See the "Build, Operate, Maintain" document of the capesstack/capes/gogs repository on GitHub."

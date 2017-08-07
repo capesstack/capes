@@ -183,3 +183,4 @@ echo "TheHive has been successfully deployed. Browse to http://$HOSTNAME:9000 (o
 "
 echo "Cortex has been successfully deployed. Browse to http://$HOSTNAME:9001 (or http://$IP:9001 if you don't have DNS set up) to begin using the service.
 "
+echo "See the "Build, Operate, Maintain" document of the capesstack/capes/thehive repository on GitHub."

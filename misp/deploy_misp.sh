@@ -333,3 +333,5 @@ chown -R apache:apache /var/www/MISP/<directory path with an indicated issue>
 # - You should really harden the configuration of MySQL
 # - Keep your software up2date (MISP, CakePHP and everything else)
 # - Log and audit
+
+echo "See the "Build, Operate, Maintain" document of the capesstack/capes/misp repository on GitHub."
