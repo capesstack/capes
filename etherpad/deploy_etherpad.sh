@@ -70,8 +70,8 @@ sudo systemctl start chronyd.service
 # Install dependencies
 # Temporarily must install http-parser as it was removed from EPEL as it is now included in RHEL 7.4
 # Until CentOS 7.4 can be released, we must install it manually
-curl -OL https://kojipkgs.fedoraproject.org/packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm
-sudo yum install gzip git curl python openssl-devel epel-release expect firewalld http-parser-2.7.1-3.el7.x86_64.rpm -y && sudo yum groupinstall "Development Tools" -y
+# curl -OL https://kojipkgs.fedoraproject.org/packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm
+sudo yum install https://kojipkgs.fedoraproject.org/packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm gzip git curl python openssl-devel epel-release expect firewalld -y && sudo yum groupinstall "Development Tools" -y
 sudo yum install nodejs mariadb-server -y
 
 # Configure MySQL
