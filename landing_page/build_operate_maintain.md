@@ -86,7 +86,7 @@ To restart the nginx service
 ```
 $ sudo systemctl restart nginx.service
 ```
-Of note, if you make updates to your nginx configuration, you don't need to restart the service. You can use $ sudo nginx -s reload` to send the reload signal and refresh the running config.
+Of note, if you make updates to your nginx configuration, you don't need to restart the service. You can use `$ sudo nginx -s reload` to send the reload signal and refresh the running config.
 
 #### firewalld
 ##### Starting
