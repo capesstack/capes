@@ -1,14 +1,14 @@
 # Documentation
 Please see below for Build, Operate, Maintain specifics on the different web applications
-* [CAPES Landing Page](landing_page)  
-* [CyberChef](CyberChef)  
-* [Etherpad](etherpad)  
-* [GoGS](gogs)  
-* [MISP](misp)  
-* [Mumble](mumble)  
-* [Rocketchat](rocketchat)  
-* [TheHive](TheHive)  
-* [Cortex](cortex)  
+* [CAPES Landing Page](..\landing_page\build_operate_maintain.md)  
+<!--* [CyberChef](..\cyberchef\build_operate_maintain.md)-->  
+* [Etherpad](..\etherpad\build_operate_maintain.md)  
+* [GoGS](..\gogs\build_operate_maintain.md)  
+<!--* [MISP](..\misp\build_operate_maintain.md)  
+* [Mumble](..\mumble\build_operate_maintain.md)-->  
+* [Rocketchat](..\rocketchat\build_operate_maintain.md)  
+* [TheHive](..\thehive\build_operate_maintain.md)  
+* [Cortex](..\thehive\build_operate_maintain.md)  
 
 ## Requirements
 There has not been extensive testing, but all of these services have run without issue on a single virtual machine with approximately 20 users and no issue for a week. That said, your mileage may vary.

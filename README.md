@@ -1,7 +1,7 @@
 # Cyber Analytics Platform and Examination System (CAPES)
 This is the project page for the CAPES project (in order of priority).
 
-CAPES is an operational-focused service hub for segmented, self-hosted, and offline (if necessary) incident response, intelligence analysis, and/or hunt operations.
+CAPES is an operational-focused service hub for segmented, self-hosted, and offline (if necessary) incident response, intelligence analysis, and hunt operations.
 
 ![capes logo](images/capes.png)
 
@@ -12,10 +12,10 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 1. TheHive
 1. Cortex
 1. Landing Page
-1. MISP
-1. CyberChef
+1. CyberChef *
 1. Hippocampe
 1. Mumble
+1. MISP
 
 ## Roadmap
 1. Get working shell script for all services
@@ -43,4 +43,10 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 \* designates current effort
 
 ## Documentation / Installation
-See [docs](docs/README.md)
+```
+$ sudo yum -y install git
+$ git clone https://github.com/capesstack/capes.git
+$ cd capes
+$ sudo sh deploy_capes.sh
+```
+See [docs](docs/README.md) for detailed instructions.
