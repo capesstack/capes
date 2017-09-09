@@ -411,18 +411,30 @@ sed -i "s/your-hostname/$HOSTNAME/" landing_page/index.html
 # Move landing page framework into Nginx's working directory
 sudo cp -r landing_page/* /usr/share/nginx/html/
 
+# Perform a little housekeeping
+sudo rm /usr/share/nginx/html/build_operate_maintain.md /usr/share/nginx/html/deploy_landing_page.sh /usr/share/nginx/html/README.md
+
 # Configure the firewall
 # Port 80 - Nginx
 # Port 3000 - RocketChat
 # Port 4000 - GoGS
 # Port 5000 - Etherpad
-# Port 6000 - MISP
-# Port 7000 - CyberChef
 # Port 9000 - TheHive
 # Port 9001 - Cortex (TheHive Analyzer Plugins)
 # Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
 sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=9000/tcp --add-port=9001/tcp --permanent
 sudo firewall-cmd --reload
+
+################################
+########## CyberChef ###########
+################################
+
+# Collect CyberChef
+curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyberchef.htm
+
+################################
+########## Services ############
+################################
 
 # Configure services for autostart
 sudo systemctl enable nginx.service
@@ -445,12 +457,16 @@ sudo systemctl start rocketchat.service
 sudo systemctl start gogs.service
 sudo systemctl start nginx.service
 
-# Secure MySQL installtion
+################################
+### Secure MySQL installtion ###
+################################
 sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 mysql_secure_installation
 
-# Success page
+################################
+######### Success Page #########
+################################
 clear
 echo "The CAPES landing page has been successfully deployed. Browse to http://$HOSTNAME (or http://$IP if you don't have DNS set up) to begin using the services."
