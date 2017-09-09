@@ -1,6 +1,15 @@
 # CyberChef Build, Operate, Maintain
+There should probably be more here but...those GCHQ guys got their stuff together.
+
+Of particular note, all images in the `.htm` file are base64 encoded, so there is no need for any Internet access for a good UX.
 
 ## Build
-After either running the [CAPES deployment script](../deploy_capes.sh) or the [independent CyberChef deployment script](cyberchef.sh), you'll need to configure some environment variables to complete the installation and prepare for usage.
+```
+$ curl -O https://gchq.github.io/CyberChef/cyberchef.htm
+```
 
-* When you browse to the setup page in the webUI, change the following:
+## Operate
+Open `cyberchef.htm` in a web browser.
+
+## Maintain
+If you need any updates, just re-run the download above to get an updated version of CyberChef.

@@ -12,10 +12,9 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 1. TheHive
 1. Cortex
 1. Landing Page
-1. CyberChef *
-1. Hippocampe
-1. Mumble
-1. MISP
+1. CyberChef
+1. Mumble *
+1. Hippocampe (waiting on TheHive project owner to update to ES 5.5)
 
 ## Roadmap
 1. Get working shell script for all services
@@ -31,9 +30,11 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
   - GoGS
   - TheHive
   - Cortex
+  - CyberChef
   - CAPES Landing Page
 * CAPES deploy script with Landing Page presenting:
   - RocketChat
+  - CyberChef
   - GoGS
   - Etherpad
   - TheHive
