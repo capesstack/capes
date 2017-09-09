@@ -1,11 +1,10 @@
 # Documentation
 Please see below for Build, Operate, Maintain specifics on the different web applications
 * [CAPES Landing Page](..\landing_page\build_operate_maintain.md)  
-<!--* [CyberChef](..\cyberchef\build_operate_maintain.md)-->  
+* [CyberChef](..\cyberchef\build_operate_maintain.md)
 * [Etherpad](..\etherpad\build_operate_maintain.md)  
 * [GoGS](..\gogs\build_operate_maintain.md)  
-<!--* [MISP](..\misp\build_operate_maintain.md)  
-* [Mumble](..\mumble\build_operate_maintain.md)-->  
+* [Mumble](..\mumble\build_operate_maintain.md)
 * [Rocketchat](..\rocketchat\build_operate_maintain.md)  
 * [TheHive](..\thehive\build_operate_maintain.md)  
 * [Cortex](..\thehive\build_operate_maintain.md)  
@@ -121,6 +120,7 @@ This will start the automated build of:
 * Install Etherpad
 * Install TheHive
 * Install Cortex
+* Install CyberChef
 * Install Nginx
 * Install the CAPES landing page
 * Secure the MySQL installation
@@ -128,6 +128,6 @@ This will start the automated build of:
 * Set everything to autostart
 
 ## Get Started
-After the CAPES installation, you should be able to browse to `http://capes_system` (or `http://capes_IP` if you don't have DNS set up) get get to the CAPES landing page and start setting up services.
+After the CAPES installation, you should be able to browse to `http://capes_system` (or `http://capes_IP` if you don't have DNS set up) to get to the CAPES landing page and start setting up services.
 
-I **strongly** recommend that you look at the `Build, Operate, Maintain` guides for these services before you get going. A few of the services launch a configuration pipeline that is hard to restart if you don't complete it the first time.
+I **strongly** recommend that you look at the `Build, Operate, Maintain` guides for these services before you get going. A few of the services launch a configuration pipeline that is hard to restart if you don't complete it the first time (I'm looking at you TheHive and GoGS).
