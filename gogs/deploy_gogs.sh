@@ -76,7 +76,7 @@ sudo systemctl start chronyd.service
 ################################
 
 # Install dependencies
-sudo yum install mariadb-server git unzip firewalld -y
+sudo yum install mariadb-server -y
 sudo systemctl start mariadb.service
 
 # Configure MySQL
@@ -89,33 +89,18 @@ sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 
-# Add the GoGS user with no login
-sudo useradd -s /usr/sbin/nologin gogs
-
 # Build GoGS
-sudo mkdir /opt/gogs
-curl -L https://dl.gogs.io/0.11.19/linux_amd64.zip -o gogs.zip
-sudo unzip gogs.zip -d /opt/
-rm gogs.zip
+sudo curl -L https://dl.packager.io/srv/pkgr/gogs/pkgr/installer/el/7.repo -o /etc/yum.repos.d/gogs.repo
+sudo yum install -y gogs
 
-# Set directory permissions for GoGS
-sudo chown -R gogs:gogs /opt/gogs
+# Change the GoGS user to not have a login
+sudo usermod -s /usr/sbin/nologin gogs
 
-sudo bash -c 'cat > /usr/lib/systemd/system/gogs.service <<EOF
-[Unit]
-Description=GoGS
-After=syslog.target network.target mariadb.service
-[Service]
-Type=simple
-User=gogs
-Group=gogs
-WorkingDirectory=/opt/gogs/
-ExecStart=/opt/gogs/gogs web -port 4000
-Restart=always
-Environment=USER=gogs HOME=/home/gogs
-[Install]
-WantedBy=multi-user.target
-EOF'
+# Change the default GoGS port
+sudo systemctl stop gogs-web-1.service gogs.service
+sudo sed -i 's/6000/4000/' /etc/systemd/system/gogs-web-1.service
+sudo systemctl daemon-reload
+sudo systemctl start gogs-web-1.service gogs.service
 
 # Configure the firewall
 # Port 4000 - GoGS
@@ -124,10 +109,6 @@ sudo firewall-cmd --reload
 
 # Configure services for autostart
 sudo systemctl enable mariadb.service
-sudo systemctl enable gogs.service
-
-# Start all the services
-sudo systemctl start gogs.service
 
 # Secure MySQL installtion
 mysql_secure_installation

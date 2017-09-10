@@ -136,41 +136,25 @@ EOF'
 ################################
 
 # Install dependencies
-sudo yum install -y mariadb-server git unzip
+sudo yum install mariadb-server -y
+sudo systemctl start mariadb.service
 
 # Configure MySQL
-sudo systemctl start mariadb.service
 mysql -u root -e "CREATE DATABASE gogs;"
 mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassword';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
-# Add the GoGS user with no login
-sudo useradd -s /usr/sbin/nologin gogs
-
 # Build GoGS
-sudo mkdir /opt/gogs
-curl -L https://dl.gogs.io/0.11.19/linux_amd64.zip -o gogs.zip
-sudo unzip gogs.zip -d /opt/
-rm gogs.zip
+sudo curl -L https://dl.packager.io/srv/pkgr/gogs/pkgr/installer/el/7.repo -o /etc/yum.repos.d/gogs.repo
+sudo yum install -y gogs
 
-# Set directory permissions for GoGS
-sudo chown -R gogs:gogs /opt/gogs
+# Change the GoGS user to not have a login
+sudo usermod -s /usr/sbin/nologin gogs
 
-sudo bash -c 'cat > /usr/lib/systemd/system/gogs.service <<EOF
-[Unit]
-Description=GoGS
-After=syslog.target network.target mariadb.service
-[Service]
-Type=simple
-User=gogs
-Group=gogs
-WorkingDirectory=/opt/gogs/
-ExecStart=/opt/gogs/gogs web -port 4000
-Restart=always
-Environment=USER=gogs HOME=/home/gogs
-[Install]
-WantedBy=multi-user.target
-EOF'
+# Change the default GoGS port
+sudo systemctl stop gogs-web-1.service gogs.service
+sudo sed -i 's/6000/4000/' /etc/systemd/system/gogs-web-1.service
+sudo systemctl daemon-reload
 
 ################################
 ########### Etherpad ###########
@@ -440,7 +424,6 @@ curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyb
 sudo systemctl enable nginx.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable mongod.service
-sudo systemctl enable gogs.service
 sudo systemctl enable rocketchat.service
 sudo systemctl enable etherpad.service
 sudo systemctl enable elasticsearch.service
@@ -455,6 +438,7 @@ sudo systemctl start mongod.service
 sudo systemctl start etherpad.service
 sudo systemctl start rocketchat.service
 sudo systemctl start gogs.service
+sudo systemctl start gogs-web-1.service
 sudo systemctl start nginx.service
 
 ################################
