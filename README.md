@@ -44,10 +44,19 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 \* designates current effort
 
 ## Documentation / Installation
+See [docs](docs/README.md) for detailed instructions.  
+### CentOS 7.4
 ```
 $ sudo yum -y install git
 $ git clone https://github.com/capesstack/capes.git
 $ cd capes
 $ sudo sh deploy_capes.sh
 ```
-See [docs](docs/README.md) for detailed instructions.
+### Pre-CentOS 7.4
+```
+$ sudo yum install -y https://kojipkgs.fedoraproject.org/packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm
+$ sudo yum -y install git
+$ git clone https://github.com/capesstack/capes.git
+$ cd capes
+$ sudo sh deploy_capes.sh
+```

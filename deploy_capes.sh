@@ -90,10 +90,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
 EOF'
 
 # Install dependencies
-# Temporarily must install http-parser as it was removed from EPEL as it is now included in RHEL 7.4
-# Until CentOS 7.4 can be released, we must install it manually
-# curl -OL https://kojipkgs.fedoraproject.org/packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm
-sudo yum install https://kojipkgs.fedoraproject.org/packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm epel-release firewalld -y && sudo yum update -y
+sudo yum install epel-release -y && sudo yum update -y
 sudo yum install nodejs GraphicsMagick npm mongodb-org gcc-c++ -y
 
 # Configure npm
