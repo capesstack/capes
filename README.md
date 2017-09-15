@@ -13,7 +13,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 1. Cortex
 1. Landing Page
 1. CyberChef
-1. Mumble *
+1. Mumble
 1. Hippocampe (waiting on TheHive project owner to update to ES 5.5)
 
 ## Roadmap
@@ -28,6 +28,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
   - RocketChat
   - Etherpad
   - GoGS
+  - Mumble
   - TheHive
   - Cortex
   - CyberChef
@@ -36,6 +37,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
   - RocketChat
   - CyberChef
   - GoGS
+  - Mumble
   - Etherpad
   - TheHive
   - Cortex

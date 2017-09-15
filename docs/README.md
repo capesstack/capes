@@ -7,6 +7,7 @@ Please see below for Build, Operate, Maintain specifics on the different web app
 * [Rocketchat](../rocketchat/build_operate_maintain.md)  
 * [TheHive](../thehive/build_operate_maintain.md)  
 * [Cortex](../thehive/build_operate_maintain.md)  
+* [Mumble](../mumble/build_operate_maintain.md)  
 
 ## Requirements
 There has not been extensive testing, but all of these services have run without issue on a single virtual machine with approximately 20 users and no issue for a week. That said, your mileage may vary.
@@ -19,13 +20,14 @@ While the OS version isn't a hard requirement, all testing and development work 
 | RAM | 8 GB |
 | Hard Disk | 20 GB |
 
-## Secure Deployment
+## Secure by Design
+
+### Secure Deployment
 There is an inherent risk to deploying web applications to the Internet or to a contested networking enclave -- basically, somewhere the bad guys can get to.
 
 To address this, the CAPES project has done a few things to help protect these web applications and left a few things for you, the operator, to close in on as your need requires.
 
-### Secure by Design
-#### Operating System
+### Operating System
 While there are a lot of projects that are developed using Ubuntu (many of these service creators still follow that path), CAPES chose to use CentOS because of a few different reasons:  
 1. CentOS is the open source version of Red Hat Enterprise Linux (RHEL)
     - Many enterprises use RHEL as their Linux distribution of choice because you can purchase support for it
@@ -34,12 +36,12 @@ While there are a lot of projects that are developed using Ubuntu (many of these
     - SELinux uses context to define security controls (for example, I know a text editor shouldn't talk to the Internet because it's a text editor, not a browser)
     - AppArmor uses prescripted rules to define security controls (for example, I know that a text editor shouldn't talk to the Internet because someone told me it shouldn't)
 
-#### Implementation
+### Implementation
 While the `iptables` service is running on CAPES and the only ports listening have services attached to them, you should still consider using a Web Application Firewall (WAF), an Intrusion Detection System (IDS) or a Network Security Monitor (like [ROCKNSM](rocknsm.io) - which has an IDS integrated on top of a litany of other goodies) to ensure that your CAPES stack isn't being targeted.
 
 If possible, CAPES, just like a passive NSM, should **not** be on the contested network. This will prevent it from being targeted by aggressors. On net implementations (re: enhanced web application security) are a roadmap item.
 
-#### Securing the Landing Page
+### Securing the Landing Page
 We are going to implement a login for the CAPES landing page. Right now, CAPES should not be deployed where an aggressor can get at it...however, that's not really an excuse. We're working on it. **All services have authentication requirements.**
 
 Additionally, SSL. We are having discussions around self-signed certificates vs. 3rd party (Let's Encrypt, etc.); but there are some architecture caveats to consider here. Again, it's a roadmap item.
@@ -49,7 +51,7 @@ Generally, the CAPES ecosystem is meant to run as a whole, so the preferred usag
 
 That said, there is a deploy script for each of the services that you should be able to run individually if your use case requires that.
 
-### Build your OS
+### Build your OS (CentOS 7.3)
 This is meant to help those who need a step-by-step build of CentOS, securing SSh, and getting ready to grab CAPES. If you don't need this guide, skip on down to [Get CAPES](#get-capes).
 1. Download the latest version of [CentOS Minimal](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1611.iso)
 1. Build a VM or a physical system with 4 cores, 8 GB of RAM, and a 20 GB HDD at a minimum
@@ -106,12 +108,24 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
     ```
 ## Get CAPES
 Finally, here we go.
+
+### CentOS 7.4
 ```
-git clone https://github.com/peasead/capes.git
-# if you're feeling adventurous git clone -b devel https://github.com/peasead/capes.git
-cd capes
-sudo sh deploy_capes.sh
+$ sudo yum -y install git
+$ git clone https://github.com/capesstack/capes.git
+$ cd capes
+$ sudo sh deploy_capes.sh
 ```
+
+### Pre-CentOS 7.4
+```
+$ sudo yum install -y https://kojipkgs.fedoraproject.org/packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm
+$ sudo yum -y install git
+$ git clone https://github.com/capesstack/capes.git
+$ cd capes
+$ sudo sh deploy_capes.sh
+```
+
 This will start the automated build of:
 * Configure NTP (likely already done, but in the event you skipped the [Build your OS](#build-your-os) above)
 * Install Rocketchat
@@ -119,6 +133,7 @@ This will start the automated build of:
 * Install Etherpad
 * Install TheHive
 * Install Cortex
+* Install Mumble
 * Install CyberChef
 * Install Nginx
 * Install the CAPES landing page
