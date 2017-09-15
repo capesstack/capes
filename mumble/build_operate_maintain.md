@@ -131,7 +131,7 @@ Once a user has created an account and Registered, you can add them to the `admi
 1. Name and add the channel
 
 #### Note
-If the `Temporary` box is checked and greyed out, you do not have not been delegated rights. See `Delegating Permissions` above.
+If the `Temporary` box is checked and greyed out, you do not have not been delegated rights. See [Delegating Permissions](#delegating-permissions) above.
 
 ## Additional documentation  
 https://wiki.mumble.info/wiki/
