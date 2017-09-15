@@ -1,10 +1,9 @@
 # Etherpad
-The Etherpad build script for CentOS 7.3.
+The Etherpad build script for CentOS 7.4.
 
 ## Usage
-`$ sudo sh etherpad_deploy.sh`
+`$ sudo sh deploy_etherpad.sh`
 
 ## Notes
 * You'll need to enter your `sudo` credentials to install the dependencies.
-* Change the MYSQL password from `changeme` to something more secure.
 * The `mysql_secure_installation` requires interaction right now.
