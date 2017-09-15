@@ -1,6 +1,20 @@
 #!/bin/bash
 
 ################################
+######## repo_gpgcheck #########
+################################
+
+# repo_gpgcheck and localpkg_gpgcheck either 1 or 0 tells yum whether or not it should perform a GPG signature check on the repodata. When this is set in the [main] section of /etc/yum.conf, it sets the default for all repositories. The default is 0.
+# Yum tries to download repomd.xml.asc as repo_gpgcheck was set to 1, however yum was unable to locate repomd.xml.asc on the epel server due to GPG armor not being enabled on the server side
+# Yum also needs Public key for theHive (localpkg_gpgcheck)
+# This appears to be caused by an applied Security Profile in the build with CentOS 7.4 - additional testing is being performed
+# Until then, we are going to set repo_gpgcheck and localpkg_gpgcheck back to the default of 0
+# https://rhel7stig.readthedocs.io/en/latest/high.html?highlight=repo_gpgcheck
+# https://access.redhat.com/solutions/2850911
+sudo sed -i 's/repo_gpgcheck=1/repo_gpgcheck=0/' /etc/yum.conf
+sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
+
+################################
 ##### Collect Credentials ######
 ################################
 
@@ -11,6 +25,10 @@ read -s gogspassword
 # Create Etherpad password
 echo "Create your Etherpad password for the MySQL database and the service administration account then press [Enter]"
 read -s etherpadpassword
+
+# Create your Mumble password
+echo "Create your Mumble SuperUser password and press [Enter]."
+read -s mumblepassword
 
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
@@ -76,6 +94,72 @@ sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
 ################################
+########### Mumble #############
+################################
+
+# Prepare the environment
+sudo yum -y install bzip2 && yum -y update
+sudo groupadd -r murmur
+sudo useradd -r -g murmur -m -d /var/lib/murmur -s /sbin/nologin murmur
+sudo mkdir -p /var/log/murmur
+sudo chown murmur:murmur /var/log/murmur
+sudo chmod 0770 /var/log/murmur
+
+# Download binaries
+curl -OL https://github.com/mumble-voip/mumble/releases/download/1.2.19/murmur-static_x86-1.2.19.tar.bz2
+tar vxjf murmur-static_x86-1.2.19.tar.bz2
+sudo mkdir -p /opt/murmur
+sudo cp -r murmur-static_x86-1.2.19/* /opt/murmur
+sudo cp murmur-static_x86-1.2.19/murmur.ini /etc/murmur.ini
+rm -rf murmur-static_x86-1.2.19.tar.bz2 murmur-static_x86-1.2.19
+
+# Configure /etc/murmur.ini
+sudo sed -i 's/database=/database=\/var\/lib\/murmur\/murmur\.sqlite/' /etc/murmur.ini
+sudo sed -i 's/\#logfile=murmur\.log/logfile=\/var\/log\/murmur\/murmur\.log/' /etc/murmur.ini
+sudo sed -i 's/\#pidfile=/pidfile=\/var\/run\/murmur\/murmur\.pid/' /etc/murmur.ini
+sudo sed -i 's/\#registerName=Mumble\ Server/registerName=CAPES\ -\ Mumble\ Server/' /etc/murmur.ini
+sudo sed -i 's/port=64738/port=7000/' /etc/murmur.ini
+
+# Rotate logs
+sudo bash -c 'cat > /etc/logrotate.d/murmur <<EOF
+/var/log/murmur/*log {
+    su murmur murmur
+    dateext
+    rotate 4
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+        /bin/systemctl reload murmur.service > /dev/null 2>/dev/null || true
+    endscript
+}
+EOF'
+
+# Creating the systemd service
+sudo bash -c 'cat > /etc/systemd/system/murmur.service <<EOF
+[Unit]
+Description=Mumble Server (Murmur)
+Requires=network-online.target
+After=network-online.target mariadb.service time-sync.target
+
+[Service]
+User=murmur
+Type=forking
+ExecStart=/opt/murmur/murmur.x86 -ini /etc/murmur.ini
+PIDFile=/var/run/murmur/murmur.pid
+ExecReload=/bin/kill -s HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+
+# Generate the pid directory for Murmur:
+sudo bash -c 'cat > /etc/tmpfiles.d/murmur.conf <<EOF
+d /var/run/murmur 775 murmur murmur
+EOF'
+
+################################
 ########## RocketChat ##########
 ################################
 
@@ -129,7 +213,7 @@ WantedBy=multi-user.target
 EOF'
 
 ################################
-############# GoGS #############
+########### GoGS ###############
 ################################
 
 # Install dependencies
@@ -302,16 +386,17 @@ EOF'
 
 # Install Dependencies
 sudo yum install java-1.8.0-openjdk.x86_64  -y
-sudo yum install https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
+sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
 network.host: 127.0.0.1
-script.inline: on
 cluster.name: hive
-threadpool.index.queue_size: 100000
-threadpool.search.queue_size: 100000
-threadpool.bulk.queue_size: 1000
+script.inline: true
+thread_pool.index.queue_size: 100000
+thread_pool.search.queue_size: 100000
+thread_pool.bulk.queue_size: 1000
 EOF'
 
 # Collect the Cortex analyzers
@@ -400,10 +485,11 @@ sudo rm /usr/share/nginx/html/build_operate_maintain.md /usr/share/nginx/html/de
 # Port 3000 - RocketChat
 # Port 4000 - GoGS
 # Port 5000 - Etherpad
+# Port 7000 - Mumble
 # Port 9000 - TheHive
 # Port 9001 - Cortex (TheHive Analyzer Plugins)
 # Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=9000/tcp --add-port=9001/tcp --permanent
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
 sudo firewall-cmd --reload
 
 ################################
@@ -417,6 +503,10 @@ curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyb
 ########## Services ############
 ################################
 
+# Prepare the service environment
+sudo systemd-tmpfiles --create /etc/tmpfiles.d/murmur.conf
+sudo systemctl daemon-reload
+
 # Configure services for autostart
 sudo systemctl enable nginx.service
 sudo systemctl enable mariadb.service
@@ -426,6 +516,7 @@ sudo systemctl enable etherpad.service
 sudo systemctl enable elasticsearch.service
 sudo systemctl enable thehive.service
 sudo systemctl enable cortex.service
+sudo systemctl enable murmur.service
 
 # Start all the services
 sudo systemctl start elasticsearch.service
@@ -436,7 +527,11 @@ sudo systemctl start etherpad.service
 sudo systemctl start rocketchat.service
 sudo systemctl start gogs.service
 sudo systemctl start gogs-web-1.service
+sudo systemctl start murmur.service
 sudo systemctl start nginx.service
+
+# Configure the Murmur SuperUser account
+sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassword
 
 ################################
 ### Secure MySQL installtion ###
