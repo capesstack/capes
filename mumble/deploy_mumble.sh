@@ -4,7 +4,7 @@
 ##### Collect Credentials ######
 ################################
 
-# Create your GoGS password
+# Create your Mumble password
 echo "Create your Mumble SuperUser password and press [Enter]."
 read -s mumblepassword
 
@@ -87,8 +87,9 @@ sudo chmod 0770 /var/log/murmur
 curl -OL https://github.com/mumble-voip/mumble/releases/download/1.2.19/murmur-static_x86-1.2.19.tar.bz2
 tar vxjf murmur-static_x86-1.2.19.tar.bz2
 sudo mkdir -p /opt/murmur
-sudo cp -r ./murmur-static_x86-1.2.19/* /opt/murmur
-sudo cp ./murmur-static_x86-1.2.19/murmur.ini /etc/murmur.ini
+sudo cp -r murmur-static_x86-1.2.19/* /opt/murmur
+sudo cp murmur-static_x86-1.2.19/murmur.ini /etc/murmur.ini
+rm -rf murmur-static_x86-1.2.19.tar.bz2 murmur-static_x86-1.2.19
 
 # Configure /etc/murmur.ini
 sudo sed -i 's/database=/database=\/var\/lib\/murmur\/murmur\.sqlite/' /etc/murmur.ini
