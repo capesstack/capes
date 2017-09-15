@@ -372,16 +372,17 @@ EOF'
 
 # Install Dependencies
 sudo yum install java-1.8.0-openjdk.x86_64  -y
-sudo yum install https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
+sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
 network.host: 127.0.0.1
-script.inline: on
 cluster.name: hive
-threadpool.index.queue_size: 100000
-threadpool.search.queue_size: 100000
-threadpool.bulk.queue_size: 1000
+script.inline: true
+thread_pool.index.queue_size: 100000
+thread_pool.search.queue_size: 100000
+thread_pool.bulk.queue_size: 1000
 EOF'
 
 # Collect the Cortex analyzers
