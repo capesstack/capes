@@ -1,4 +1,10 @@
 # CyberChef Build, Operate, Maintain
+CyberChef was created, and is maintained, by the Government Communications Headquarters (GCHQ). GCHQ is one of the UK's security and intelligence agencies, working with its partners in MI5 and SIS. All credit for the service goes to their talented team.
+
+_There are around 150 useful operations in CyberChef for anyone working on anything vaguely Internet-related, whether you just want to convert a timestamp to a different format, decompress gzipped data, create a SHA3 hash, or parse an X.509 certificate to find out who issued it._
+
+_It’s the Cyber Swiss Army Knife._
+
 There should probably be more here but...those GCHQ guys got their stuff together.
 
 Of particular note, all images in the `.htm` file are base64 encoded, so there is no need for any Internet access for a good UX.
@@ -69,5 +75,7 @@ If you receive `ls: cannot access /usr/share/nginx/html/cyberchef.htm: No such f
 sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyberchef.htm
 ```
 You may be having an issue with nginx or your firewall. Check the troubleshooting steps [here](../landing_page/build_operate_maintain.md#troubleshooting)
+
+Check with the GoGS project maintainers at https://github.com/gchq/CyberChef
 
 If you're still unable to access the CAPES page from a web browser, [please file an issue](https://github.com/capesstack/capes/issues).

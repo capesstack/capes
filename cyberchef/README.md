@@ -1,5 +1,5 @@
 # CyberChef
-CyberChef was created, and is maintained, by the Government Communications Headquarters (GCHQ). GCHQ is one of the UK's security and intelligence agencies, working with its partners in MI5 and SIS.
+CyberChef was created, and is maintained, by the Government Communications Headquarters (GCHQ). GCHQ is one of the UK's security and intelligence agencies, working with its partners in MI5 and SIS. All credit for the service goes to their talented team.
 
 _There are around 150 useful operations in CyberChef for anyone working on anything vaguely Internet-related, whether you just want to convert a timestamp to a different format, decompress gzipped data, create a SHA3 hash, or parse an X.509 certificate to find out who issued it._
 

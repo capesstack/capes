@@ -1,12 +1,14 @@
 # Etherpad Build, Operate, Maintain
-There should probably be more here but...those GCHQ guys got their stuff together.
+This project is created and maintained by the Etherpad team. All credit for the service goes to their talented team.
 
-Of particular note, all images in the `.htm` file are base64 encoded, so there is no need for any Internet access for a good UX.
+_Etherpad allows you to edit documents collaboratively in real-time, much like a live multi-player editor that runs in your browser. Write articles, press releases, to-do lists, etc. together with your friends, fellow students or colleagues, all working on the same document at the same time._
+
+_All instances provide access to all data through a well-documented API and supports import/export to many major data exchange formats. And if the built-in feature set isn't enough for you, there's tons of plugins that allow you to customize your instance to suit your needs._
 
 ## Build
 
 ### Dependencies
-Below are the dependencies for CyberChef. These are installed using `deploy_capes.sh` script.
+Below are the dependencies for Etherpad. These are installed using `deploy_capes.sh` script.
 
 | Package      | Version           |
 |--------------|-------------------|
@@ -72,5 +74,7 @@ Etherpad configuration location - `/opt/etherpad/settings.json`
 In the event that you have any issues, here are some things you can check to make sure they're operating as intended.
 
 You may be having an issue with your firewall. Check the troubleshooting steps [here](../landing_page/build_operate_maintain.md#troubleshooting)
+
+Check with the Etherpad project maintainers at http://etherpad.org/
 
 If you're still unable to access the Etherpad page from a web browser, [please file an issue](https://github.com/capesstack/capes/issues).
