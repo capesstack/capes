@@ -497,7 +497,7 @@ sudo firewall-cmd --reload
 ################################
 
 # Collect CyberChef
-curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyberchef.htm
+sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyberchef.htm
 
 ################################
 ########## Services ############

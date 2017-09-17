@@ -26,17 +26,17 @@ Run the [CAPES deployment script](../deploy_capes.sh) or the [independent Landin
 
 Deploying with CAPES (recommended):
 ```
-$ sudo yum install -y git
-$ git clone https://github.com/capesstack/capes.git
-$ cd capes
-$ sudo sh deploy_capes.sh
+sudo yum install -y git
+git clone https://github.com/capesstack/capes.git
+cd capes
+sudo sh deploy_capes.sh
 ```
 Deploying separately from CAPES:
 ```
-$ sudo yum install -y git
-$ git clone https://github.com/capesstack/capes.git
-$ cd capes/landing_page
-$ sudo sh deploy_landing_page.sh
+sudo yum install -y git
+git clone https://github.com/capesstack/capes.git
+cd capes/landing_page
+sudo sh deploy_landing_page.sh
 ```
 ## Operate
 ### Cosmetics
@@ -159,7 +159,7 @@ If port 80 isn't listed, then we'll need to open that up.
 #### Opening Firewall Ports
 TCP port 80 is needed to access the CAPES landing page, and it is included in the `deploy_landing_page.sh` script, however:
 ```
-$ sudo firewall-cmd --add-port=80/tcp --permanent
-$ sudo firewall-cmd --reload
+sudo firewall-cmd --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
 ```
 If you're still unable to access the CAPES page from a web browser, [please file an issue](https://github.com/capesstack/capes/issues).
