@@ -230,6 +230,11 @@ sudo firewall-cmd --reload
 sudo systemctl enable etherpad.service
 sudo systemctl start etherpad.service
 
+# Prevent remote access to MySQL
+sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
+sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
+sudo systemctl restart mariadb.service
+
 # Secure MySQL
 mysql_secure_installation
 
