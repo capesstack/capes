@@ -14,7 +14,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 1. Landing Page
 1. CyberChef
 1. Mumble
-1. Hippocampe (waiting on TheHive project owner to update to ES 5.5)
+1. Hippocampe *
 
 ## Roadmap
 1. Get working shell script for all services

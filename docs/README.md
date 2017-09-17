@@ -12,7 +12,7 @@ Please see below for Build, Operate, Maintain specifics on the different web app
 ## Requirements
 There has not been extensive testing, but all of these services have run without issue on a single virtual machine with approximately 20 users and no issue for a week. That said, your mileage may vary.
 
-While the OS version isn't a hard requirement, all testing and development work has been done with `CentOS 7.3.1611 (Core)`.
+While the OS version isn't a hard requirement, all testing and development work has been done with `CentOS 7.4.1708 (Core)`.
 
 | Component | Number |
 | - | - |
@@ -37,7 +37,7 @@ While there are a lot of projects that are developed using Ubuntu (many of these
     - AppArmor uses prescripted rules to define security controls (for example, I know that a text editor shouldn't talk to the Internet because someone told me it shouldn't)
 
 ### Implementation
-While the `iptables` service is running on CAPES and the only ports listening have services attached to them, you should still consider using a Web Application Firewall (WAF), an Intrusion Detection System (IDS) or a Network Security Monitor (like [ROCKNSM](rocknsm.io) - which has an IDS integrated on top of a litany of other goodies) to ensure that your CAPES stack isn't being targeted.
+While the `firewalld` service is running on CAPES and the only ports listening have services attached to them, you should still consider using a Web Application Firewall (WAF), an Intrusion Detection System (IDS) or a Network Security Monitor (like [ROCKNSM](rocknsm.io) - which has an IDS integrated on top of a litany of other goodies) to ensure that your CAPES stack isn't being targeted.
 
 If possible, CAPES, just like a passive NSM, should **not** be on the contested network. This will prevent it from being targeted by aggressors. On net implementations (re: enhanced web application security) are a roadmap item.
 
@@ -51,7 +51,7 @@ Generally, the CAPES ecosystem is meant to run as a whole, so the preferred usag
 
 That said, there is a deploy script for each of the services that you should be able to run individually if your use case requires that.
 
-### Build your OS (CentOS 7.3)
+### Build your OS (CentOS 7.4)
 This is meant to help those who need a step-by-step build of CentOS, securing SSh, and getting ready to grab CAPES. If you don't need this guide, skip on down to [Get CAPES](#get-capes).
 1. Download the latest version of [CentOS Minimal](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1611.iso)
 1. Build a VM or a physical system with 4 cores, 8 GB of RAM, and a 20 GB HDD at a minimum
@@ -67,7 +67,7 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
       - Click `Save`
     - Click `Done` in the top left
 1. Next the `Security Profile` in the lower right
-    - Select `STIG for CentOS Linux 7 Server`
+    - Select `DISA STIG for CentOS 7` or `United States Government Configuration Baseline (USGCB/STIG) - DRAFT` (depending on your use case)
     - Click `Select Profile`
     - Click `Done`
 1. Next click `Installation Destination`
@@ -90,14 +90,12 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
 1. Login using the account you created during the Anaconda setup
   - Run the following commands
     ```
-    sudo yum update -y && sudo yum install git firewall-cmd -y` (Enter the password you created in Anaconda)
-    sudo firwall-cmd --add-port=22/tcp --permanent
+    sudo yum update -y && sudo yum install git -y` (Enter the password you created in Anaconda)
+    sudo firewall-cmd --add-service=ssh --permanent
     sudo firewall-cmd --reload
-    sudo sed '$s/^/\#/' /etc/ssh/sshd_config
-    sudo systemctl restart sshd.service
     ```
 1. Secure ssh
-  - On your management system, create an SSh key pair
+  - On your management system, create an ssh key pair
     ```
     ssh-keygen -t rsa` accept the defaults, but enter a passphrase for your keys
     ssh-copy-id your_created_user@<ip of CAPES>
