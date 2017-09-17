@@ -1,11 +1,11 @@
 # CAPES Land Page Build, Operate, Maintain
 The CAPES landing page was developed to give a singular place for operators to go to access all of the CAPES toolsets. Feel free to customize it to meet your environment. The only exception to this is Mumble as it is not a web application.
 
-**This will distill the basic installation and configuration of the HTTP server, nginx, as it relates to the CAPES project.
+**This will distill the basic installation and configuration of the HTTP server, nginx, as it relates to the CAPES project.**
 
-Yes, believe me, I know there are a lot of ways to do this, and that when you're running more than 1 web service, there are individual `.conf` files to use - I get it :) That said, as it relates to CAPES, we only need a single `index.html` page and just allow `nginx` to do it's thing there without making a configuration file for the entire CAPES web application. I'm certainly open to reasons to do this in a more complex way, but as it sits right now, I didn't see the need. PR and Issues are gleefully welcome.
+**Yes, believe me, I know there are a lot of ways to do this, and that when you're running more than 1 web service, there are individual `.conf` files to use - I get it :) That said, as it relates to CAPES, we only need a single `index.html` page and just allow `nginx` to do it's thing there without making a configuration file for the entire CAPES web application. I'm certainly open to reasons to do this in a more complex way, but as it sits right now, I didn't see the need. PR and Issues are gleefully welcome.**
 
-For additional configuration and deployment options, see the official [nginx wiki](https://www.nginx.com/resources/wiki/).**
+**For additional configuration and deployment options, see the official [nginx wiki](https://www.nginx.com/resources/wiki/).**
 
 ## Build
 

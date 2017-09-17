@@ -1,3 +1,5 @@
-The contents of this folder  needs to be placed at /usr/share/nginx/html/ after nginx is installed.
+# CAPES Landing Page
+This serves as a landing page for CAPES.
 
-It will serve as a landing page for CAPES.
+## Documentation / Installation
+See the [Build, Operate, Maintain page](build_operate_maintain.md) for detailed instructions.  
