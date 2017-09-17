@@ -135,3 +135,4 @@ If the `Temporary` box is checked and greyed out, you do not have not been deleg
 
 ## Additional documentation  
 https://wiki.mumble.info/wiki/
+https://wiki.mumble.info/wiki/Murmurguide

@@ -1,12 +1,12 @@
 # GoGS
-The GoGS build script for CentOS 7.3.
+This project is created and maintained by the GoGS team. All credit for the service goes to their talented team.
 
-## Usage
-`$ sudo sh gogs_deploy.sh`
+_GoGS is a painless self-hosted Git service._
 
-You'll need to visit the [Build, Operate, Maintain](build_operate_maintain.md) page for additional setup requirements.
+_The goal of this project is to make the easiest, fastest, and most painless way of setting up a self-hosted Git service. With Go, this can be done with an independent binary distribution across ALL platforms that Go supports, including Linux, Mac OS X, Windows and ARM._
 
-## Notes
-* You'll need to enter your `sudo` credentials to install the dependencies.
-* Remember the password you enter at the beginning of the script
-* `mysql_secure_installation` runs after GoGS installation
+## Documentation / Installation
+See the [Build, Operate, Maintain page](build_operate_maintain.md) for detailed instructions.  
+
+## Project Link
+https://gogs.io

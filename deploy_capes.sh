@@ -242,7 +242,7 @@ sudo systemctl daemon-reload
 ################################
 
 # Install dependencies
-sudo yum install gzip openssl-devel -y && sudo yum groupinstall "Development Tools" -y
+sudo yum install openssl-devel -y && sudo yum groupinstall "Development Tools" -y
 
 # Configure MySQL
 mysql -u root -e "CREATE DATABASE etherpad;"
@@ -497,7 +497,7 @@ sudo firewall-cmd --reload
 ################################
 
 # Collect CyberChef
-curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyberchef.htm
+sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyberchef.htm
 
 ################################
 ########## Services ############

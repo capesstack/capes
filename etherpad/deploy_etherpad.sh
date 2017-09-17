@@ -81,7 +81,7 @@ sudo systemctl start chronyd.service
 ################################
 
 # Install dependencies
-sudo yum install gzip git curl python openssl-devel epel-release expect -y && sudo yum groupinstall "Development Tools" -y
+sudo yum install git openssl-devel epel-release expect -y && sudo yum groupinstall "Development Tools" -y
 sudo yum install nodejs mariadb-server -y
 
 # Configure MySQL
@@ -230,6 +230,11 @@ sudo firewall-cmd --reload
 sudo systemctl enable etherpad.service
 sudo systemctl start etherpad.service
 
+# Prevent remote access to MySQL
+sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
+sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
+sudo systemctl restart mariadb.service
+
 # Secure MySQL
 mysql_secure_installation
 
@@ -265,7 +270,3 @@ echo "Etherpad successfully installed!"
 echo "Your First boot will take a couple minutes while the final npm dependencies are grabbed."
 echo "Browse to http://$HOSTNAME:5000 (or http://$IP:5000 if you don't have DNS set up) to get started, /admin for administrative functions."
 echo "See the "Build, Operate, Maintain" document of the capesstack/capes/etherpad repository on GitHub."
-
-# Note
-# Highly recommend the adminpads plugin. You'll need to do it via the web UI at /admin/plugins and then restart Etherpad via `sudo systemctl restart etherpad.service`.
-# The adminpads plugin should be able to be installed via `npm install ep_adminpads`, but it isn't working. Have entered an issue with developer.

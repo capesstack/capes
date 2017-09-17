@@ -19,7 +19,7 @@ IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
-sudo yum install epel-release firewalld -y && sudo yum update -y
+sudo yum install epel-release -y && sudo yum update -y
 sudo yum install nginx -y
 sudo sed -i 's/your-hostname/$HOSTNAME/' index.html
 sudo cp -r . /usr/share/nginx/html/
