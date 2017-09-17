@@ -242,7 +242,7 @@ sudo systemctl daemon-reload
 ################################
 
 # Install dependencies
-sudo yum install gzip openssl-devel -y && sudo yum groupinstall "Development Tools" -y
+sudo yum install openssl-devel -y && sudo yum groupinstall "Development Tools" -y
 
 # Configure MySQL
 mysql -u root -e "CREATE DATABASE etherpad;"
