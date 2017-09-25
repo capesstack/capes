@@ -18,17 +18,17 @@ sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
 ##### Collect Credentials ######
 ################################
 
-# Create your GoGS password
-echo "Create your GoGS password for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
-read -s gogspassword
+# Create your GoGS passphrase
+echo "Create your GoGS passphrase for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
+read -s gogspassphrase
 
-# Create Etherpad password
-echo "Create your Etherpad password for the MySQL database and the service administration account then press [Enter]"
-read -s etherpadpassword
+# Create Etherpad passphrase
+echo "Create your Etherpad passphrase for the MySQL database and the service administration account then press [Enter]"
+read -s etherpadpassphrase
 
-# Create your Mumble password
-echo "Create your Mumble SuperUser password and press [Enter]."
-read -s mumblepassword
+# Create your Mumble passphrase
+echo "Create your Mumble SuperUser passphrase and press [Enter]."
+read -s mumblepassphrase
 
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
@@ -222,7 +222,7 @@ sudo systemctl start mariadb.service
 
 # Configure MySQL
 mysql -u root -e "CREATE DATABASE gogs;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassword';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassphrase';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
 # Build GoGS
@@ -246,7 +246,7 @@ sudo yum install openssl-devel -y && sudo yum groupinstall "Development Tools" -
 
 # Configure MySQL
 mysql -u root -e "CREATE DATABASE etherpad;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassword';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassphrase';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
 # Add the Etherpad user
@@ -268,7 +268,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
    "dbSettings" : {
                     "user"    : "etherpad",
                     "host"    : "localhost",
-                    "password": "etherpadpassword",
+                    "password": "etherpadpassphrase",
                     "database": "etherpad",
                     "charset" : "utf8mb4"
                   },
@@ -327,7 +327,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
   "automaticReconnectionTimeout" : 0,
   "users": {
     "admin": {
-      "password": "etherpadpassword",
+      "password": "etherpadpassphrase",
       "is_admin": true
     },
   },
@@ -360,7 +360,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
     }
 }
 EOF'
-sudo sed -i "s/etherpadpassword/$etherpadpassword/" /opt/etherpad/settings.json
+sudo sed -i "s/etherpadpassphrase/$etherpadpassphrase/" /opt/etherpad/settings.json
 
 # Give the Etherpad user ownership of the /opt/etherpad directory
 sudo chown -R etherpad:etherpad /opt/etherpad
@@ -531,11 +531,13 @@ sudo systemctl start murmur.service
 sudo systemctl start nginx.service
 
 # Configure the Murmur SuperUser account
-sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassword
+sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
 
 ################################
 ### Secure MySQL installtion ###
 ################################
+clear
+Echo "Now we need to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then asked to confirm some security configurations."
 sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service

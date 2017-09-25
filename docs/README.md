@@ -84,13 +84,13 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
     - Click `Done`
     - Note - the beginning of these install scripts configures Network Time Protocol (NTP). You just did that, but it's included just to be safe because time, and DNS, matter.
 1. Click `Begin Installation`
-1. We're not going to set a Root password because CAPES will never, ever need it. Ever. Not setting a password locks the Root account.
+1. We're not going to set a Root passphrase because CAPES will never, ever need it. Ever. Not setting a passphrase locks the Root account.
 1. Create a user, but ensure that you toggle the `Make this user administrator` checkbox
 1. Once the installation is done, click the `Reboot` button in the bottom right to...well...reboot
 1. Login using the account you created during the Anaconda setup
   - Run the following commands
     ```
-    sudo yum update -y && sudo yum install git -y` (Enter the password you created in Anaconda)
+    sudo yum update -y && sudo yum install git -y` (Enter the passphrase you created in Anaconda)
     sudo firewall-cmd --add-service=ssh --permanent
     sudo firewall-cmd --reload
     ```
@@ -123,6 +123,11 @@ $ git clone https://github.com/capesstack/capes.git
 $ cd capes
 $ sudo sh deploy_capes.sh
 ```
+
+### Build Process
+The build is automated minus asking you to set the GoGS, Etherpad, and Mumble administrative passphrases, set the MariaDB root passphrase, and confirm some security settings for MariaDB.
+
+You'll be asked to create the first three passphrases at the beginning and to create the MariaDB passphrase at the end of the CAPES installation.
 
 This will start the automated build of:
 * Configure NTP (likely already done, but in the event you skipped the [Build your OS](#build-your-os) above)

@@ -13,9 +13,9 @@
 # https://access.redhat.com/solutions/2850911
 sudo sed -i 's/repo_gpgcheck=1/repo_gpgcheck=0/' /etc/yum.conf
 
-# Create Etherpad password
-echo "Create your Etherpad password for the MySQL database and the service administration account then press [Enter]"
-read -s etherpadpassword
+# Create Etherpad passphrase
+echo "Create your Etherpad passphrase for the MySQL database and the service administration account then press [Enter]"
+read -s etherpadpassphrase
 
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
@@ -87,7 +87,7 @@ sudo yum install nodejs mariadb-server -y
 # Configure MySQL
 sudo systemctl start mariadb.service
 mysql -u root -e "CREATE DATABASE etherpad;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassword';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassphrase';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
 # Add the Etherpad user
@@ -109,7 +109,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
    "dbSettings" : {
                     "user"    : "etherpad",
                     "host"    : "localhost",
-                    "password": "etherpadpassword",
+                    "password": "etherpadpassphrase",
                     "database": "etherpad",
                     "charset" : "utf8mb4"
                   },
@@ -168,7 +168,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
   "automaticReconnectionTimeout" : 0,
   "users": {
     "admin": {
-      "password": "etherpadpassword",
+      "password": "etherpadpassphrase",
       "is_admin": true
     },
   },
@@ -201,7 +201,7 @@ sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
     }
 }
 EOF'
-sudo sed -i "s/etherpadpassword/$etherpadpassword/" /opt/etherpad/settings.json
+sudo sed -i "s/etherpadpassphrase/$etherpadpassphrase/" /opt/etherpad/settings.json
 
 # Give the Etherpad user ownership of the /opt/etherpad directory
 sudo chown -R etherpad:etherpad /opt/etherpad

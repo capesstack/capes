@@ -4,9 +4,9 @@
 ##### Collect Credentials ######
 ################################
 
-# Create your GoGS password
-echo "Create your GoGS password for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
-read -s gogspassword
+# Create your GoGS passphrase
+echo "Create your GoGS passphrase for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
+read -s gogspassphrase
 
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
@@ -81,7 +81,7 @@ sudo systemctl start mariadb.service
 
 # Configure MySQL
 mysql -u root -e "CREATE DATABASE gogs;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassword';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassphrase';"
 mysql -u root -e "FLUSH PRIVILEGES;"
 
 # Prevent remote access to MySQL

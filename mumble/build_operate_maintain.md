@@ -3,6 +3,8 @@
 ## Build
 After either running the [CAPES deployment script](../deploy_capes.sh) or the [independent Mumble deployment script](deploy_mumble.sh), you'll need to configure some environment variables to complete the installation and prepare for usage.
 
+Everything in the Build phase is done with either the deploy_capes.sh or deploy_mumble.sh script, the below steps are only if you are doing this completely manually.
+
 ### Prepare the Environment
 ```
 sudo yum -y install bzip2 && yum -y update
@@ -100,7 +102,7 @@ sudo systemctl start murmur.service
 
 ### Configure the SuperUser Account
 ```
-sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw <password>
+sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw <passphrase>
 ```
 
 ### Connect to the Mumble Server
@@ -118,7 +120,7 @@ sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw <password>
 ### Delegating Permissions
 Once a user has created an account and Registered, you can add them to the `admin` role.
 
-1. Log in as the `SuperUser`account with the password you set during installation.
+1. Log in as the `SuperUser`account with the passphrase you set during installation.
 1. Right-click on main channel (likely "CAPES - Mumble Server") and select `Edit`
 1 Go to the Groups tab
 1. Select the `admin` role from the drop down

@@ -12,7 +12,7 @@ You'll need to enter your `sudo` credentials to install the dependencies.
 Browse to `http://$HOSTNAME:9000` (or `http://$IP:9000` if you don't have DNS set up) to begin using the service.
 
 #### Note
-I would **strongly** recommend that you browse to TheHive web application and configure your username and password before you do anything else. If you skip this, or browse there with `curl` or `wget`, you'll have to reset the admin creds directly in Elasticsearch...and it's a less than smooth process. I recommend setting up your `username:password` first.
+I would **strongly** recommend that you browse to TheHive web application and configure your username and passphrase before you do anything else. If you skip this, or browse there with `curl` or `wget`, you'll have to reset the admin creds directly in Elasticsearch...and it's a less than smooth process. I recommend setting up your `username:passphrase` first.
 
 ### Cortex Project
 Browse to `http://$HOSTNAME:9001` (or `http://$IP:9001` if you don't have DNS set up) to begin using the service.
