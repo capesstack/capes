@@ -5,6 +5,7 @@
 ################################
 
 # Create your GoGS passphrase
+clear
 echo "Create your GoGS passphrase for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
 read -s gogspassphrase
 

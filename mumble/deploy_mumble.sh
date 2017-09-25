@@ -5,6 +5,7 @@
 ################################
 
 # Create your Mumble passphrase
+clear
 echo "Create your Mumble SuperUser passphrase and press [Enter]."
 read -s mumblepassphrase
 

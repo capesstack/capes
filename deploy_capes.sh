@@ -18,6 +18,7 @@ sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
 ##### Collect Credentials ######
 ################################
 
+clear
 # Create your GoGS passphrase
 echo "Create your GoGS passphrase for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
 read -s gogspassphrase
@@ -537,7 +538,7 @@ sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
 ### Secure MySQL installtion ###
 ################################
 clear
-Echo "Now we need to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then asked to confirm some security configurations."
+echo "Now we need to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then asked to confirm some security configurations."
 sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service

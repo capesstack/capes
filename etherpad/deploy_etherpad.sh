@@ -14,6 +14,7 @@
 sudo sed -i 's/repo_gpgcheck=1/repo_gpgcheck=0/' /etc/yum.conf
 
 # Create Etherpad passphrase
+clear
 echo "Create your Etherpad passphrase for the MySQL database and the service administration account then press [Enter]"
 read -s etherpadpassphrase
 
