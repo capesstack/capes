@@ -39,12 +39,10 @@ While there are a lot of projects that are developed using Ubuntu (many of these
 ### Implementation
 While the `firewalld` service is running on CAPES and the only ports listening have services attached to them, you should still consider using a Web Application Firewall (WAF), an Intrusion Detection System (IDS) or a Network Security Monitor (like [ROCKNSM](rocknsm.io) - which has an IDS integrated on top of a litany of other goodies) to ensure that your CAPES stack isn't being targeted.
 
-If possible, CAPES, just like a passive NSM, should **not** be on the contested network. This will prevent it from being targeted by aggressors. On net implementations (re: enhanced web application security) are a roadmap item.
+If possible, CAPES, just like a passive NSM, should **not** be on the contested network. This will prevent it from being targeted by aggressors.
 
-### Securing the Landing Page
-We are going to implement a login for the CAPES landing page. Right now, CAPES should not be deployed where an aggressor can get at it...however, that's not really an excuse. We're working on it. **All services have authentication requirements.**
-
-Additionally, SSL. We are having discussions around self-signed certificates vs. 3rd party (Let's Encrypt, etc.); but there are some architecture caveats to consider here. Again, it's a roadmap item.
+### SSL
+It is a poor practice to deploy self-signed SSL certificates because it teaches bad behavior by "clicking through" SSL warnings; for that reason, we have decided not to deploy CAPES with SSL. [If you want to enable SSL for your own deployment](https://nginx.org/en/docs/http/configuring_https_servers.html), we encourage you to do so.
 
 ## Installation
 Generally, the CAPES ecosystem is meant to run as a whole, so the preferred usage will be to install CAPES with the `deploy_capes.sh` script in the root directory of this repository. Additionally, if there is a service that you do not want, you can comment that service out of the deploy script as they are documented with service headers.
