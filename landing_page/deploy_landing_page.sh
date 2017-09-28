@@ -21,7 +21,7 @@ sudo systemctl start chronyd.service
 
 sudo yum install epel-release -y && sudo yum update -y
 sudo yum install nginx -y
-sudo sed -i 's/your-hostname/$HOSTNAME/' index.html
+sudo sed -i 's/your-ip/$IP/' index.html
 sudo cp -r . /usr/share/nginx/html/
 sudo firewall-cmd --add-port=80/tcp --permanent
 sudo firewall-cmd --reload

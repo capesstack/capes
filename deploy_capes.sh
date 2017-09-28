@@ -473,7 +473,7 @@ EOF'
 sudo yum install nginx -y
 
 # Update the landing page index file
-sed -i "s/your-hostname/$HOSTNAME/" landing_page/index.html
+sed -i "s/your-ip/$IP/" landing_page/index.html
 
 # Move landing page framework into Nginx's working directory
 sudo cp -r landing_page/* /usr/share/nginx/html/
