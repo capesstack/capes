@@ -4,9 +4,10 @@
 ##### Collect Credentials ######
 ################################
 
-# Create your Mumble password
-echo "Create your Mumble SuperUser password and press [Enter]."
-read -s mumblepassword
+# Create your Mumble passphrase
+clear
+echo "Create your Mumble SuperUser passphrase and press [Enter]."
+read -s mumblepassphrase
 
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
@@ -152,7 +153,7 @@ sudo systemctl enable murmur.service
 sudo systemctl start murmur.service
 
 # Configure the SuperUser account
-sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassword
+sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
 
 # Success
 clear

@@ -39,12 +39,10 @@ While there are a lot of projects that are developed using Ubuntu (many of these
 ### Implementation
 While the `firewalld` service is running on CAPES and the only ports listening have services attached to them, you should still consider using a Web Application Firewall (WAF), an Intrusion Detection System (IDS) or a Network Security Monitor (like [ROCKNSM](rocknsm.io) - which has an IDS integrated on top of a litany of other goodies) to ensure that your CAPES stack isn't being targeted.
 
-If possible, CAPES, just like a passive NSM, should **not** be on the contested network. This will prevent it from being targeted by aggressors. On net implementations (re: enhanced web application security) are a roadmap item.
+If possible, CAPES, just like a passive NSM, should **not** be on the contested network. This will prevent it from being targeted by aggressors.
 
-### Securing the Landing Page
-We are going to implement a login for the CAPES landing page. Right now, CAPES should not be deployed where an aggressor can get at it...however, that's not really an excuse. We're working on it. **All services have authentication requirements.**
-
-Additionally, SSL. We are having discussions around self-signed certificates vs. 3rd party (Let's Encrypt, etc.); but there are some architecture caveats to consider here. Again, it's a roadmap item.
+### SSL
+It is a poor practice to deploy self-signed SSL certificates because it teaches bad behavior by "clicking through" SSL warnings; for that reason, we have decided not to deploy CAPES with SSL. [If you want to enable SSL for your own deployment](https://nginx.org/en/docs/http/configuring_https_servers.html), we encourage you to do so.
 
 ## Installation
 Generally, the CAPES ecosystem is meant to run as a whole, so the preferred usage will be to install CAPES with the `deploy_capes.sh` script in the root directory of this repository. Additionally, if there is a service that you do not want, you can comment that service out of the deploy script as they are documented with service headers.
@@ -84,13 +82,13 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
     - Click `Done`
     - Note - the beginning of these install scripts configures Network Time Protocol (NTP). You just did that, but it's included just to be safe because time, and DNS, matter.
 1. Click `Begin Installation`
-1. We're not going to set a Root password because CAPES will never, ever need it. Ever. Not setting a password locks the Root account.
+1. We're not going to set a Root passphrase because CAPES will never, ever need it. Ever. Not setting a passphrase locks the Root account.
 1. Create a user, but ensure that you toggle the `Make this user administrator` checkbox
 1. Once the installation is done, click the `Reboot` button in the bottom right to...well...reboot
 1. Login using the account you created during the Anaconda setup
   - Run the following commands
     ```
-    sudo yum update -y && sudo yum install git -y` (Enter the password you created in Anaconda)
+    sudo yum update -y && sudo yum install git -y` (Enter the passphrase you created in Anaconda)
     sudo firewall-cmd --add-service=ssh --permanent
     sudo firewall-cmd --reload
     ```
@@ -123,6 +121,11 @@ $ git clone https://github.com/capesstack/capes.git
 $ cd capes
 $ sudo sh deploy_capes.sh
 ```
+
+### Build Process
+The build is automated minus asking you to set the GoGS, Etherpad, and Mumble administrative passphrases, set the MariaDB root passphrase, and confirm some security settings for MariaDB.
+
+You'll be asked to create the first three passphrases at the beginning and to create the MariaDB passphrase at the end of the CAPES installation.
 
 This will start the automated build of:
 * Configure NTP (likely already done, but in the event you skipped the [Build your OS](#build-your-os) above)

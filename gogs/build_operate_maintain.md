@@ -44,7 +44,7 @@ Browse to `http://<CAPES-system>:4000`
 #### Post-Install Configuration
 When you browse to GoGS for the first time, you'll enter a post-installation configuration pipeline.
 
-* The database user will not be `root`, it will be `gogs` and the password will be what you set at the beginning of the install process  
+* The database user will not be `root`, it will be `gogs` and the passphrase will be what you set at the beginning of the install process  
 * Use the explicit IP of the GoGS server instead of `localhost` for the `Domain` and `Application URL` fields  
 * Under `Server and other Services Settings` check the `Disable Avatar Service` box  
 
