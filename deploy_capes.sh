@@ -477,7 +477,7 @@ EOF'
 sudo yum install nginx httpd-tools -y
 
 # Create basic authentiation for Nginx
-sudo htpasswd -ic /etc/nginx/.htpasswd operator $capespassphrase
+sudo htpasswd -bc /etc/nginx/.htpasswd operator $capespassphrase
 sudo sed -i '43 a \\tauth_basic "CAPES Login";' /etc/nginx/nginx.conf
 sudo sed -i '44 a \\tauth_basic_user_file /etc/nginx/.htpasswd;' /etc/nginx/nginx.conf
 
