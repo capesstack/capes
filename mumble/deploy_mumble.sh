@@ -155,6 +155,11 @@ sudo systemctl start murmur.service
 # Configure the SuperUser account
 sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
 
+###############################
+### Clear your Bash history ###
+###############################
+cat /dev/null > ~/.bash_history && history -c
+
 # Success
 clear
 cat << "EOF"
@@ -187,4 +192,5 @@ MMMMMMMMMMMMMMMMMMMMMNmmmmmmNMMMMMMMMMMMMMMMMMMMMM
 
 EOF
 echo "Murmur (Mumble) has been successfully deployed."
+echo "The Mumble SuperUser passphrase is: "$mumblepassphrase
 echo "See the "Build, Operate, Maintain" document of the capesstack/capes/mumble repository on GitHub for Mumble configurations of the client and service."
