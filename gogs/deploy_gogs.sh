@@ -114,7 +114,13 @@ sudo systemctl enable mariadb.service
 # Secure MySQL installtion
 mysql_secure_installation
 
+###############################
+### Clear your Bash history ###
+###############################
+cat /dev/null > ~/.bash_history && history -c
+
 # Success page
 clear
+echo "The GoGS passphrase for the MySQL database is: "$gogspassphrase
 echo "GoGS has been successfully deployed. Browse to http://$HOSTNAME:4000 (or http://$IP:4000 if you don't have DNS set up) to begin using the services."
 echo "See the "Build, Operate, Maintain" document of the capesstack/capes/gogs repository on GitHub."

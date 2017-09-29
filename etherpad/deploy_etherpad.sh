@@ -239,6 +239,11 @@ sudo systemctl restart mariadb.service
 # Secure MySQL
 mysql_secure_installation
 
+###############################
+### Clear your Bash history ###
+###############################
+cat /dev/null > ~/.bash_history && history -c
+
 # Install success
 clear
 cat << "EOF"
@@ -269,5 +274,6 @@ cat << "EOF"
 EOF
 echo "Etherpad successfully installed!"
 echo "Your First boot will take a couple minutes while the final npm dependencies are grabbed."
+echo "The Etherpad passphrase for the MySQL database and the service administration account is: "$etherpadpassphrase
 echo "Browse to http://$HOSTNAME:5000 (or http://$IP:5000 if you don't have DNS set up) to get started, /admin for administrative functions."
 echo "See the "Build, Operate, Maintain" document of the capesstack/capes/etherpad repository on GitHub."
