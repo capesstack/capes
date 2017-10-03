@@ -65,7 +65,7 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
       - Click `Save`
     - Click `Done` in the top left
 1. Next the `Security Profile` in the lower right
-    - Select `DISA STIG for CentOS 7` or `United States Government Configuration Baseline (USGCB/STIG) - DRAFT` (depending on your use case)
+    - Select `United States Government Configuration Baseline (USGCB/STIG) - DRAFT`
     - Click `Select Profile`
     - Click `Done`
 1. Next click `Installation Destination`
