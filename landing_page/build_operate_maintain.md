@@ -41,6 +41,18 @@ sudo sh deploy_landing_page.sh
 ## Operate
 The landing page runs as the `nginx` user, it has no shell and cannot be logged on as.
 
+### Authentication
+CAPES employs Basic Auth for logging into the landing page. The passphrase is set during installation for the user "operator".
+
+If you need reset the credentials for the user "operator":
+```
+sudo htpasswd /etc/nginx/.htpasswd operator
+```
+If you need to create new users:
+```
+sudo htpasswd /etc/nginx/.htpasswd <new_user>
+```
+
 ### Cosmetics
 There is an included `favicon.ico` file for the little image that shows up on browser tabs, you can update this with your own logo in `/usr/share/nginx/html/favicon.ico`. Its dimensions should be `32x32`.
 
