@@ -399,7 +399,7 @@ sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /op
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
 # If you're going to be using this offline, you can remove the Cortex install (sudo yum install thehive -y).
-sudo rpm --import https://dl.bintray.com/cert-bdf/rpm/repodata/:repomd.xml.key
+sudo rpm --import https://dl.bintray.com/cert-bdf/rpm/repodata/repomd.xml.key
 sudo yum install https://dl.bintray.com/cert-bdf/rpm/thehive-project-release-1.0.0-3.noarch.rpm -y
 sudo yum install thehive cortex -y
 
