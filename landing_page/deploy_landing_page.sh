@@ -1,18 +1,5 @@
 #!/bin/bash
 
-################################
-######## repo_gpgcheck #########
-################################
-
-# repo_gpgcheck either 1 or 0 tells yum whether or not it should perform a GPG signature check on the repodata. When this is set in the [main] section of /etc/yum.conf, it sets the default for all repositories. The default is 0.
-# Currently Red Hat products (Customer Portal, Red Hat Satellite, RHUI..etc) does not support repo gpgcheck option yet
-# Yum tries to download repomd.xml.asc as repo_gpgcheck was set to 1, however yum was unable to locate repomd.xml.asc on the epel server due to GPG armor not being enabled on the server side
-# This appears to be caused by an applied Security Profile in the build with CentOS 7.4 - additional testing is being performed
-# Until then, we are going to set repo_gpgcheck back to the default of 0
-# https://rhel7stig.readthedocs.io/en/latest/high.html?highlight=repo_gpgcheck
-# https://access.redhat.com/solutions/2850911
-sudo sed -i 's/repo_gpgcheck=1/repo_gpgcheck=0/' /etc/yum.conf
-
 # Create your CAPES Landing Page passphrase
 echo "Create your CAPES Landing Page passphrase for the account \"operator\" and press [Enter]."
 read -s capespassphrase
