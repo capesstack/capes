@@ -174,7 +174,7 @@ sudo n 4.5
 
 # Build RocketChat
 sudo mkdir /opt/rocketchat
-curl -L https://rocket.chat/releases/latest/download -o rocketchat.tar.gz
+curl -L https://download.rocket.chat/stable -o rocketchat.tar.gz
 echo "This next part takes a few minutes, everything is okay...go have a scone."
 sudo tar zxf rocketchat.tar.gz -C /opt/rocketchat/
 sudo mv /opt/rocketchat/bundle /opt/rocketchat/Rocket.Chat
@@ -429,6 +429,13 @@ sudo pip install --upgrade pip
 # Add the future Python package and then install the Cortex Python dependencies
 sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
+
+# This will remove the redundant install attempts of Python modules, but there is a line chopping issue with yara-python and coreutils
+# for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
+# sort requirements.staged | uniq >> requirements.txt
+# rm requirements.staged
+# sudo pip install -r requirements.txt
+# rm requirements.txt
 
 # Update the location of the analyzers
 sudo sed -i 's/path\/to\/Cortex\-Analyzers/\/opt\/cortex/' /etc/cortex/application.conf
