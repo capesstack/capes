@@ -83,7 +83,7 @@ sudo n 4.5
 
 # Build RocketChat
 sudo mkdir /opt/rocketchat
-sudo curl -L https://rocket.chat/releases/latest/download -o /opt/rocketchat/rocket.chat.tgz
+sudo curl -L https://download.rocket.chat/stable -o /opt/rocketchat/rocket.chat.tgz
 echo "This next part takes a few minutes, everything is okay...go have a scone."
 sudo tar zxf /opt/rocketchat/rocket.chat.tgz -C /opt/rocketchat/
 sudo mv /opt/rocketchat/bundle /opt/rocketchat/Rocket.Chat
