@@ -428,7 +428,12 @@ sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
 sudo pip install future
-for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
+for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
+sort requirements.staged >> requirements.txt
+rm requirements.staged
+sudo pip install -r requirements.txt
+rm requirements.txt
+# for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
 
 # Update the location of the analyzers
 sudo sed -i 's/path\/to\/Cortex\-Analyzers/\/opt\/cortex/' /etc/cortex/application.conf
