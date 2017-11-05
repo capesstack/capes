@@ -1,5 +1,16 @@
 #!/bin/bash
 
+################################
+######### Epel Release #########
+################################
+# The DISA STIG for CentOS 7.4.1708 enforces a GPG signature check for all repodata. While this is generally a good idea, it causes repos tha do not use GPG Armor to fail.
+# One example of a repo that does not use GPG Armor is Epel; which is a dependency of CAPES (and tons of other projects, for that matter).
+# To fix this, we are going to disable the GPG signature and local RPM GPG signature checking.
+# I'm open to other options here.
+# RHEL's official statement on this: https://access.redhat.com/solutions/2850911
+sudo sed -i 's/repo_gpgcheck=1/repo_gpgcheck=0/' /etc/yum.conf
+sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
+
 # Create your CAPES Landing Page passphrase
 echo "Create your CAPES Landing Page passphrase for the account \"operator\" and press [Enter]."
 read -s capespassphrase
@@ -29,6 +40,7 @@ sudo systemctl start nginx
 ###############################
 ### Clear your Bash history ###
 ###############################
+# We don't want anyone snooping around and seeing any passphrases you set
 cat /dev/null > ~/.bash_history && history -c
 
 clear

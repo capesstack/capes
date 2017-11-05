@@ -1,6 +1,17 @@
 #!/bin/bash
 
 ################################
+######### Epel Release #########
+################################
+# The DISA STIG for CentOS 7.4.1708 enforces a GPG signature check for all repodata. While this is generally a good idea, it causes repos tha do not use GPG Armor to fail.
+# One example of a repo that does not use GPG Armor is Epel; which is a dependency of CAPES (and tons of other projects, for that matter).
+# To fix this, we are going to disable the GPG signature and local RPM GPG signature checking.
+# I'm open to other options here.
+# RHEL's official statement on this: https://access.redhat.com/solutions/2850911
+sudo sed -i 's/repo_gpgcheck=1/repo_gpgcheck=0/' /etc/yum.conf
+sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
+
+################################
 ##### Collect Credentials ######
 ################################
 
@@ -428,8 +439,6 @@ sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
 sudo pip install future
-# for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
-
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
@@ -540,7 +549,7 @@ sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
 ### Secure MySQL installtion ###
 ################################
 clear
-echo "Now we need to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then asked to confirm some security configurations."
+echo "In a few seconds we are going to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then be asked to confirm some security configurations."
 sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
@@ -549,6 +558,7 @@ mysql_secure_installation
 ###############################
 ### Clear your Bash history ###
 ###############################
+# We don't want anyone snooping around and seeing any passphrases you set
 cat /dev/null > ~/.bash_history && history -c
 
 ################################
