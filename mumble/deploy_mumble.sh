@@ -158,6 +158,7 @@ sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
 ###############################
 ### Clear your Bash history ###
 ###############################
+# We don't want anyone snooping around and seeing any passphrases you set
 cat /dev/null > ~/.bash_history && history -c
 
 # Success

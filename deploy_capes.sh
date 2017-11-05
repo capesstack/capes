@@ -439,8 +439,6 @@ sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
 sudo pip install future
-# for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
-
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
@@ -551,7 +549,7 @@ sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
 ### Secure MySQL installtion ###
 ################################
 clear
-echo "Now we need to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then asked to confirm some security configurations."
+echo "In a few seconds we are going to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then be asked to confirm some security configurations."
 sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
@@ -560,6 +558,7 @@ mysql_secure_installation
 ###############################
 ### Clear your Bash history ###
 ###############################
+# We don't want anyone snooping around and seeing any passphrases you set
 cat /dev/null > ~/.bash_history && history -c
 
 ################################

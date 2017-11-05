@@ -40,6 +40,7 @@ sudo systemctl start nginx
 ###############################
 ### Clear your Bash history ###
 ###############################
+# We don't want anyone snooping around and seeing any passphrases you set
 cat /dev/null > ~/.bash_history && history -c
 
 clear
