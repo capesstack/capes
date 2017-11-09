@@ -1,0 +1,8 @@
+Authentication Type: LDAP (via BindDN)
+Authentication Name: FreeIPA
+Security Protocol: Unencrypted
+Host: hostname or IP (freeipa.perched.io)
+Port: 389
+User Search Base: cn=users,cn=accounts,dc=perched,dc=io
+User Filter: (&(objectClass=posixAccount)(uid=%s))
+Email Attribute: ldap.user.email
