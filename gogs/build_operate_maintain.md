@@ -1,3 +1,5 @@
+**There is a database issue with GoGS 0.11.34 (11/22/17) and this service is disabled until it can be resolved.**
+
 # GoGS Build, Operate, Maintain
 This project is created and maintained by the GoGS team. All credit for the service goes to their talented team.
 
@@ -13,7 +15,7 @@ Below are the dependencies for CyberChef. These are installed using `deploy_cape
 | Package      | Version           |
 |--------------|-------------------|
 | git          | 1.8.3.1-12.el7_4  |
-| gogs         | 0.11.29-1502836198.b1100b5e.centos7 |
+| gogs         | 0.11.34 |
 | libevent | 2.0.21-4.el7 |
 | postgresql-libs | 9.2.23-1.el7_ |
 

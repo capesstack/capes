@@ -1,3 +1,5 @@
+**There is a database issue with GoGS 0.11.34 (11/22/17) and this service is disabled until it can be resolved.**
+
 # GoGS
 This project is created and maintained by the GoGS team. All credit for the service goes to their talented team.
 
