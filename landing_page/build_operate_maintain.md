@@ -64,7 +64,7 @@ sudo sed -i 's/your-logo.png/<your-actual-logo-name-with-extension>/' /usr/share
 There are multiple service presented by the CAPES landing page.
 * [CyberChef](../cyberchef/build_operate_maintain.md)
 * [Etherpad](../etherpad/build_operate_maintain.md)  
-* [GoGS](../gogs/build_operate_maintain.md)  
+* [Gitea](../gitea/build_operate_maintain.md)  
 * [Rocketchat](../rocketchat/build_operate_maintain.md)  
 * [TheHive](../thehive/build_operate_maintain.md)  
 * [Cortex](../thehive/build_operate_maintain.md)  
