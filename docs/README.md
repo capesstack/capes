@@ -3,7 +3,7 @@ Please see below for Build, Operate, Maintain specifics on the different web app
 * [CAPES Landing Page](../landing_page/build_operate_maintain.md)  
 * [CyberChef](../cyberchef/build_operate_maintain.md)
 * [Etherpad](../etherpad/build_operate_maintain.md)  
-* [GoGS](../gogs/build_operate_maintain.md)  
+* [Gitea](../gitea/build_operate_maintain.md)  
 * [Rocketchat](../rocketchat/build_operate_maintain.md)  
 * [TheHive](../thehive/build_operate_maintain.md)  
 * [Cortex](../thehive/build_operate_maintain.md)  
@@ -123,14 +123,14 @@ $ sudo sh deploy_capes.sh
 ```
 
 ### Build Process
-The build is automated minus asking you to set the GoGS, Etherpad, and Mumble administrative passphrases, set the MariaDB root passphrase, and confirm some security settings for MariaDB.
+The build is automated minus asking you to set the Gitea, Etherpad, and Mumble administrative passphrases, set the MariaDB root passphrase, and confirm some security settings for MariaDB.
 
 You'll be asked to create the first three passphrases at the beginning and to create the MariaDB passphrase at the end of the CAPES installation.
 
 This will start the automated build of:
 * Configure NTP (likely already done, but in the event you skipped the [Build your OS](#build-your-os) above)
 * Install Rocketchat
-* Install GoGS
+* Install Gitea
 * Install Etherpad
 * Install TheHive
 * Install Cortex
@@ -145,4 +145,4 @@ This will start the automated build of:
 ## Get Started
 After the CAPES installation, you should be able to browse to `http://capes_system` (or `http://capes_IP` if you don't have DNS set up) to get to the CAPES landing page and start setting up services.
 
-I **strongly** recommend that you look at the `Build, Operate, Maintain` guides for these services before you get going. A few of the services launch a configuration pipeline that is hard to restart if you don't complete it the first time (I'm looking at you TheHive and GoGS).
+I **strongly** recommend that you look at the `Build, Operate, Maintain` guides for these services before you get going. A few of the services launch a configuration pipeline that is hard to restart if you don't complete it the first time (I'm looking at you TheHive and Gitea).

@@ -10,7 +10,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 ## Services
 1. Rocketchat
 1. Etherpad
-1. GoGS - currently disabled because of a database issue with GoGS 0.11.34, working to correct this (12/4/17)
+1. Gitea
 1. TheHive
 1. Cortex
 1. Landing Page
@@ -29,7 +29,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 * Working shell scripts
   - RocketChat
   - Etherpad
-  - GoGS - currently disabled because of a database issue with GoGS 0.11.34, working to correct this (12/4/17)
+  - Gitea
   - Mumble
   - TheHive
   - Cortex
@@ -38,7 +38,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 * CAPES deploy script with Landing Page presenting:
   - RocketChat
   - CyberChef
-  - GoGS - currently disabled because of a database issue with GoGS 0.11.34, working to correct this (12/4/17)
+  - Gitea
   - Mumble
   - Etherpad
   - TheHive

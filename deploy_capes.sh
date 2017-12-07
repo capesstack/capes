@@ -16,9 +16,9 @@ sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
 ################################
 
 clear
-# Create your GoGS passphrase
-# echo "Create your GoGS passphrase for the MySQL database and press [Enter]. You will create your GoGS administration credentials after the installation."
-# read -s gogspassphrase
+# Create your Gitea passphrase
+echo "Create your Gitea passphrase for the MySQL database and press [Enter]. You will create your Gitea administration credentials after the installation."
+read -s giteapassphrase
 
 # Create Etherpad passphrase
 echo "Create your Etherpad passphrase for the MySQL database and the service administration account then press [Enter]"
@@ -215,32 +215,54 @@ WantedBy=multi-user.target
 EOF'
 
 ################################
-########### GoGS ###############
+########## Gitea ###############
 ################################
 
-# December 4, 2017 - there is an issue with GoGS 0.11.34
-# I am disabling the installation until it can be fixed
-
 # Install dependencies
-# sudo yum install mariadb-server -y
-# sudo systemctl start mariadb.service
+sudo yum install mariadb-server -y
+sudo systemctl start mariadb.service
 
-# Configure MySQL
-# mysql -u root -e "CREATE DATABASE gogs;"
-# mysql -u root -e "GRANT ALL PRIVILEGES ON gogs.* TO 'gogs'@'localhost' IDENTIFIED BY '$gogspassphrase';"
-# mysql -u root -e "FLUSH PRIVILEGES;"
+# Configure MariaDB
+mysql -u root -e "CREATE DATABASE gitea;"
+mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO 'gitea'@'localhost' IDENTIFIED BY '$giteapassphrase';"
+mysql -u root -e "FLUSH PRIVILEGES;"
 
-# Build GoGS
-# sudo curl -L https://dl.packager.io/srv/pkgr/gogs/pkgr/installer/el/7.repo -o /etc/yum.repos.d/gogs.repo
-# sudo yum install -y gogs
+# Create the Gitea user
+sudo useradd -s /usr/sbin/nologin gitea
 
-# Change the GoGS user to not have a login
-# sudo usermod -s /usr/sbin/nologin gogs
+# Grab Gitea and make it a home
+sudo mkdir -p /opt/gitea
+sudo curl -o /opt/gitea/gitea https://dl.gitea.io/gitea/master/gitea-master-linux-amd64
+sudo chown -R gitea:gitea /opt/gitea
+sudo chmod 744 /opt/gitea/gitea
 
-# Change the default GoGS port
-# sudo systemctl stop gogs-web-1.service gogs.service
-# sudo sed -i 's/6000/4000/' /etc/systemd/system/gogs-web-1.service
-# sudo systemctl daemon-reload
+# Create the Gitea service
+sudo bash -c 'cat > /etc/systemd/system/gitea.service <<EOF
+[Unit]
+Description=Gitea (Git with a cup of tea)
+After=syslog.target
+After=network.target
+After=mariadb.service
+
+[Service]
+# Modify these two values and uncomment them if you have
+# repos with lots of files and get an HTTP error 500 because
+# of that
+###
+#LimitMEMLOCK=infinity
+#LimitNOFILE=65535
+RestartSec=2s
+Type=simple
+User=gitea
+Group=gitea
+WorkingDirectory=/opt/gitea
+ExecStart=/opt/gitea/gitea web -p 4000
+Restart=always
+Environment=USER=gitea HOME=/home/gitea
+
+[Install]
+WantedBy=multi-user.target
+EOF'
 
 ################################
 ########### Etherpad ###########
@@ -495,24 +517,26 @@ sudo cp -r landing_page/* /usr/share/nginx/html/
 # Perform a little housekeeping
 sudo rm /usr/share/nginx/html/build_operate_maintain.md /usr/share/nginx/html/deploy_landing_page.sh /usr/share/nginx/html/README.md
 
-# Configure the firewall
-# Port 80 - Nginx
-# Port 3000 - RocketChat
-# Port 4000 - GoGS
-# Port 5000 - Etherpad
-# Port 7000 - Mumble
-# Port 9000 - TheHive
-# Port 9001 - Cortex (TheHive Analyzer Plugins)
-# Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=5000/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
-sudo firewall-cmd --reload
-
 ################################
 ########## CyberChef ###########
 ################################
 
 # Collect CyberChef
 sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/html/cyberchef.htm
+
+################################
+########## Firewall ############
+################################
+# Port 80 - Nginx
+# Port 3000 - RocketChat
+# Port 4000 - Gitea
+# Port 5000 - Etherpad
+# Port 7000 - Mumble
+# Port 9000 - TheHive
+# Port 9001 - Cortex (TheHive Analyzer Plugins)
+# Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
+sudo firewall-cmd --reload
 
 ################################
 ########## Services ############
@@ -524,7 +548,8 @@ sudo systemctl daemon-reload
 
 # Configure services for autostart
 sudo systemctl enable nginx.service
-# sudo systemctl enable mariadb.service
+sudo systemctl enable mariadb.service
+sudo systemctl enable gitea.service
 sudo systemctl enable mongod.service
 sudo systemctl enable rocketchat.service
 sudo systemctl enable etherpad.service
@@ -536,12 +561,11 @@ sudo systemctl enable murmur.service
 # Start all the services
 sudo systemctl start elasticsearch.service
 sudo systemctl start cortex.service
+sudo systemctl start gitea.service
 sudo systemctl start thehive.service
 sudo systemctl start mongod.service
 sudo systemctl start etherpad.service
 sudo systemctl start rocketchat.service
-# sudo systemctl start gogs.service
-# sudo systemctl start gogs-web-1.service
 sudo systemctl start murmur.service
 sudo systemctl start nginx.service
 
@@ -551,12 +575,12 @@ sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
 ################################
 ### Secure MySQL installtion ###
 ################################
-# clear
-# echo "In a few seconds we are going to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then be asked to confirm some security configurations."
-# sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
-# sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
-# sudo systemctl restart mariadb.service
-# mysql_secure_installation
+clear
+echo "In a few seconds we are going to secure your MariaDB configuration. You'll be asked for your MariaDB root passphrase (which hasn't been set), you'll set the MariaDB root passphrase and then be asked to confirm some security configurations."
+sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
+sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
+sudo systemctl restart mariadb.service
+mysql_secure_installation
 
 ###############################
 ### Clear your Bash history ###
@@ -568,7 +592,7 @@ cat /dev/null > ~/.bash_history && history -c
 ######### Success Page #########
 ################################
 clear
-echo "The GoGS passphrase for the MySQL database is: "$gogspassphrase
+echo "The Gitea passphrase for the MySQL database is: "$giteapassphrase
 echo "The Etherpad passphrase for the MySQL database and the service administration account is: "$etherpadpassphrase
 echo "The Mumble SuperUser passphrase is: "$mumblepassphrase
 echo "The CAPES landing passphrase for the account \"operator\" is: "$capespassphrase
