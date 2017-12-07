@@ -16,7 +16,7 @@ sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
 ################################
 
 clear
-Create your Gitea passphrase
+# Create your Gitea passphrase
 echo "Create your Gitea passphrase for the MySQL database and press [Enter]. You will create your Gitea administration credentials after the installation."
 read -s giteapassphrase
 
@@ -535,7 +535,7 @@ sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/htm
 # Port 9000 - TheHive
 # Port 9001 - Cortex (TheHive Analyzer Plugins)
 # Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=5000/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
 sudo firewall-cmd --reload
 
 ################################
