@@ -529,66 +529,7 @@ sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/htm
 ################################
 
 sudo yum install -y https://artifacts.elastic.co/downloads/beats/heartbeat/heartbeat-6.0.1-x86_64.rpm
-sudo bash -c 'cat > /etc/heartbeat/heartbeat.yml <<EOF
-# Configure monitors
-heartbeat.monitors:
-
-- type: http
-  schedule: '@every 10s'
-  urls: ["http://localhost:80"]
-  check.response.status: 200
-  username: operator
-  password: passphrase
-  name: Landing_Page
-
-- type: http
-  schedule: '@every 10s'
-  urls: ["http://localhost:80/cyberchef.htm"]
-  check.response.status: 200
-  username: operator
-  password: passphrase
-  name: CyberChef
-
-- type: http
-  schedule: '@every 10s'
-  urls: ["http://localhost:3000"]
-  check.response.status: 200
-  name: RocketChat
-
-- type: http
-  schedule: '@every 10s'
-  urls: ["http://localhost:4000"]
-  check.response.status: 200
-  name: Gitea
-
-- type: http
-  schedule: '@every 10s'
-  urls: ["http://localhost:5000"]
-  check.response.status: 200
-  name: Etherpad
-
-- type: http
-  schedule: '@every 10s'
-  urls: ["http://localhost:5601"]
-  check.response.status: 200
-  name: Kibana
-
-- type: http
-  schedule: '@every 10s'
-  urls: ["http://localhost:9000"]
-  check.response.status: 200
-  name: TheHive
-
-- type: http
-  schedule: '@every 10s'
-  urls: ["http://localhost:9001"]
-  check.response.status: 200
-  name: Cortex
-
-#Configure output
-output.elasticsearch:
-  hosts: ["localhost:9200"]
-EOF'
+sudo cp elastic/heartbeat.yml /etc/heartbeat/heartbeat.yml
 sudo sed -i "s/passphrase/$capespassphrase/" /etc/heartbeat/heartbeat.yml
 
 ################################
