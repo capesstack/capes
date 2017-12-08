@@ -537,7 +537,7 @@ sudo sed -i "s/passphrase/$capespassphrase/" /etc/heartbeat/heartbeat.yml
 ################################
 
 sudo yum install -y https://artifacts.elastic.co/downloads/kibana/kibana-6.0.1-x86_64.rpm
-sudo sed -i "s/server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/kibana/kibana.yml
+sudo sed -i "s/#server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/kibana/kibana.yml
 
 ################################
 ########## Firewall ############
@@ -566,7 +566,7 @@ sudo systemctl daemon-reload
 # Configure services for autostart
 sudo systemctl enable nginx.service
 sudo systemctl enable kibana.service
-sudo systemctl enable heartbeat.service
+sudo systemctl enable heartbeat-elastic.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service
 sudo systemctl enable mongod.service
@@ -580,7 +580,7 @@ sudo systemctl enable murmur.service
 # Start all the services
 sudo systemctl start elasticsearch.service
 sudo systemctl start kibana.service
-sudo systemctl start heartbeat.service
+sudo systemctl start heartbeat-elastic.service
 sudo systemctl start cortex.service
 sudo systemctl start gitea.service
 sudo systemctl start thehive.service
