@@ -538,7 +538,7 @@ heartbeat.monitors:
   urls: ["http://localhost:80"]
   check.response.status: 200
   username: operator
-  password: password
+  password: passphrase
   name: Landing_Page
 
 - type: http
@@ -546,7 +546,7 @@ heartbeat.monitors:
   urls: ["http://localhost:80/cyberchef.htm"]
   check.response.status: 200
   username: operator
-  password: password
+  password: passphrase
   name: CyberChef
 
 - type: http
@@ -589,6 +589,7 @@ heartbeat.monitors:
 output.elasticsearch:
   hosts: ["localhost:9200"]
 EOF'
+sudo sed -i "s/passphrase/$capespassphrase/" /etc/heartbeat/heartbeat.yml
 
 ################################
 ########### Kibana #############
