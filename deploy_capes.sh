@@ -528,15 +528,15 @@ sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/htm
 ######## Heartbeat #############
 ################################
 
-sudo yum install -y https://artifacts.elastic.co/downloads/beats/heartbeat/heartbeat-6.0.1-x86_64.rpm
-sudo cp elastic/heartbeat.yml /etc/heartbeat/heartbeat.yml
+sudo yum install -y https://artifacts.elastic.co/downloads/beats/heartbeat/heartbeat-5.6.5-x86_64.rpm
+sudo cp elastic-beats/heartbeat.yml /etc/heartbeat/heartbeat.yml
 sudo sed -i "s/passphrase/$capespassphrase/" /etc/heartbeat/heartbeat.yml
 
 ################################
 ########### Kibana #############
 ################################
 
-sudo yum install -y https://artifacts.elastic.co/downloads/kibana/kibana-6.0.1-x86_64.rpm
+sudo yum install -y https://artifacts.elastic.co/downloads/kibana/kibana-5.6.5-x86_64.rpm
 sudo sed -i "s/#server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/kibana/kibana.yml
 
 ################################
