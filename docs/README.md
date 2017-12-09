@@ -8,6 +8,8 @@ Please see below for Build, Operate, Maintain specifics on the different web app
 * [TheHive](../thehive/build_operate_maintain.md)  
 * [Cortex](../thehive/build_operate_maintain.md)  
 * [Mumble](../mumble/build_operate_maintain.md)  
+* [Kibana](../kibana/build_operate_maintain.md)
+* [Beats (Elastic's Heartbeat & Metricbeat)](../beats/build_operate_maintain.md)
 
 ## Requirements
 There has not been extensive testing, but all of these services have run without issue on a single virtual machine with approximately 20 users and no issue for a week. That said, your mileage may vary.
@@ -88,14 +90,14 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
 1. Login using the account you created during the Anaconda setup
   - Run the following commands
     ```
-    sudo yum update -y && sudo yum install git -y` (Enter the passphrase you created in Anaconda)
+    sudo yum update -y && sudo yum install git -y #(Enter the passphrase you created in Anaconda)
     sudo firewall-cmd --add-service=ssh --permanent
     sudo firewall-cmd --reload
     ```
 1. Secure ssh
   - On your management system, create an ssh key pair
     ```
-    ssh-keygen -t rsa` accept the defaults, but enter a passphrase for your keys
+    ssh-keygen -t rsa #accept the defaults, but enter a passphrase for your keys
     ssh-copy-id your_created_user@<ip of CAPES>
     ssh your_created_user@<ip of CAPES>
     sudo sed -i 's/\#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
@@ -137,6 +139,7 @@ This will start the automated build of:
 * Install Mumble
 * Install CyberChef
 * Install Nginx
+* Install Kibana (with Elastic's Heartbeat and Metricbeat)
 * Install the CAPES landing page
 * Secure the MySQL installation
 * Make firewall changes

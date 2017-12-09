@@ -529,7 +529,7 @@ sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/htm
 ################################
 
 sudo yum install -y https://artifacts.elastic.co/downloads/beats/heartbeat/heartbeat-5.6.5-x86_64.rpm
-sudo cp elastic-beats/heartbeat.yml /etc/heartbeat/heartbeat.yml
+sudo cp beats/heartbeat.yml /etc/heartbeat/heartbeat.yml
 sudo sed -i "s/passphrase/$capespassphrase/" /etc/heartbeat/heartbeat.yml
 
 ################################
