@@ -1,0 +1,60 @@
+metricbeat.modules:
+- module: system
+  metricsets:
+    # CPU stats
+    - cpu
+
+    # System Load stats
+    - load
+
+    # Per CPU core stats
+    - core
+
+    # IO stats
+    - diskio
+
+    # Per filesystem stats
+    - filesystem
+
+    # File system summary stats
+    - fsstat
+
+    # Memory stats
+    - memory
+
+    # Network stats
+    - network
+
+    # Per process stats
+    - process
+
+    # Sockets (linux only)
+    - socket
+  enabled: true
+  period: 10s
+  processes: ['.*']
+
+- module: nginx
+  metricsets: ["stubstatus"]
+  enabled: true
+  period: 10s
+  hosts: ["http://127.0.0.1"]
+
+- module: mongodb
+  metricsets: ["dbstats", "status"]
+  enabled: true
+  period: 10s
+  hosts: ["localhost"]
+
+- module: mysql
+  metricsets: ["status"]
+  hosts: ["tcp(127.0.0.1:3306)/"]
+  username: root
+  password: password_to_be_set_post_install
+
+name: hostname
+
+tags: ["capes"]
+
+output.elasticsearch:
+  hosts: ["localhost:9200"]

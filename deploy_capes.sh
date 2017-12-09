@@ -533,11 +533,22 @@ sudo cp beats/heartbeat.yml /etc/heartbeat/heartbeat.yml
 sudo sed -i "s/passphrase/$capespassphrase/" /etc/heartbeat/heartbeat.yml
 
 ################################
+######## Metricbeat ############
+################################
+
+sudo yum install -y https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-5.6.5-x86_64.rpm
+sudo cp beats/metricbeat.yml /etc/metricbeat/metricbeat.yml
+sudo sed -i "s/hostname/$HOSTNAME/" /etc/metricbeat/metricbeat.yml
+
+################################
 ########### Kibana #############
 ################################
 
 sudo yum install -y https://artifacts.elastic.co/downloads/kibana/kibana-5.6.5-x86_64.rpm
 sudo sed -i "s/#server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/kibana/kibana.yml
+# Install some default visualizations and dashboards
+/usr/share/metricbeat/scripts/./import_dashboards
+/usr/share/heartbeat/scripts/./import_dashboards
 
 ################################
 ########## Firewall ############
@@ -567,6 +578,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable nginx.service
 sudo systemctl enable kibana.service
 sudo systemctl enable heartbeat.service
+sudo systemctl enable metricbeat.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service
 sudo systemctl enable mongod.service
@@ -581,6 +593,7 @@ sudo systemctl enable murmur.service
 sudo systemctl start elasticsearch.service
 sudo systemctl start kibana.service
 sudo systemctl start heartbeat.service
+sudo systemctl start metricbeat.service
 sudo systemctl start cortex.service
 sudo systemctl start gitea.service
 sudo systemctl start thehive.service
