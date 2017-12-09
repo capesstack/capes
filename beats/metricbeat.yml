@@ -50,7 +50,7 @@ metricbeat.modules:
   metricsets: ["status"]
   hosts: ["tcp(127.0.0.1:3306)/"]
   username: root
-  password: password_to_be_set_post_install
+  password: passphrase_to_be_set_post_install
 
 name: hostname
 

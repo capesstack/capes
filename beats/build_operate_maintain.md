@@ -38,6 +38,11 @@ sudo systemctl start metricbeat.service
 **Note, version 6.0 changes the service name to `heartbeat-elastic.service` and `metricbeat-elastic.service`, so don't get twisted on which version you're working with when reading Elastic's documentation**
 
 ## Operate
+Immediately following installation of CAPES (or Metricbeats invidually), you need to go to update your MariaDB root passphrase in the Metricbeat configuration file. If you don't do this, the MySQL visualizations and dashboards won't be populated.  
+1. `sudo vi /etc/metricbeat/metricbeat.yml`
+1. change "passphrase_to_be_set_post_install" to your root passphrase you set during the MySQL securing process
+1. `sudo systemctl restart metricbeat.service`
+
 One you have installed Beats, you need to go into Kibana and create the Heartbeat and Metricbeat Index Patterns.
 
 Browse to http://<capes_ip> and select "Kibana" from the landing page. You will be directed to the Index setup page.
