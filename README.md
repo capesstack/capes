@@ -1,6 +1,8 @@
 # Cyber Analytics Platform and Examination System (CAPES)
 ![capes logo](http://capesstack.io/capes_logo.png)
 
+**People ask from time-to-time what help is needed - documentation. If you see documentation that is wrong, be it grammar, incorrect guidance, or missing; please consider doing a PR correcting it. I will gladly give contributor status to anyone who does anything to make this project easier for people to get started.**
+
 This is the project page for the CAPES project (in order of priority).
 
 CAPES is an operational-focused service hub for segmented, self-hosted, and offline (if necessary) incident response, intelligence analysis, and hunt operations.
