@@ -44,11 +44,12 @@ metricbeat.modules:
   metricsets: ["dbstats", "status"]
   enabled: true
   period: 10s
-  hosts: ["localhost"]
+  hosts: ["localhost:27017"]
 
 - module: mysql
   metricsets: ["status"]
   hosts: ["tcp(127.0.0.1:3306)/"]
+  enabled: true
   username: root
   password: passphrase_to_be_set_post_install
 
