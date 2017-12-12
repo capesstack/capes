@@ -8,6 +8,8 @@ Included with CAPES is Heartbeat and Metricbeat. While these two are very differ
 
 For a description of Heartbeat and Metricbeat, please see the [README](README.md) at the root of this directory.
 
+Additionally, the great team over at Elastic created some default visualizations and dashboards for Metricbeats and Heartbeats that are built into CAPES. They aren't needed to see the data, but...you know...charts and stuff.
+
 ## Build
 **It should be noted, this build is using Heartbeat and Metricbeat 5.6 to align with the installation of Elasticsearch and Kibana 5.6. When TheHive is updated to Elasticsearch 6.0, Kibana and Beats will be close behind.**
 
