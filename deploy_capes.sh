@@ -546,9 +546,6 @@ sudo sed -i "s/hostname/$HOSTNAME/" /etc/metricbeat/metricbeat.yml
 
 sudo yum install -y https://artifacts.elastic.co/downloads/kibana/kibana-5.6.5-x86_64.rpm
 sudo sed -i "s/#server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/kibana/kibana.yml
-# Install some default visualizations and dashboards
-/usr/share/metricbeat/scripts/./import_dashboards
-/usr/share/heartbeat/scripts/./import_dashboards
 
 ################################
 ########## Firewall ############
@@ -615,6 +612,13 @@ sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 mysql_secure_installation
+
+###################################
+###### Install some default #######
+## visualizations and dashboards ##
+###################################
+/usr/share/metricbeat/scripts/./import_dashboards
+/usr/share/heartbeat/scripts/./import_dashboards
 
 ###############################
 ### Clear your Bash history ###
