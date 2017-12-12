@@ -634,4 +634,6 @@ echo "The Gitea passphrase for the MySQL database is: "$giteapassphrase
 echo "The Etherpad passphrase for the MySQL database and the service administration account is: "$etherpadpassphrase
 echo "The Mumble SuperUser passphrase is: "$mumblepassphrase
 echo "The CAPES landing passphrase for the account \"operator\" is: "$capespassphrase
+echo "You will need to update "/usr/share/metricbeat/metricbeat.yml" with the root passphrase for the MariaDB you just set."
+echo "Please see the "Build, Operate, Maintain" documentation for the individual services."
 echo "The CAPES landing page has been successfully deployed. Browse to http://$HOSTNAME (or http://$IP if you don't have DNS set up) to begin using the services."
