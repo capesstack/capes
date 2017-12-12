@@ -533,6 +533,14 @@ sudo cp beats/heartbeat.yml /etc/heartbeat/heartbeat.yml
 sudo sed -i "s/passphrase/$capespassphrase/" /etc/heartbeat/heartbeat.yml
 
 ################################
+######## Metricbeat ############
+################################
+
+sudo yum install -y https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-5.6.5-x86_64.rpm
+sudo cp beats/metricbeat.yml /etc/metricbeat/metricbeat.yml
+sudo sed -i "s/hostname/$HOSTNAME/" /etc/metricbeat/metricbeat.yml
+
+################################
 ########### Kibana #############
 ################################
 
@@ -567,6 +575,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable nginx.service
 sudo systemctl enable kibana.service
 sudo systemctl enable heartbeat.service
+sudo systemctl enable metricbeat.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service
 sudo systemctl enable mongod.service
@@ -581,6 +590,7 @@ sudo systemctl enable murmur.service
 sudo systemctl start elasticsearch.service
 sudo systemctl start kibana.service
 sudo systemctl start heartbeat.service
+sudo systemctl start metricbeat.service
 sudo systemctl start cortex.service
 sudo systemctl start gitea.service
 sudo systemctl start thehive.service
@@ -603,6 +613,13 @@ sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 mysql_secure_installation
 
+###################################
+###### Install some default #######
+## visualizations and dashboards ##
+###################################
+/usr/share/metricbeat/scripts/./import_dashboards
+/usr/share/heartbeat/scripts/./import_dashboards
+
 ###############################
 ### Clear your Bash history ###
 ###############################
@@ -617,4 +634,6 @@ echo "The Gitea passphrase for the MySQL database is: "$giteapassphrase
 echo "The Etherpad passphrase for the MySQL database and the service administration account is: "$etherpadpassphrase
 echo "The Mumble SuperUser passphrase is: "$mumblepassphrase
 echo "The CAPES landing passphrase for the account \"operator\" is: "$capespassphrase
+echo "You will need to update "/usr/share/metricbeat/metricbeat.yml" with the root passphrase for the MariaDB you just set."
+echo "Please see the "Build, Operate, Maintain" documentation for the individual services."
 echo "The CAPES landing page has been successfully deployed. Browse to http://$HOSTNAME (or http://$IP if you don't have DNS set up) to begin using the services."

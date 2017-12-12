@@ -18,7 +18,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 1. Landing Page
 1. CyberChef
 1. Mumble
-1. Kibana (with Heartbeat)
+1. Kibana (with Heartbeat and Metricbeat)
 1. Hippocampe *
 
 ## Roadmap
@@ -36,7 +36,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
   - Mumble
   - TheHive
   - Cortex
-  - Kibana (with Heartbeat)
+  - Kibana (with Heartbeat and Metricbeat)
   - CyberChef
   - CAPES Landing Page
 * CAPES deploy script with Landing Page presenting:
@@ -47,7 +47,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
   - Etherpad
   - TheHive
   - Cortex
-  - Kibana (with Heartbeat)
+  - Kibana (with Heartbeat and Metricbeat)
 
 ## Note
 \* designates current effort
