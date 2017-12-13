@@ -82,7 +82,7 @@ sudo systemctl start chronyd.service
 sudo yum install java-1.8.0-openjdk.x86_64 epel-release -y && sudo yum update -y
 sudo yum groupinstall "Development Tools" -y
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-sudo yum install https://kojipkgs.fedoraproject.org/packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm -y
+sudo yum install libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
