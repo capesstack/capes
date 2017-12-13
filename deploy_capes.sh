@@ -8,6 +8,7 @@
 # To fix this, we are going to disable the GPG signature and local RPM GPG signature checking.
 # I'm open to other options here.
 # RHEL's official statement on this: https://access.redhat.com/solutions/2850911
+# Leaving as a backup, but this is fixed by installing https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm with yum, which is done with this install script.
 # sudo sed -i 's/repo_gpgcheck=1/repo_gpgcheck=0/' /etc/yum.conf
 # sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
 
