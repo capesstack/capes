@@ -55,7 +55,7 @@ Browse to http://<capes_ip> and select "Kibana" from the landing page. You will 
 
 The Heartbeat and Metricbeat Index Patterns _should_ have been added, but you'll need to define a Default Index Pattern. `heartbeat-*` or `metricbeat-*`, the choice is yours which your default is. You do this by selecting either one of them and then clicking the "Star" in the upper right of the Kibana screen. You can swap between indicies at will, but you need to set a default.
 
-If Metricbeat or Heartbeat aren't there, this isn't a problem, see Troubleshooting to fix the issue.
+If Metricbeat or Heartbeat aren't there, this isn't a problem, see [Troubleshooting](https://github.com/capesstack/capes/blob/master/beats/build_operate_maintain.md#troubleshooting) to fix the issue.
 ![beats_set_default](img/beats_set_default.png)  
 
 The Filebeat Index Pattern will need to be manually added by clicking on `Create Index Pattern` and typing `filebeat-*` and clicking `Create`.
@@ -64,7 +64,7 @@ Once you have completed the Index Pattern setup, click on the "Discover Tab" on 
 ![switch_index](img/index_switch.png)
 
 ### Dashboards
-This is really neat, but feel free to explore on your own. There should be some default dashboards for Metricbeat and Heartbeat loaded. If not, see the Troubleshooting section.
+This is really neat, but feel free to explore on your own. There should be some default dashboards for Metricbeat and Heartbeat loaded. If not, see the [Troubleshooting](https://github.com/capesstack/capes/blob/devel/beats/build_operate_maintain.md#troubleshooting) section.
 ![beats_overview](img/overview.png)
 ![beats_processes](img/processes.png)
 ![beats_cpu](img/cpu.png)
