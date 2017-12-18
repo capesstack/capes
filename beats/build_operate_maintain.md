@@ -54,6 +54,16 @@ The Heartbeat and Metricbeat Index Patterns _should_ have been added, but you'll
 
 Once you have completed the Index Pattern setup, click on the "Discover Tab" on the top left of your screen to start exploring data.
 
+### Dashboards
+This is really neat, but feel free to explore on your own. There should be some default dashboards loaded. If not, see the Troubleshooting section.
+![beats_overview](img/overview.png)
+![beats_processes](img/processes.png)
+![beats_cpu](img/cpu.png)
+![beats_filesystem](img/filesystem.png)
+![beats_filesystem_per_host](img/filesystem_per_host.png)
+![beats_memory](img/memory.png)
+![beats_network](img/network.png)
+
 ### Deleting Data
 In the event you want to delete some Beat data, use this
 ```
