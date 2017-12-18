@@ -1,6 +1,7 @@
 # Documentation
 Please see below for Build, Operate, Maintain specifics on the different web applications
-* [CAPES Landing Page](../landing_page/build_operate_maintain.md)  
+* [Post Installation]()
+* [CAPES Landing Page](https://github.com/capesstack/capes/tree/master/docs#post-installation)  
 * [CyberChef](../cyberchef/build_operate_maintain.md)
 * [Etherpad](../etherpad/build_operate_maintain.md)  
 * [Gitea](../gitea/build_operate_maintain.md)  
@@ -144,6 +145,11 @@ This will start the automated build of:
 * Secure the MySQL installation
 * Make firewall changes
 * Set everything to autostart
+
+## Post Installation
+While the CAPES deploy script attempts to get you up and running, there are a few things that need to be done after installation.
+1. Set your MariaDB root passphrase (which you set at the very end of the deployment) in `/etc/metricbeat/metricbeat.yml`, replacing `passphrase_to_be_set_post_install`  
+1. Set your Cortex API keys in `/etc/cortex/application.conf`. It's pretty self-explanatory where they all go  
 
 ## Get Started
 After the CAPES installation, you should be able to browse to `http://capes_system` (or `http://capes_IP` if you don't have DNS set up) to get to the CAPES landing page and start setting up services.
