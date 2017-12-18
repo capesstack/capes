@@ -11,10 +11,10 @@ For a description of Heartbeat, Filebeat, and Metricbeat, please see the [README
 Additionally, the great team over at Elastic created some default visualizations and dashboards for Metricbeats and Heartbeats that are built into CAPES. They aren't needed to see the data, but...you know...charts and stuff.
 
 ## Build
-**It should be noted, this build is using Heartbeat and Metricbeat 5.6 to align with the installation of Elasticsearch and Kibana 5.6. When TheHive is updated to Elasticsearch 6.0, Kibana and Beats will be close behind.**
+**It should be noted, this build is using Heartbeat, Filebeat, and Metricbeat 5.6 to align with the installation of Elasticsearch and Kibana 5.6. When TheHive is updated to Elasticsearch 6.0, Kibana and Beats will be close behind.**
 
 ### Dependencies
-There are no dependencies. Beats (Heartbeat and Metricbeat) are installed using `deploy_capes.sh` script in the root of this repository.
+There are no dependencies. Beats (Heartbeat, Filebeat, and Metricbeat) are installed using `deploy_capes.sh` script in the root of this repository.
 
 ### Server Build
 Please see the [server build instructions](../docs/README.md#build-your-os).
@@ -41,7 +41,7 @@ sudo systemctl start filebeat.service
 sudo systemctl start heartbeat.service
 sudo systemctl start metricbeat.service
 ```
-**Note, version 6.0 changes the service name to `heartbeat-elastic.service` and `metricbeat-elastic.service`, so don't get twisted on which version you're working with when reading Elastic's documentation**
+**Note, version 6.0 changes the service name to `heartbeat-elastic.service`, `filebeat-elastic.service`, and `metricbeat-elastic.service`, so don't get twisted on which version you're working with when reading Elastic's documentation**
 
 ## Operate
 Immediately following installation of CAPES (or Metricbeats individually), you need to go to update your MariaDB root passphrase in the Metricbeat configuration file. If you don't do this, the MySQL visualizations and dashboards won't be populated.  
@@ -60,8 +60,8 @@ If Metricbeat or Heartbeat aren't there, this isn't a problem, see Troubleshooti
 
 The Filebeat Index Pattern will need to be manually added by clicking on `Create Index Pattern` and typing `filebeat-*` and clicking `Create`.
 
-Once you have completed the Index Pattern setup, click on the "Discover Tab" on the top left of your screen to start exploring data. You can flip between indicies right above the `Selected Fields` section.
-~[switch_index](img/index_switch.png)
+Once you have completed the Index Pattern setup, click on the "Discover Tab" on the top left of your screen to start exploring data. You can flip between indicies right above the `Selected Fields` section.  
+![switch_index](img/index_switch.png)
 
 ### Dashboards
 This is really neat, but feel free to explore on your own. There should be some default dashboards for Metricbeat and Heartbeat loaded. If not, see the Troubleshooting section.
