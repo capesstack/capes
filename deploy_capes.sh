@@ -427,7 +427,7 @@ thread_pool.bulk.queue_size: 1000
 EOF'
 
 # Collect the Cortex analyzers
-sudo git clone https://github.com/CERT-BDF/Cortex-Analyzers.git /opt/cortex/
+sudo git clone https://github.com/capesstack/Cortex-Analyzers.git /opt/cortex/
 
 # Collect the Cortex Report Templates
 sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
