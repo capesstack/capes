@@ -95,7 +95,7 @@ thread_pool.bulk.queue_size: 1000
 EOF'
 
 # Collect the Cortex analyzers
-sudo git clone https://github.com/CERT-BDF/Cortex-Analyzers.git /opt/cortex/
+sudo git clone https://github.com/capesstack/Cortex-Analyzers.git /opt/cortex/
 
 # Collect the Cortex Report Templates
 sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
@@ -133,10 +133,11 @@ sudo firewall-cmd --reload
 
 # Update Pip...just because it's ludicious that installing it doesn't bring the updated version
 sudo pip install --upgrade pip
+
 # Add the future Python package and then install the Cortex Python dependencies
 sudo pip install future
-# for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
 
+# for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
@@ -164,7 +165,7 @@ sudo bash -c 'cat >> /etc/thehive/application.conf <<EOF
 play.modules.enabled += connectors.cortex.CortexConnector
 cortex {
   "CORTEX-SERVER-ID" {
-  url = "http://$HOSTNAME:9001"
+  url = "http://`hostname -I | sed -e 's/[[:space:]]*$//'`:9001"
   }
 }
 EOF'

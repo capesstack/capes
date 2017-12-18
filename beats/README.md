@@ -13,6 +13,11 @@ Metricbeat collects metrics from your systems and services. From CPU to memory, 
 
 We use Metricbeat to ensure that CAPES is given the appropriate resources for the use case.
 
+## Filebeat
+Filebeat comes with internal modules (auditd, Apache, Nginx, System, and MySQL) that simplify the collection, parsing, and visualization of common log formats down to a single command. They achieve this by combining automatic defaults based on your operating system, with Elasticsearch Ingest Node pipeline definitions, and with Kibana dashboards.
+
+We use Filebeat to watch different parts of CAPES to ensure that they're not being targeted or abused.
+
 ## Documentation / Installation
 See the [Build, Operate, Maintain page](build_operate_maintain.md) for detailed instructions.  
 

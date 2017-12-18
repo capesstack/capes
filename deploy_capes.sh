@@ -427,7 +427,7 @@ thread_pool.bulk.queue_size: 1000
 EOF'
 
 # Collect the Cortex analyzers
-sudo git clone https://github.com/CERT-BDF/Cortex-Analyzers.git /opt/cortex/
+sudo git clone https://github.com/capesstack/Cortex-Analyzers.git /opt/cortex/
 
 # Collect the Cortex Report Templates
 sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
@@ -533,6 +533,14 @@ sudo cp beats/heartbeat.yml /etc/heartbeat/heartbeat.yml
 sudo sed -i "s/passphrase/$capespassphrase/" /etc/heartbeat/heartbeat.yml
 
 ################################
+######### Filebeat #############
+################################
+sudo yum install -y https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.6.5-x86_64.rpm
+sudo cp beats/filebeat.yml /etc/filebeat/filebeat.yml
+sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-user-agent
+sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-geoip
+
+################################
 ######## Metricbeat ############
 ################################
 
@@ -559,7 +567,6 @@ sudo sed -i "s/#server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/
 # Port 7000 - Mumble
 # Port 9000 - TheHive
 # Port 9001 - Cortex (TheHive Analyzer Plugins)
-# Port 9002 - HippoCampe (TheHive Threat Feed Plugin)
 sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=5601/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
 sudo firewall-cmd --reload
 
@@ -575,6 +582,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable nginx.service
 sudo systemctl enable kibana.service
 sudo systemctl enable heartbeat.service
+sudo systemctl enable filebeat.service
 sudo systemctl enable metricbeat.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service
@@ -589,8 +597,6 @@ sudo systemctl enable murmur.service
 # Start all the services
 sudo systemctl start elasticsearch.service
 sudo systemctl start kibana.service
-sudo systemctl start heartbeat.service
-sudo systemctl start metricbeat.service
 sudo systemctl start cortex.service
 sudo systemctl start gitea.service
 sudo systemctl start thehive.service
@@ -599,6 +605,9 @@ sudo systemctl start etherpad.service
 sudo systemctl start rocketchat.service
 sudo systemctl start murmur.service
 sudo systemctl start nginx.service
+sudo systemctl start heartbeat.service
+sudo systemctl start metricbeat.service
+sudo systemctl start filebeat.service
 
 # Configure the Murmur SuperUser account
 sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
