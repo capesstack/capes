@@ -3,57 +3,33 @@
 
 **People ask from time-to-time what help is needed - documentation. If you see documentation that is wrong, be it grammar, incorrect guidance, or missing; please consider doing a PR correcting it. I will gladly give contributor status to anyone who does anything to make this project easier for people to get started.**
 
-This is the project page for the CAPES project (in order of priority).
-
 CAPES is an operational-focused service hub for segmented, self-hosted, and offline (if necessary) incident response, intelligence analysis, and hunt operations.
 
 ![capes architecture](http://capesstack.io/capes_arch.png)
 
-## Services
-1. Rocketchat
-1. Etherpad
-1. Gitea
-1. TheHive
-1. Cortex
-1. Landing Page
-1. CyberChef
-1. Mumble
-1. Kibana (with Heartbeat and Metricbeat)
-1. Hippocampe *
+## Services in CAPES
+1. Rocketchat (Chat)
+1. Etherpad (Collaboration-style documentation)
+1. Gitea (Version controlled documentation)
+1. CyberChef (Data analysis)
+1. Mumble (VoIP)
+1. TheHive (Incident Response)
+1. Cortex (Indicator enrichment)
+1. Kibana (Data visualization)
+1. Beats - Metric, Heart, and File (Performance and health metrics)
 
 ## Roadmap
 1. Get working shell script for all services
 1. Get shell scripts combined into a singular CAPES deploy script
 1. Documentation *
-1. Convert shell script to Ansible
 1. Convert CAPES to Docker
-
-## Done
-* Working shell scripts
-  - RocketChat
-  - Etherpad
-  - Gitea
-  - Mumble
-  - TheHive
-  - Cortex
-  - Kibana (with Heartbeat and Metricbeat)
-  - CyberChef
-  - CAPES Landing Page
-* CAPES deploy script with Landing Page presenting:
-  - RocketChat
-  - CyberChef
-  - Gitea
-  - Mumble
-  - Etherpad
-  - TheHive
-  - Cortex
-  - Kibana (with Heartbeat and Metricbeat)
 
 ## Note
 \* designates current effort
 
 ## Documentation / Installation
 See [docs](docs/README.md) for detailed instructions.  
+
 ### CentOS 7.4
 ```
 $ sudo yum -y install git
@@ -72,3 +48,9 @@ $ sudo sh deploy_capes.sh
 ## Usage
 1. See the [Build, Operate, Maintain guides](docs/README.md) to complete post-installation configuration
 1. Browse to http://capes_IP
+
+# Troubleshooting
+Please see the [documentation](https://github.com/capesstack/capes/tree/master/docs#documentation) or feel free to open a [GitHub Issue](https://github.com/capesstack/capes/issues).
+
+# Training & Professional Services
+While CAPES is a FOSS project and we'll attempt to support deployment questions via the Issues page, if you need training or PS, please feel free to check out some options over at [Perched](http://perched.io)

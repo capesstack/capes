@@ -149,7 +149,8 @@ This will start the automated build of:
 ## Post Installation
 While the CAPES deploy script attempts to get you up and running, there are a few things that need to be done after installation.
 1. Set your MariaDB root passphrase (which you set at the very end of the deployment) in `/etc/metricbeat/metricbeat.yml`, replacing `passphrase_to_be_set_post_install`  
-1. Set your Cortex API keys in `/etc/cortex/application.conf`. It's pretty self-explanatory where they all go  
+1. Set your Cortex API keys in `/etc/cortex/application.conf` (it's pretty self-explanatory where they all go) and `sudo systemctl restart cortex.service`
+1. Check Filebeat and make sure it's running. If Elasticsearch doesn't start fast enough, Filebeat will fail when trying to connect to it. If Filebeat isn't started )`sudo systemctl status filebeat.service`) you can look at the log file to see what the reason is (`sudo cat /var/log/filebeat/capes_filebeat`)
 
 ## Get Started
 After the CAPES installation, you should be able to browse to `http://capes_system` (or `http://capes_IP` if you don't have DNS set up) to get to the CAPES landing page and start setting up services.
