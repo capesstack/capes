@@ -622,6 +622,11 @@ sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 mysql_secure_installation
 
+################################
+########## Remove gcc ##########
+################################
+sudo yum -y remove gcc-c++
+
 ###################################
 ###### Install some default #######
 ## visualizations and dashboards ##

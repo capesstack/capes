@@ -131,6 +131,9 @@ sudo systemctl enable rocketchat.service
 sudo firewall-cmd --add-port=3000/tcp --permanent
 sudo firewall-cmd --reload
 
+# Remove gcc
+sudo yum -y remove gcc-c++
+
 # Start RocketChat and MongoDB services
 sudo systemctl start mongod.service
 sudo systemctl start rocketchat.service
