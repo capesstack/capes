@@ -157,7 +157,6 @@ sudo chmod 640 /etc/cortex/application.conf
 
 # Configure Cortex to run on port 9001 instead of the default 9000, which is shared with TheHive
 sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
-sudo systemctl daemon-reload
 
 # Connect TheHive to Cortex
 sudo bash -c 'cat >> /etc/thehive/application.conf <<EOF

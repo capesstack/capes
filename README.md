@@ -54,5 +54,10 @@ Please see the [documentation](https://github.com/capesstack/capes/tree/master/d
 
 Want to join the discussion? Send a request to join our Slack Workspace to contact [at] capesstack[.]io
 
+# Swag
+Interested in some CAPES swag? Send me a email to contact [at] capesstack[.]io and I'll send you some laptop decals.
+
+If you're interested in CAPES t-shirts, we parter with TeeSpring for those. Feel free to check out [our storefront](https://teespring.com/stores/capesstack). We don't make a penny on these - 100% of the profits go to the National Alliance to End Homelessness. 
+
 # Training & Professional Services
 While CAPES is a FOSS project and we'll attempt to support deployment questions via the Issues page, if you need training or PS, please feel free to check out some options over at [Perched](http://perched.io)
