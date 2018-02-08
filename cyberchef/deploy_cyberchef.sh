@@ -85,6 +85,9 @@ sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/htm
 sudo firewall-cmd --add-port=80/tcp --permanent
 sudo firewall-cmd --reload
 
+# Prepare the service environment
+sudo systemctl daemon-reload
+
 # Configure the nginx service to start on boot and start it
 sudo systemctl enable nginx.service
 sudo systemctl start nginx.service

@@ -123,6 +123,9 @@ Environment=MONGO_URL=mongodb://localhost:27017/rocketchat ROOT_URL=http://local
 WantedBy=multi-user.target
 EOF'
 
+# Prepare the service environment
+sudo systemctl daemon-reload
+
 # Configure RocketChat services
 sudo systemctl enable mongod.service
 sudo systemctl enable rocketchat.service

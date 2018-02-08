@@ -119,6 +119,9 @@ Environment=USER=gitea HOME=/home/gitea
 WantedBy=multi-user.target
 EOF'
 
+# Prepare the service environment
+sudo systemctl daemon-reload
+
 # Configure services for autostart
 sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service

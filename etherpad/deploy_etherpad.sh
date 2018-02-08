@@ -224,6 +224,9 @@ EOF'
 sudo firewall-cmd --add-port=5000/tcp --permanent
 sudo firewall-cmd --reload
 
+# Prepare the service environment
+sudo systemctl daemon-reload
+
 # Configure the Etherpad service to start on boot and start it
 # Your first boot will take a few minutes while the final npm dependencies are grabbed
 sudo systemctl enable etherpad.service

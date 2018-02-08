@@ -170,6 +170,9 @@ cortex {
 }
 EOF'
 
+# Prepare the service environment
+sudo systemctl daemon-reload
+
 # Set Elasticsearch and TheHive Project to start on boot
 sudo systemctl enable elasticsearch.service
 sudo systemctl enable thehive.service
