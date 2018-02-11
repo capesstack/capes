@@ -11,12 +11,12 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 1. Rocketchat (Chat)
 1. Etherpad (Collaboration-style documentation)
 1. Gitea (Version controlled documentation)
-1. CyberChef (Data analysis)
-1. Mumble (VoIP)
 1. TheHive (Incident Response)
 1. Cortex (Indicator enrichment)
-1. Kibana (Data visualization)
+1. CyberChef (Data analysis)
+1. Mumble (VoIP)
 1. Beats - Metric, Heart, and File (Performance and health metrics)
+1. Kibana (Data visualization)
 
 ## Roadmap
 1. Get working shell script for all services
@@ -57,7 +57,7 @@ Want to join the discussion? Send a request to join our Slack Workspace to conta
 # Swag
 Interested in some CAPES swag? Send me a email to contact [at] capesstack[.]io and I'll send you some laptop decals.
 
-If you're interested in CAPES t-shirts, we parter with TeeSpring for those. Feel free to check out [our storefront](https://teespring.com/stores/capesstack). We don't make a penny on these - 100% of the profits go to the National Alliance to End Homelessness. 
+If you're interested in CAPES t-shirts, we parter with TeeSpring for those. Feel free to check out [our storefront](https://teespring.com/stores/capesstack). We don't make a penny on these - 100% of the profits go to the National Alliance to End Homelessness.
 
 # Training & Professional Services
 While CAPES is a FOSS project and we'll attempt to support deployment questions via the Issues page, if you need training or PS, please feel free to check out some options over at [Perched](http://perched.io)
