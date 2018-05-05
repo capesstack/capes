@@ -1,6 +1,17 @@
 #!/bin/bash
 
 ################################
+######### Epel Release #########
+################################
+# The DISA STIG for CentOS 7.4.1708 enforces a GPG signature check for all repodata. While this is generally a good idea, it causes repos tha do not use GPG Armor to fail.
+# One example of a repo that does not use GPG Armor is Epel; which is a dependency of CAPES (and tons of other projects, for that matter).
+# To fix this, we are going to disable the GPG signature and local RPM GPG signature checking.
+# I'm open to other options here.
+# RHEL's official statement on this: https://access.redhat.com/solutions/2850911
+sudo sed -i 's/repo_gpgcheck=1/repo_gpgcheck=0/' /etc/yum.conf
+sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
+
+################################
 ##### Collect Credentials ######
 ################################
 
@@ -64,13 +75,29 @@ sudo systemctl start chronyd.service
 ################################
 
 # Install dependencies
-sudo yum install mariadb-server firewalld -y
+sudo yum install epel-release -y
+sudo yum install mariadb-server http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm firewalld -y
+sudo yum update git -y
 sudo systemctl start mariadb.service
 
 # Configure MariaDB
 mysql -u root -e "CREATE DATABASE gitea;"
 mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO 'gitea'@'localhost' IDENTIFIED BY '$giteapassphrase';"
 mysql -u root -e "FLUSH PRIVILEGES;"
+mysql -u root -e "set global innodb_file_format = Barracuda;
+set global innodb_file_per_table = on;
+set global innodb_large_prefix = 1;
+use gitea;
+CREATE TABLE oauth2_session (
+  id varchar(400) NOT NULL,
+  data text,
+  created_unix bigint(20) DEFAULT NULL,
+  updated_unix bigint(20) DEFAULT NULL,
+  expires_unix bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ALTER TABLE oauth2_session
+  ADD PRIMARY KEY (id(191));
+COMMIT;"
 
 # Prevent remote access to MariaDB
 sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'

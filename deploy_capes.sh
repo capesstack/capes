@@ -176,6 +176,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
 EOF'
 
 # Install dependencies
+# curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
 sudo yum install epel-release -y && sudo yum update -y
 sudo yum install nodejs GraphicsMagick npm mongodb-org gcc-c++ -y
 
@@ -219,13 +220,28 @@ EOF'
 ################################
 
 # Install dependencies
-sudo yum install mariadb-server -y
+sudo yum install mariadb-server http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm -y
+sudo yum update git -y
 sudo systemctl start mariadb.service
 
 # Configure MariaDB
 mysql -u root -e "CREATE DATABASE gitea;"
 mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO 'gitea'@'localhost' IDENTIFIED BY '$giteapassphrase';"
 mysql -u root -e "FLUSH PRIVILEGES;"
+mysql -u root -e "set global innodb_file_format = Barracuda;
+set global innodb_file_per_table = on;
+set global innodb_large_prefix = 1;
+use gitea;
+CREATE TABLE oauth2_session (
+  id varchar(400) NOT NULL,
+  data text,
+  created_unix bigint(20) DEFAULT NULL,
+  updated_unix bigint(20) DEFAULT NULL,
+  expires_unix bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ALTER TABLE oauth2_session
+  ADD PRIMARY KEY (id(191));
+COMMIT;"
 
 # Create the Gitea user
 sudo useradd -s /usr/sbin/nologin gitea
@@ -260,149 +276,6 @@ ExecStart=/opt/gitea/gitea web -p 4000
 Restart=always
 Environment=USER=gitea HOME=/home/gitea
 
-[Install]
-WantedBy=multi-user.target
-EOF'
-
-################################
-########### Etherpad ###########
-################################
-
-# Install dependencies
-sudo yum install openssl-devel -y && sudo yum groupinstall "Development Tools" -y
-
-# Configure MySQL
-mysql -u root -e "CREATE DATABASE etherpad;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassphrase';"
-mysql -u root -e "FLUSH PRIVILEGES;"
-
-# Add the Etherpad user
-sudo useradd -s /usr/sbin/nologin etherpad
-
-# Get the Etherpad packages
-sudo mkdir -p /opt/etherpad
-sudo git clone https://github.com/ether/etherpad-lite.git /opt/etherpad
-
-# Configure the Etherpad settings
-sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
-{
-  "title": "CAPES Etherpad",
-  "favicon": "favicon.ico",
-  "ip": "0.0.0.0",
-  "port" : 5000,
-  "showSettingsInAdminPage" : true,
-   "dbType" : "mysql",
-   "dbSettings" : {
-                    "user"    : "etherpad",
-                    "host"    : "localhost",
-                    "password": "etherpadpassphrase",
-                    "database": "etherpad",
-                    "charset" : "utf8mb4"
-                  },
-  "defaultPadText" : "Welcome to the CAPES Etherpad.\n\nThis pad text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents.",
-  "padOptions": {
-    "noColors": false,
-    "showControls": true,
-    "showChat": true,
-    "showLineNumbers": true,
-    "useMonospaceFont": false,
-    "userName": false,
-    "userColor": false,
-    "rtl": false,
-    "alwaysShowChat": false,
-    "chatAndUsers": false,
-    "lang": "en-gb"
-  },
-  "padShortcutEnabled" : {
-    "altF9"     : true, /* focus on the File Menu and/or editbar */
-    "altC"      : true, /* focus on the Chat window */
-    "cmdShift2" : true, /* shows a gritter popup showing a line author */
-    "delete"    : true,
-    "return"    : true,
-    "esc"       : true, /* in mozilla versions 14-19 avoid reconnecting pad */
-    "cmdS"      : true, /* save a revision */
-    "tab"       : true, /* indent */
-    "cmdZ"      : true, /* undo/redo */
-    "cmdY"      : true, /* redo */
-    "cmdI"      : true, /* italic */
-    "cmdB"      : true, /* bold */
-    "cmdU"      : true, /* underline */
-    "cmd5"      : true, /* strike through */
-    "cmdShiftL" : true, /* unordered list */
-    "cmdShiftN" : true, /* ordered list */
-    "cmdShift1" : true, /* ordered list */
-    "cmdShiftC" : true, /* clear authorship */
-    "cmdH"      : true, /* backspace */
-    "ctrlHome"  : true, /* scroll to top of pad */
-    "pageUp"    : true,
-    "pageDown"  : true
-  },
-  "suppressErrorsInPadText" : false,
-  "requireSession" : false,
-  "editOnly" : false,
-  "sessionNoPassword" : false,
-  "minify" : true,
-  "maxAge" : 21600, // 60 * 60 * 6 = 6 hours
-  "abiword" : null,
-  "soffice" : null,
-  "tidyHtml" : null,
-  "allowUnknownFileEnds" : true,
-  "requireAuthentication" : false,
-  "requireAuthorization" : false,
-  "trustProxy" : true,
-  "disableIPlogging" : false,
-  "automaticReconnectionTimeout" : 0,
-  "users": {
-    "admin": {
-      "password": "etherpadpassphrase",
-      "is_admin": true
-    },
-  },
-  "socketTransportProtocols" : ["xhr-polling", "jsonp-polling", "htmlfile"],
-  "loadTest": false,
-  "indentationOnNewLine": true,
-  "toolbar": {
-    "left": [
-      ["bold", "italic", "underline", "strikethrough"],
-      ["orderedlist", "unorderedlist", "indent", "outdent"],
-      ["undo", "redo"],
-      ["clearauthorship"]
-    ],
-    "right": [
-      ["importexport", "timeslider", "savedrevision"],
-      ["settings", "embed"],
-      ["showusers"]
-    ],
-    "timeslider": [
-      ["timeslider_export", "timeslider_returnToPad"]
-    ]
-  },
-  "loglevel": "INFO",
-  "logconfig" :
-    { "appenders": [
-        { "type": "console"
-        //, "category": "access"// only logs pad access
-        }
-      ]
-    }
-}
-EOF'
-sudo sed -i "s/etherpadpassphrase/$etherpadpassphrase/" /opt/etherpad/settings.json
-
-# Give the Etherpad user ownership of the /opt/etherpad directory
-sudo chown -R etherpad:etherpad /opt/etherpad
-
-# Create the systemd Etherpad service
-sudo bash -c 'cat > /usr/lib/systemd/system/etherpad.service <<EOF
-[Unit]
-Description=The Etherpad server
-After=network.target remote-fs.target nss-lookup.target
-[Service]
-ExecStart=/opt/etherpad/bin/run.sh
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=etherpad
-User=etherpad
 [Install]
 WantedBy=multi-user.target
 EOF'
@@ -588,7 +461,7 @@ sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service
 sudo systemctl enable mongod.service
 sudo systemctl enable rocketchat.service
-sudo systemctl enable etherpad.service
+# sudo systemctl enable etherpad.service
 sudo systemctl enable elasticsearch.service
 sudo systemctl enable thehive.service
 sudo systemctl enable cortex.service
@@ -601,13 +474,13 @@ sudo systemctl start cortex.service
 sudo systemctl start gitea.service
 sudo systemctl start thehive.service
 sudo systemctl start mongod.service
-sudo systemctl start etherpad.service
-sudo systemctl start rocketchat.service
+# sudo systemctl start etherpad.service
 sudo systemctl start murmur.service
 sudo systemctl start nginx.service
 sudo systemctl start heartbeat.service
 sudo systemctl start metricbeat.service
 sudo systemctl start filebeat.service
+sudo systemctl start rocketchat.service
 
 # Configure the Murmur SuperUser account
 sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase

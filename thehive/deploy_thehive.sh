@@ -131,7 +131,7 @@ _EOF_
 sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
 sudo firewall-cmd --reload
 
-# Update Pip...just because it's ludicious that installing it doesn't bring the updated version
+# Update Pip...just because it's ludicrous that installing it doesn't bring the updated version
 sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies

@@ -85,6 +85,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
 EOF'
 
 # Install dependencies
+# curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
 sudo yum install epel-release -y && sudo yum update -y
 sudo yum install nodejs curl GraphicsMagick npm mongodb-org gcc-c++ -y
 
