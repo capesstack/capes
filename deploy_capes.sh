@@ -219,6 +219,8 @@ EOF'
 ########## Gitea ###############
 ################################
 
+# Big thanks to @seven62 for fixing the Git 2.x and MariaDB issues and getting the service back in the green!
+
 # Install dependencies
 sudo yum install mariadb-server http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm -y
 sudo yum update git -y
