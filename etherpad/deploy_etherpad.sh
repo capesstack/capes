@@ -80,7 +80,8 @@ sudo systemctl start chronyd.service
 ################################
 
 # Install dependencies
-sudo yum install git openssl-devel epel-release expect -y && sudo yum groupinstall "Development Tools" -y
+curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
+sudo yum install openssl-devel epel-release -y && sudo yum groupinstall "Development Tools" -y
 sudo yum install nodejs mariadb-server -y
 
 # Configure MySQL
@@ -223,6 +224,9 @@ EOF'
 # Make firewall configurations
 sudo firewall-cmd --add-port=5000/tcp --permanent
 sudo firewall-cmd --reload
+
+# Prepare the service environment
+sudo systemctl daemon-reload
 
 # Configure the Etherpad service to start on boot and start it
 # Your first boot will take a few minutes while the final npm dependencies are grabbed

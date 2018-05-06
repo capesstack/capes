@@ -1,7 +1,7 @@
 # Documentation
 Please see below for Build, Operate, Maintain specifics on the different web applications
 * [Post Installation](https://github.com/capesstack/capes/tree/master/docs#post-installation)
-* [CAPES Landing Page](../lading_page/build_operate_maintain.md)  
+* [CAPES Landing Page](../landing_page/build_operate_maintain.md)  
 * [CyberChef](../cyberchef/build_operate_maintain.md)
 * [Etherpad](../etherpad/build_operate_maintain.md)  
 * [Gitea](../gitea/build_operate_maintain.md)  

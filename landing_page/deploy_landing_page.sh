@@ -33,6 +33,9 @@ sudo htpasswd -bc /etc/nginx/.htpasswd operator $capespassphrase
 sudo sed -i '43 a \\tauth_basic "CAPES Login";' /etc/nginx/nginx.conf
 sudo sed -i '44 a \\tauth_basic_user_file /etc/nginx/.htpasswd;' /etc/nginx/nginx.conf
 
+# Prepare the service environment
+sudo systemctl daemon-reload
+
 # Start Nginx and set it for autoboot
 sudo systemctl enable nginx
 sudo systemctl start nginx

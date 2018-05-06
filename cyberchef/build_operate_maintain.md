@@ -76,6 +76,6 @@ sudo curl https://gchq.github.io/CyberChef/cyberchef.htm -o /usr/share/nginx/htm
 ```
 You may be having an issue with nginx or your firewall. Check the troubleshooting steps [here](../landing_page/build_operate_maintain.md#troubleshooting)
 
-Check with the GoGS project maintainers at https://github.com/gchq/CyberChef
+Check with the CyberChef project maintainers at https://github.com/gchq/CyberChef
 
 If you're still unable to access the CAPES page from a web browser, [please file an issue](https://github.com/capesstack/capes/issues).

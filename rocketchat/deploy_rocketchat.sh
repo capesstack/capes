@@ -85,6 +85,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
 EOF'
 
 # Install dependencies
+# curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
 sudo yum install epel-release -y && sudo yum update -y
 sudo yum install nodejs curl GraphicsMagick npm mongodb-org gcc-c++ -y
 
@@ -123,6 +124,9 @@ Environment=MONGO_URL=mongodb://localhost:27017/rocketchat ROOT_URL=http://local
 WantedBy=multi-user.target
 EOF'
 
+# Prepare the service environment
+sudo systemctl daemon-reload
+
 # Configure RocketChat services
 sudo systemctl enable mongod.service
 sudo systemctl enable rocketchat.service
@@ -130,6 +134,9 @@ sudo systemctl enable rocketchat.service
 # Configure the firewall
 sudo firewall-cmd --add-port=3000/tcp --permanent
 sudo firewall-cmd --reload
+
+# Remove gcc
+sudo yum -y remove gcc-c++
 
 # Start RocketChat and MongoDB services
 sudo systemctl start mongod.service

@@ -131,7 +131,7 @@ _EOF_
 sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
 sudo firewall-cmd --reload
 
-# Update Pip...just because it's ludicious that installing it doesn't bring the updated version
+# Update Pip...just because it's ludicrous that installing it doesn't bring the updated version
 sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
@@ -157,7 +157,6 @@ sudo chmod 640 /etc/cortex/application.conf
 
 # Configure Cortex to run on port 9001 instead of the default 9000, which is shared with TheHive
 sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
-sudo systemctl daemon-reload
 
 # Connect TheHive to Cortex
 sudo bash -c 'cat >> /etc/thehive/application.conf <<EOF
@@ -169,6 +168,9 @@ cortex {
   }
 }
 EOF'
+
+# Prepare the service environment
+sudo systemctl daemon-reload
 
 # Set Elasticsearch and TheHive Project to start on boot
 sudo systemctl enable elasticsearch.service

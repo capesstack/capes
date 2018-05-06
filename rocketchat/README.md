@@ -1,9 +1,2 @@
-# Rocketchat
-
-The Rocketchat build script for CentOS 7.3.
-
-## Usage
-`$ sudo sh rocketchat_deploy.sh`
-
-## Notes
-You'll need to enter your `sudo` credentials to install the dependencies.
+# Rocketchat Note
+On May 6 2018, we transitioned back to Mattermost from Rocketchat.

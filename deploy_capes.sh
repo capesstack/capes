@@ -20,9 +20,9 @@ clear
 echo "Create your Gitea passphrase for the MySQL database and press [Enter]. You will create your Gitea administration credentials after the installation."
 read -s giteapassphrase
 
-# Create Etherpad passphrase
-echo "Create your Etherpad passphrase for the MySQL database and the service administration account then press [Enter]"
-read -s etherpadpassphrase
+# Create your Mattermost passphrase
+echo "Create your Mattermost passphrase for the MySQL database and press [Enter]. You will create your Mattermost administration credentials after the installation."
+read -s mattermostpassphrase
 
 # Create your Mumble passphrase
 echo "Create your Mumble SuperUser passphrase and press [Enter]."
@@ -33,7 +33,7 @@ echo "Create your CAPES Landing Page passphrase for the account \"operator\" and
 read -s capespassphrase
 
 # Set your IP address as a variable. This is for instructions below.
-  IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
+IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
 ################################
 ######## Configure NTP #########
@@ -162,77 +162,99 @@ d /var/run/murmur 775 murmur murmur
 EOF'
 
 ################################
-########## RocketChat ##########
+########## Mattermost ##########
 ################################
 
-# Configure MongoDB Yum repository
-sudo bash -c 'cat > /etc/yum.repos.d/mongodb.repo <<EOF
-[mongodb-org-3.4]
-name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.4/x86_64/
-gpgcheck=1
-enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
-EOF'
-
 # Install dependencies
-sudo yum install epel-release -y && sudo yum update -y
-sudo yum install nodejs GraphicsMagick npm mongodb-org gcc-c++ -y
+sudo yum install epel-release mariadb-server firewalld -y
 
-# Configure npm
-sudo npm install -g inherits n
-sudo n 4.5
+# Configure MariaDB
+sudo systemctl start mariadb.service
+mysql -u root -e "CREATE DATABASE mattermost;"
+mysql -u root -e "GRANT ALL PRIVILEGES ON mattermost.* TO 'mattermost'@'localhost' IDENTIFIED BY '$mattermostpassphrase';"
 
-# Build RocketChat
-sudo mkdir /opt/rocketchat
-curl -L https://download.rocket.chat/stable -o rocketchat.tar.gz
-echo "This next part takes a few minutes, everything is okay...go have a scone."
-sudo tar zxf rocketchat.tar.gz -C /opt/rocketchat/
-sudo mv /opt/rocketchat/bundle /opt/rocketchat/Rocket.Chat
-rm rocketchat.tar.gz
-sudo npm --prefix /opt/rocketchat/Rocket.Chat/programs/server install
+# Build Mattermost
+sudo mkdir -p /opt/mattermost/data
+sudo curl -L https://releases.mattermost.com/4.9.2/mattermost-4.9.2-linux-amd64.tar.gz -o /opt/mattermost/mattermost.tar.gz
+sudo tar -xzf /opt/mattermost/mattermost.tar.gz -C /opt/
 
-# Add the RocketChat user with no login
-sudo useradd -s /usr/sbin/nologin rocketchat
+# Add the Mattermost user with no login
+sudo useradd -s /usr/sbin/nologin mattermost
 
-# Set directory permissions for RocketChat
-sudo chown -R rocketchat:rocketchat /opt/rocketchat
+# Set directory permissions for Mattermost
+sudo chown -R mattermost:mattermost /opt/mattermost
+sudo chmod -R g+w /opt/mattermost
 
-# Create the Rocketchat service
-sudo bash -c 'cat > /usr/lib/systemd/system/rocketchat.service <<EOF
+# Update the Mattermost configuration
+sudo sed -i "s/mmuser/mattermost/" /opt/mattermost/config/config.json
+sudo sed -i "s/mostest/$mattermostpassphrase/" /opt/mattermost/config/config.json
+sudo sed -i "s/dockerhost/127.0.0.1/" /opt/mattermost/config/config.json
+sudo sed -i "s/mattermost_test/mattermost/" /opt/mattermost/config/config.json
+sudo sed -i "s/8065/3000/" /opt/mattermost/config/config.json
+
+# Create the Mattermost tables
+cd /opt/mattermost/bin/
+sudo -u mattermost /opt/mattermost/bin/./platform
+cd -
+
+# Correct the MariaDB formatting
+mysql -u root -e "ALTER TABLE mattermost.Audits ENGINE = MyISAM;ALTER TABLE mattermost.ChannelMembers ENGINE = MyISAM;ALTER TABLE mattermost.Channels ENGINE = MyISAM;ALTER TABLE mattermost.ClusterDiscovery ENGINE = MyISAM;ALTER TABLE mattermost.Commands ENGINE = MyISAM;ALTER TABLE mattermost.CommandWebhooks ENGINE = MyISAM;ALTER TABLE mattermost.Compliances ENGINE = MyISAM;ALTER TABLE mattermost.Emoji ENGINE = MyISAM;ALTER TABLE mattermost.FileInfo ENGINE = MyISAM;ALTER TABLE mattermost.IncomingWebhooks ENGINE = MyISAM;ALTER TABLE mattermost.Jobs ENGINE = MyISAM;ALTER TABLE mattermost.Licenses ENGINE = MyISAM;ALTER TABLE mattermost.OAuthAccessData ENGINE = MyISAM;ALTER TABLE mattermost.OAuthApps ENGINE = MyISAM;ALTER TABLE mattermost.OAuthAuthData ENGINE = MyISAM;ALTER TABLE mattermost.OutgoingWebhooks ENGINE = MyISAM;ALTER TABLE mattermost.Posts ENGINE = MyISAM;ALTER TABLE mattermost.Preferences ENGINE = MyISAM;ALTER TABLE mattermost.Reactions ENGINE = MyISAM;ALTER TABLE mattermost.Sessions ENGINE = MyISAM;ALTER TABLE mattermost.Status ENGINE = MyISAM;ALTER TABLE mattermost.Systems ENGINE = MyISAM;ALTER TABLE mattermost.TeamMembers ENGINE = MyISAM;ALTER TABLE mattermost.Teams ENGINE = MyISAM;ALTER TABLE mattermost.Tokens ENGINE = MyISAM;ALTER TABLE mattermost.UserAccessTokens ENGINE = MyISAM;ALTER TABLE mattermost.Users ENGINE = MyISAM;"
+
+# Create the Mattermost service
+sudo bash -c 'cat > /etc/systemd/system/mattermost.service <<EOF
 [Unit]
-Description=The Rocket.Chat server
-After=network.target remote-fs.target nss-lookup.target nginx.target mongod.target
+Description=Mattermost
+After=syslog.target network.target mariadb.service
+
 [Service]
-ExecStart=/usr/local/bin/node /opt/rocketchat/Rocket.Chat/main.js
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=rocketchat
-User=rocketchat
-Environment=MONGO_URL=mongodb://localhost:27017/rocketchat ROOT_URL=http://localhost:3000/ PORT=3000
+Type=notify
+WorkingDirectory=/opt/mattermost
+User=mattermost
+ExecStart=/opt/mattermost/bin/platform
+PIDFile=/var/spool/mattermost/pid/master.pid
+TimeoutStartSec=3600
+LimitNOFILE=49152
+
 [Install]
 WantedBy=multi-user.target
 EOF'
+sudo chmod 664 /etc/systemd/system/mattermost.service
 
 ################################
 ########## Gitea ###############
 ################################
 
+# Big thanks to @seven62 for fixing the Git 2.x and MariaDB issues and getting the service back in the green!
+
 # Install dependencies
-sudo yum install mariadb-server -y
-sudo systemctl start mariadb.service
+sudo yum install http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm -y
+sudo yum update git -y
 
 # Configure MariaDB
 mysql -u root -e "CREATE DATABASE gitea;"
 mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO 'gitea'@'localhost' IDENTIFIED BY '$giteapassphrase';"
 mysql -u root -e "FLUSH PRIVILEGES;"
+mysql -u root -e "set global innodb_file_format = Barracuda;
+set global innodb_file_per_table = on;
+set global innodb_large_prefix = 1;
+use gitea;
+CREATE TABLE oauth2_session (
+  id varchar(400) NOT NULL,
+  data text,
+  created_unix bigint(20) DEFAULT NULL,
+  updated_unix bigint(20) DEFAULT NULL,
+  expires_unix bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ALTER TABLE oauth2_session
+  ADD PRIMARY KEY (id(191));
+COMMIT;"
 
 # Create the Gitea user
 sudo useradd -s /usr/sbin/nologin gitea
 
 # Grab Gitea and make it a home
 sudo mkdir -p /opt/gitea
-sudo curl -o /opt/gitea/gitea https://dl.gitea.io/gitea/master/gitea-master-linux-amd64
+sudo curl -L https://dl.gitea.io/gitea/master/gitea-master-linux-amd64 -o /opt/gitea/gitea
 sudo chown -R gitea:gitea /opt/gitea
 sudo chmod 744 /opt/gitea/gitea
 
@@ -260,149 +282,6 @@ ExecStart=/opt/gitea/gitea web -p 4000
 Restart=always
 Environment=USER=gitea HOME=/home/gitea
 
-[Install]
-WantedBy=multi-user.target
-EOF'
-
-################################
-########### Etherpad ###########
-################################
-
-# Install dependencies
-sudo yum install openssl-devel -y && sudo yum groupinstall "Development Tools" -y
-
-# Configure MySQL
-mysql -u root -e "CREATE DATABASE etherpad;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON etherpad.* TO 'etherpad'@'localhost' IDENTIFIED BY '$etherpadpassphrase';"
-mysql -u root -e "FLUSH PRIVILEGES;"
-
-# Add the Etherpad user
-sudo useradd -s /usr/sbin/nologin etherpad
-
-# Get the Etherpad packages
-sudo mkdir -p /opt/etherpad
-sudo git clone https://github.com/ether/etherpad-lite.git /opt/etherpad
-
-# Configure the Etherpad settings
-sudo bash -c 'cat > /opt/etherpad/settings.json <<EOF
-{
-  "title": "CAPES Etherpad",
-  "favicon": "favicon.ico",
-  "ip": "0.0.0.0",
-  "port" : 5000,
-  "showSettingsInAdminPage" : true,
-   "dbType" : "mysql",
-   "dbSettings" : {
-                    "user"    : "etherpad",
-                    "host"    : "localhost",
-                    "password": "etherpadpassphrase",
-                    "database": "etherpad",
-                    "charset" : "utf8mb4"
-                  },
-  "defaultPadText" : "Welcome to the CAPES Etherpad.\n\nThis pad text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents.",
-  "padOptions": {
-    "noColors": false,
-    "showControls": true,
-    "showChat": true,
-    "showLineNumbers": true,
-    "useMonospaceFont": false,
-    "userName": false,
-    "userColor": false,
-    "rtl": false,
-    "alwaysShowChat": false,
-    "chatAndUsers": false,
-    "lang": "en-gb"
-  },
-  "padShortcutEnabled" : {
-    "altF9"     : true, /* focus on the File Menu and/or editbar */
-    "altC"      : true, /* focus on the Chat window */
-    "cmdShift2" : true, /* shows a gritter popup showing a line author */
-    "delete"    : true,
-    "return"    : true,
-    "esc"       : true, /* in mozilla versions 14-19 avoid reconnecting pad */
-    "cmdS"      : true, /* save a revision */
-    "tab"       : true, /* indent */
-    "cmdZ"      : true, /* undo/redo */
-    "cmdY"      : true, /* redo */
-    "cmdI"      : true, /* italic */
-    "cmdB"      : true, /* bold */
-    "cmdU"      : true, /* underline */
-    "cmd5"      : true, /* strike through */
-    "cmdShiftL" : true, /* unordered list */
-    "cmdShiftN" : true, /* ordered list */
-    "cmdShift1" : true, /* ordered list */
-    "cmdShiftC" : true, /* clear authorship */
-    "cmdH"      : true, /* backspace */
-    "ctrlHome"  : true, /* scroll to top of pad */
-    "pageUp"    : true,
-    "pageDown"  : true
-  },
-  "suppressErrorsInPadText" : false,
-  "requireSession" : false,
-  "editOnly" : false,
-  "sessionNoPassword" : false,
-  "minify" : true,
-  "maxAge" : 21600, // 60 * 60 * 6 = 6 hours
-  "abiword" : null,
-  "soffice" : null,
-  "tidyHtml" : null,
-  "allowUnknownFileEnds" : true,
-  "requireAuthentication" : false,
-  "requireAuthorization" : false,
-  "trustProxy" : true,
-  "disableIPlogging" : false,
-  "automaticReconnectionTimeout" : 0,
-  "users": {
-    "admin": {
-      "password": "etherpadpassphrase",
-      "is_admin": true
-    },
-  },
-  "socketTransportProtocols" : ["xhr-polling", "jsonp-polling", "htmlfile"],
-  "loadTest": false,
-  "indentationOnNewLine": true,
-  "toolbar": {
-    "left": [
-      ["bold", "italic", "underline", "strikethrough"],
-      ["orderedlist", "unorderedlist", "indent", "outdent"],
-      ["undo", "redo"],
-      ["clearauthorship"]
-    ],
-    "right": [
-      ["importexport", "timeslider", "savedrevision"],
-      ["settings", "embed"],
-      ["showusers"]
-    ],
-    "timeslider": [
-      ["timeslider_export", "timeslider_returnToPad"]
-    ]
-  },
-  "loglevel": "INFO",
-  "logconfig" :
-    { "appenders": [
-        { "type": "console"
-        //, "category": "access"// only logs pad access
-        }
-      ]
-    }
-}
-EOF'
-sudo sed -i "s/etherpadpassphrase/$etherpadpassphrase/" /opt/etherpad/settings.json
-
-# Give the Etherpad user ownership of the /opt/etherpad directory
-sudo chown -R etherpad:etherpad /opt/etherpad
-
-# Create the systemd Etherpad service
-sudo bash -c 'cat > /usr/lib/systemd/system/etherpad.service <<EOF
-[Unit]
-Description=The Etherpad server
-After=network.target remote-fs.target nss-lookup.target
-[Service]
-ExecStart=/opt/etherpad/bin/run.sh
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=etherpad
-User=etherpad
 [Install]
 WantedBy=multi-user.target
 EOF'
@@ -560,14 +439,14 @@ sudo sed -i "s/#server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/
 ################################
 
 # Port 80 - Nginx
-# Port 3000 - RocketChat
+# Port 3000 - Mattermost
 # Port 4000 - Gitea
-# Port 5000 - Etherpad
+# Port 5000 - Vacant
 # Port 5601 - Kibana
 # Port 7000 - Mumble
 # Port 9000 - TheHive
-# Port 9001 - Cortex (TheHive Analyzer Plugins)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=5601/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
+# Port 9001 - Cortex (TheHive Analyzer Plugin)
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5601/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
 sudo firewall-cmd --reload
 
 ################################
@@ -587,8 +466,7 @@ sudo systemctl enable metricbeat.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service
 sudo systemctl enable mongod.service
-sudo systemctl enable rocketchat.service
-sudo systemctl enable etherpad.service
+sudo systemctl enable mattermost.service
 sudo systemctl enable elasticsearch.service
 sudo systemctl enable thehive.service
 sudo systemctl enable cortex.service
@@ -601,13 +479,12 @@ sudo systemctl start cortex.service
 sudo systemctl start gitea.service
 sudo systemctl start thehive.service
 sudo systemctl start mongod.service
-sudo systemctl start etherpad.service
-sudo systemctl start rocketchat.service
 sudo systemctl start murmur.service
 sudo systemctl start nginx.service
 sudo systemctl start heartbeat.service
 sudo systemctl start metricbeat.service
 sudo systemctl start filebeat.service
+sudo systemctl start mattermost.service
 
 # Configure the Murmur SuperUser account
 sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
@@ -621,6 +498,11 @@ sudo sh -c 'echo [mysqld] > /etc/my.cnf.d/bind-address.cnf'
 sudo sh -c 'echo bind-address=127.0.0.1 >> /etc/my.cnf.d/bind-address.cnf'
 sudo systemctl restart mariadb.service
 mysql_secure_installation
+
+################################
+########## Remove gcc ##########
+################################
+sudo yum -y remove gcc-c++
 
 ###################################
 ###### Install some default #######
@@ -639,8 +521,9 @@ cat /dev/null > ~/.bash_history && history -c
 ######### Success Page #########
 ################################
 clear
-echo "The Gitea passphrase for the MySQL database is: "$giteapassphrase
-echo "The Etherpad passphrase for the MySQL database and the service administration account is: "$etherpadpassphrase
+echo "The Mattermost passphrase for the MariaDB database is: "$mattermostpassphrase
+echo "The Gitea passphrase for the MariaDB database is: "$giteapassphrase
+# echo "The Etherpad passphrase for the MariaDB database and the service administration account is: "$etherpadpassphrase
 echo "The Mumble SuperUser passphrase is: "$mumblepassphrase
 echo "The CAPES landing passphrase for the account \"operator\" is: "$capespassphrase
 echo "Please see the "Build, Operate, Maintain" documentation for the post-installation steps."
