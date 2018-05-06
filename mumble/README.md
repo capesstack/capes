@@ -1,5 +1,5 @@
 # Mumble
-The Etherpad build script for CentOS 7.4.
+The Mumble build script for CentOS 7.4.
 
 ## Usage
 `$ sudo sh deploy_mumble.sh`

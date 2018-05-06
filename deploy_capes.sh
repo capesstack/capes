@@ -20,9 +20,9 @@ clear
 echo "Create your Gitea passphrase for the MySQL database and press [Enter]. You will create your Gitea administration credentials after the installation."
 read -s giteapassphrase
 
-# Create Etherpad passphrase
-echo "Create your Etherpad passphrase for the MySQL database and the service administration account then press [Enter]"
-read -s etherpadpassphrase
+# Create your Mattermost passphrase
+echo "Create your Mattermost passphrase for the MySQL database and press [Enter]. You will create your Mattermost administration credentials after the installation."
+read -s mattermostpassphrase
 
 # Create your Mumble passphrase
 echo "Create your Mumble SuperUser passphrase and press [Enter]."
@@ -33,7 +33,7 @@ echo "Create your CAPES Landing Page passphrase for the account \"operator\" and
 read -s capespassphrase
 
 # Set your IP address as a variable. This is for instructions below.
-  IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
+IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
 ################################
 ######## Configure NTP #########
@@ -162,58 +162,63 @@ d /var/run/murmur 775 murmur murmur
 EOF'
 
 ################################
-########## RocketChat ##########
+########## Mattermost ##########
 ################################
 
-# Configure MongoDB Yum repository
-sudo bash -c 'cat > /etc/yum.repos.d/mongodb.repo <<EOF
-[mongodb-org-3.4]
-name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.4/x86_64/
-gpgcheck=1
-enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
-EOF'
-
 # Install dependencies
-# curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
-sudo yum install epel-release -y && sudo yum update -y
-sudo yum install nodejs GraphicsMagick npm mongodb-org gcc-c++ -y
+sudo yum install epel-release mariadb-server firewalld -y
 
-# Configure npm
-sudo npm install -g inherits n
-sudo n 4.5
+# Configure MariaDB
+sudo systemctl start mariadb.service
+mysql -u root -e "CREATE DATABASE mattermost;"
+mysql -u root -e "GRANT ALL PRIVILEGES ON mattermost.* TO 'mattermost'@'localhost' IDENTIFIED BY '$mattermostpassphrase';"
 
-# Build RocketChat
-sudo mkdir /opt/rocketchat
-curl -L https://download.rocket.chat/stable -o rocketchat.tar.gz
-echo "This next part takes a few minutes, everything is okay...go have a scone."
-sudo tar zxf rocketchat.tar.gz -C /opt/rocketchat/
-sudo mv /opt/rocketchat/bundle /opt/rocketchat/Rocket.Chat
-rm rocketchat.tar.gz
-sudo npm --prefix /opt/rocketchat/Rocket.Chat/programs/server install
+# Build Mattermost
+sudo mkdir -p /opt/mattermost/data
+sudo curl -L https://releases.mattermost.com/4.9.2/mattermost-4.9.2-linux-amd64.tar.gz -o /opt/mattermost/mattermost.tar.gz
+sudo tar -xzf /opt/mattermost/mattermost.tar.gz -C /opt/
 
-# Add the RocketChat user with no login
-sudo useradd -s /usr/sbin/nologin rocketchat
+# Add the Mattermost user with no login
+sudo useradd -s /usr/sbin/nologin mattermost
 
-# Set directory permissions for RocketChat
-sudo chown -R rocketchat:rocketchat /opt/rocketchat
+# Set directory permissions for Mattermost
+sudo chown -R mattermost:mattermost /opt/mattermost
+sudo chmod -R g+w /opt/mattermost
 
-# Create the Rocketchat service
-sudo bash -c 'cat > /usr/lib/systemd/system/rocketchat.service <<EOF
+# Update the Mattermost configuration
+sudo sed -i "s/mmuser/mattermost/" /opt/mattermost/config/config.json
+sudo sed -i "s/mostest/$mattermostpassphrase/" /opt/mattermost/config/config.json
+sudo sed -i "s/dockerhost/127.0.0.1/" /opt/mattermost/config/config.json
+sudo sed -i "s/mattermost_test/mattermost/" /opt/mattermost/config/config.json
+sudo sed -i "s/8065/3000/" /opt/mattermost/config/config.json
+
+# Create the Mattermost tables
+cd /opt/mattermost/bin/
+sudo -u mattermost /opt/mattermost/bin/./platform
+cd -
+
+# Correct the MariaDB formatting
+mysql -u root -e "ALTER TABLE mattermost.Audits ENGINE = MyISAM;ALTER TABLE mattermost.ChannelMembers ENGINE = MyISAM;ALTER TABLE mattermost.Channels ENGINE = MyISAM;ALTER TABLE mattermost.ClusterDiscovery ENGINE = MyISAM;ALTER TABLE mattermost.Commands ENGINE = MyISAM;ALTER TABLE mattermost.CommandWebhooks ENGINE = MyISAM;ALTER TABLE mattermost.Compliances ENGINE = MyISAM;ALTER TABLE mattermost.Emoji ENGINE = MyISAM;ALTER TABLE mattermost.FileInfo ENGINE = MyISAM;ALTER TABLE mattermost.IncomingWebhooks ENGINE = MyISAM;ALTER TABLE mattermost.Jobs ENGINE = MyISAM;ALTER TABLE mattermost.Licenses ENGINE = MyISAM;ALTER TABLE mattermost.OAuthAccessData ENGINE = MyISAM;ALTER TABLE mattermost.OAuthApps ENGINE = MyISAM;ALTER TABLE mattermost.OAuthAuthData ENGINE = MyISAM;ALTER TABLE mattermost.OutgoingWebhooks ENGINE = MyISAM;ALTER TABLE mattermost.Posts ENGINE = MyISAM;ALTER TABLE mattermost.Preferences ENGINE = MyISAM;ALTER TABLE mattermost.Reactions ENGINE = MyISAM;ALTER TABLE mattermost.Sessions ENGINE = MyISAM;ALTER TABLE mattermost.Status ENGINE = MyISAM;ALTER TABLE mattermost.Systems ENGINE = MyISAM;ALTER TABLE mattermost.TeamMembers ENGINE = MyISAM;ALTER TABLE mattermost.Teams ENGINE = MyISAM;ALTER TABLE mattermost.Tokens ENGINE = MyISAM;ALTER TABLE mattermost.UserAccessTokens ENGINE = MyISAM;ALTER TABLE mattermost.Users ENGINE = MyISAM;"
+
+# Create the Mattermost service
+sudo bash -c 'cat > /etc/systemd/system/mattermost.service <<EOF
 [Unit]
-Description=The Rocket.Chat server
-After=network.target remote-fs.target nss-lookup.target nginx.target mongod.target
+Description=Mattermost
+After=syslog.target network.target mariadb.service
+
 [Service]
-ExecStart=/usr/local/bin/node /opt/rocketchat/Rocket.Chat/main.js
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=rocketchat
-User=rocketchat
-Environment=MONGO_URL=mongodb://localhost:27017/rocketchat ROOT_URL=http://localhost:3000/ PORT=3000
+Type=notify
+WorkingDirectory=/opt/mattermost
+User=mattermost
+ExecStart=/opt/mattermost/bin/platform
+PIDFile=/var/spool/mattermost/pid/master.pid
+TimeoutStartSec=3600
+LimitNOFILE=49152
+
 [Install]
 WantedBy=multi-user.target
 EOF'
+sudo chmod 664 /etc/systemd/system/mattermost.service
 
 ################################
 ########## Gitea ###############
@@ -222,9 +227,8 @@ EOF'
 # Big thanks to @seven62 for fixing the Git 2.x and MariaDB issues and getting the service back in the green!
 
 # Install dependencies
-sudo yum install mariadb-server http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm -y
+sudo yum install http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm -y
 sudo yum update git -y
-sudo systemctl start mariadb.service
 
 # Configure MariaDB
 mysql -u root -e "CREATE DATABASE gitea;"
@@ -250,7 +254,7 @@ sudo useradd -s /usr/sbin/nologin gitea
 
 # Grab Gitea and make it a home
 sudo mkdir -p /opt/gitea
-sudo curl -o /opt/gitea/gitea https://dl.gitea.io/gitea/master/gitea-master-linux-amd64
+sudo curl -L https://dl.gitea.io/gitea/master/gitea-master-linux-amd64 -o /opt/gitea/gitea
 sudo chown -R gitea:gitea /opt/gitea
 sudo chmod 744 /opt/gitea/gitea
 
@@ -435,14 +439,14 @@ sudo sed -i "s/#server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/
 ################################
 
 # Port 80 - Nginx
-# Port 3000 - RocketChat
+# Port 3000 - Mattermost
 # Port 4000 - Gitea
-# Port 5000 - Etherpad
+# Port 5000 - Vacant
 # Port 5601 - Kibana
 # Port 7000 - Mumble
 # Port 9000 - TheHive
-# Port 9001 - Cortex (TheHive Analyzer Plugins)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=5601/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
+# Port 9001 - Cortex (TheHive Analyzer Plugin)
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5601/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
 sudo firewall-cmd --reload
 
 ################################
@@ -462,8 +466,7 @@ sudo systemctl enable metricbeat.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service
 sudo systemctl enable mongod.service
-sudo systemctl enable rocketchat.service
-# sudo systemctl enable etherpad.service
+sudo systemctl enable mattermost.service
 sudo systemctl enable elasticsearch.service
 sudo systemctl enable thehive.service
 sudo systemctl enable cortex.service
@@ -476,13 +479,12 @@ sudo systemctl start cortex.service
 sudo systemctl start gitea.service
 sudo systemctl start thehive.service
 sudo systemctl start mongod.service
-# sudo systemctl start etherpad.service
 sudo systemctl start murmur.service
 sudo systemctl start nginx.service
 sudo systemctl start heartbeat.service
 sudo systemctl start metricbeat.service
 sudo systemctl start filebeat.service
-sudo systemctl start rocketchat.service
+sudo systemctl start mattermost.service
 
 # Configure the Murmur SuperUser account
 sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw $mumblepassphrase
@@ -519,8 +521,9 @@ cat /dev/null > ~/.bash_history && history -c
 ######### Success Page #########
 ################################
 clear
-echo "The Gitea passphrase for the MySQL database is: "$giteapassphrase
-echo "The Etherpad passphrase for the MySQL database and the service administration account is: "$etherpadpassphrase
+echo "The Mattermost passphrase for the MariaDB database is: "$mattermostpassphrase
+echo "The Gitea passphrase for the MariaDB database is: "$giteapassphrase
+# echo "The Etherpad passphrase for the MariaDB database and the service administration account is: "$etherpadpassphrase
 echo "The Mumble SuperUser passphrase is: "$mumblepassphrase
 echo "The CAPES landing passphrase for the account \"operator\" is: "$capespassphrase
 echo "Please see the "Build, Operate, Maintain" documentation for the post-installation steps."

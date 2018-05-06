@@ -8,7 +8,7 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 ![capes architecture](http://capesstack.io/capes_arch.png)
 
 ## Services in CAPES
-1. Rocketchat (Chat)
+1. Mattermost (Chat)
 1. Etherpad (Collaboration-style documentation)
 1. Gitea (Version controlled documentation)
 1. TheHive (Incident Response)
