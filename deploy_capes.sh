@@ -291,7 +291,8 @@ EOF'
 ################################
 
 # Install Dependencies
-sudo yum install java-1.8.0-openjdk.x86_64  -y
+sudo yum install java-1.8.0-openjdk.x86_64 gcc-c++ -y
+sudo yum groupinstall "Development Tools" -y
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
@@ -465,7 +466,6 @@ sudo systemctl enable filebeat.service
 sudo systemctl enable metricbeat.service
 sudo systemctl enable mariadb.service
 sudo systemctl enable gitea.service
-sudo systemctl enable mongod.service
 sudo systemctl enable mattermost.service
 sudo systemctl enable elasticsearch.service
 sudo systemctl enable thehive.service
