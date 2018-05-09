@@ -372,6 +372,7 @@ play.modules.enabled += connectors.cortex.CortexConnector
 cortex {
   "CORTEX-SERVER-ID" {
   url = "http://`hostname -I | sed -e 's/[[:space:]]*$//'`:9001"
+  key = Cortex-API-key-see-post-installation-instructions
   }
 }
 EOF'
