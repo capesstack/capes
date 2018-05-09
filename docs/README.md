@@ -3,9 +3,8 @@ Please see below for Build, Operate, Maintain specifics on the different web app
 * [Post Installation](https://github.com/capesstack/capes/tree/master/docs#post-installation)
 * [CAPES Landing Page](../landing_page/build_operate_maintain.md)  
 * [CyberChef](../cyberchef/build_operate_maintain.md)
-* [Etherpad](../etherpad/build_operate_maintain.md)  
 * [Gitea](../gitea/build_operate_maintain.md)  
-* [Rocketchat](../rocketchat/build_operate_maintain.md)  
+* [Mattermost](../mattermost/build_operate_maintain.md)  
 * [TheHive](../thehive/build_operate_maintain.md)  
 * [Cortex](../thehive/build_operate_maintain.md)  
 * [Mumble](../mumble/build_operate_maintain.md)  
@@ -126,15 +125,14 @@ $ sudo sh deploy_capes.sh
 ```
 
 ### Build Process
-The build is automated minus asking you to set the Gitea, Etherpad, and Mumble administrative passphrases, set the MariaDB root passphrase, and confirm some security settings for MariaDB.
+The build is automated minus asking you to set the Gitea, CAPES, and Mumble administrative passphrases, set the MariaDB root passphrase, and confirm some security settings for MariaDB.
 
 You'll be asked to create the first three passphrases at the beginning and to create the MariaDB passphrase at the end of the CAPES installation.
 
 This will start the automated build of:
 * Configure NTP (likely already done, but in the event you skipped the [Build your OS](#build-your-os) above)
-* Install Rocketchat
+* Install Mattermost
 * Install Gitea
-* Install Etherpad
 * Install TheHive
 * Install Cortex
 * Install Mumble
@@ -148,11 +146,34 @@ This will start the automated build of:
 
 ## Post Installation
 While the CAPES deploy script attempts to get you up and running, there are a few things that need to be done after installation.
+
+### Beats
 1. Set your MariaDB root passphrase (which you set at the very end of the deployment) in `/etc/metricbeat/metricbeat.yml`, replacing `passphrase_to_be_set_post_install`  
-1. Set your Cortex API keys in `/etc/cortex/application.conf` (it's pretty self-explanatory where they all go) and `sudo systemctl restart cortex.service`
-1. Check Filebeat and make sure it's running. If Elasticsearch doesn't start fast enough, Filebeat will fail when trying to connect to it. If Filebeat isn't started )`sudo systemctl status filebeat.service`) you can look at the log file to see what the reason is (`sudo cat /var/log/filebeat/capes_filebeat`)
+1. Check Filebeat and make sure it's running. If Elasticsearch doesn't start fast enough, Filebeat will fail when trying to connect to it. You can try to simply restart it with `sudo systemctl restart filebeat.service`. If Filebeat won't start )`sudo systemctl status filebeat.service`) you can look at the log file to see what the reason is (`sudo cat /var/log/filebeat/capes_filebeat`)
+
+### Cortex
+1. Log into Cortex and create a new Organization and an Organization Administrator, set that user's passphrase
+1. Log out and back into Cortex as the new Organization Administrator that you created, click on "Organization" and then click on "Users"
+1. Create a user called `TheHiveIntegration` (or the like) with the `read,analyze` roles, create an API key, copy that down
+
+### TheHive
+1. Open `/opt/thehive/application.conf` and go to the very bottom of the document and add `key = <your-api-key>` to the `CORTEX-SERVER-ID` section (`your-IP-address` should already be populated). The API key is the one you created above in Cortex.
+```
+cortex {
+  "CORTEX-SERVER-ID" {
+  url = "http://<your-IP-address>:9001"
+  key = "<your-API-key>"
+  }
+}
+```
+1. Restart The Hive with `sudo systemctl restart thehive.service`
+1. Collect the Report Templates by downloading them from [here](https://dl.bintray.com/cert-bdf/thehive/report-templates.zip)
+1. Browse to TheHive via the Landing Page (http://CAPES_IP) or (http://CAPES_IP:9000)
+1. Click "Update Database" and create an administrative account
+1. Log in and in the top right, click your username and "Report Templates"
+1. Click to "Import Templates" and upload the `report-templates.zip` file from above
 
 ## Get Started
 After the CAPES installation, you should be able to browse to `http://capes_system` (or `http://capes_IP` if you don't have DNS set up) to get to the CAPES landing page and start setting up services.
 
-I **strongly** recommend that you look at the `Build, Operate, Maintain` guides for these services before you get going. A few of the services launch a configuration pipeline that is hard to restart if you don't complete it the first time (I'm looking at you TheHive and Gitea).
+I **strongly** recommend that you look at the `Build, Operate, Maintain` guides for these services before you get going. A few of the services launch a configuration pipeline that is hard to restart if you don't complete it the first time (I'm looking at you TheHive, Cortex, and Gitea).
