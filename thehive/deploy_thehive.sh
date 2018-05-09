@@ -98,7 +98,8 @@ EOF'
 sudo git clone https://github.com/capesstack/Cortex-Analyzers.git /opt/cortex/
 
 # Collect the Cortex Report Templates
-sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
+# This doesn't appear to work in an automated fashion anymore, it must be done manually via the UI. See Post Installation instructions in docs/README.md
+# sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
 
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
@@ -165,6 +166,7 @@ play.modules.enabled += connectors.cortex.CortexConnector
 cortex {
   "CORTEX-SERVER-ID" {
   url = "http://`hostname -I | sed -e 's/[[:space:]]*$//'`:9001"
+  key = Cortex-API-key-see-post-installation-instructions
   }
 }
 EOF'

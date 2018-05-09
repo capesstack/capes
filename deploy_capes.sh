@@ -100,7 +100,7 @@ sudo systemctl start chronyd.service
 ################################
 
 # Prepare the environment
-sudo yum -y install bzip2 && yum -y update
+sudo yum -y install bzip2 && sudo yum -y update
 sudo groupadd -r murmur
 sudo useradd -r -g murmur -m -d /var/lib/murmur -s /sbin/nologin murmur
 sudo mkdir -p /var/log/murmur
@@ -109,7 +109,7 @@ sudo chmod 0770 /var/log/murmur
 
 # Download binaries
 curl -OL https://github.com/mumble-voip/mumble/releases/download/1.2.19/murmur-static_x86-1.2.19.tar.bz2
-tar vxjf murmur-static_x86-1.2.19.tar.bz2
+tar xjf murmur-static_x86-1.2.19.tar.bz2
 sudo mkdir -p /opt/murmur
 sudo cp -r murmur-static_x86-1.2.19/* /opt/murmur
 sudo cp murmur-static_x86-1.2.19/murmur.ini /etc/murmur.ini
@@ -310,7 +310,8 @@ EOF'
 sudo git clone https://github.com/capesstack/Cortex-Analyzers.git /opt/cortex/
 
 # Collect the Cortex Report Templates
-sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
+# This doesn't appear to work in an automated fashion anymore, it must be done manually via the UI. See Post Installation instructions in docs/README.md
+# sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
 
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
@@ -363,7 +364,6 @@ sudo chmod 640 /etc/cortex/application.conf
 
 # Configure Cortex to run on port 9001 instead of the default 9000, which is shared with TheHive
 sudo sed -i '16i\\t-Dhttp.port=9001 \\' /etc/systemd/system/cortex.service
-sudo systemctl daemon-reload
 
 # Connect TheHive to Cortex
 sudo bash -c 'cat >> /etc/thehive/application.conf <<EOF
@@ -372,6 +372,7 @@ play.modules.enabled += connectors.cortex.CortexConnector
 cortex {
   "CORTEX-SERVER-ID" {
   url = "http://`hostname -I | sed -e 's/[[:space:]]*$//'`:9001"
+  key = Cortex-API-key-see-post-installation-instructions
   }
 }
 EOF'
@@ -478,7 +479,6 @@ sudo systemctl start kibana.service
 sudo systemctl start cortex.service
 sudo systemctl start gitea.service
 sudo systemctl start thehive.service
-sudo systemctl start mongod.service
 sudo systemctl start murmur.service
 sudo systemctl start nginx.service
 sudo systemctl start heartbeat.service
