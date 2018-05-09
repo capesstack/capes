@@ -21,7 +21,7 @@ heartbeat.monitors:
   schedule: '@every 10s'
   urls: ["http://localhost:3000"]
   check.response.status: 200
-  name: RocketChat
+  name: Mattermost
 
 - type: http
   schedule: '@every 10s'
