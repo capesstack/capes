@@ -145,7 +145,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable mattermost.service
 
 # Configure the firewall
-sudo firewall-cmd --add-port=3000/tcp --permanent
+sudo firewall-cmd --add-port=5000/tcp --permanent
 sudo firewall-cmd --reload
 
 # Start Mattermost service
