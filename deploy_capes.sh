@@ -20,6 +20,10 @@ clear
 echo "Create your Gitea passphrase for the MySQL database and press [Enter]. You will create your Gitea administration credentials after the installation."
 read -s giteapassphrase
 
+# Create your HackMD passphrase
+echo "Create your HackMD passphrase for the MySQL database and press [Enter]. You will create your specific HackMD credentials after the installation."
+read -s hackmdpassphrase
+
 # Create your Mattermost passphrase
 echo "Create your Mattermost passphrase for the MySQL database and press [Enter]. You will create your Mattermost administration credentials after the installation."
 read -s mattermostpassphrase
@@ -190,7 +194,7 @@ sudo sed -i "s/mmuser/mattermost/" /opt/mattermost/config/config.json
 sudo sed -i "s/mostest/$mattermostpassphrase/" /opt/mattermost/config/config.json
 sudo sed -i "s/dockerhost/127.0.0.1/" /opt/mattermost/config/config.json
 sudo sed -i "s/mattermost_test/mattermost/" /opt/mattermost/config/config.json
-sudo sed -i "s/8065/3000/" /opt/mattermost/config/config.json
+sudo sed -i "s/8065/5000/" /opt/mattermost/config/config.json
 
 # Create the Mattermost tables
 cd /opt/mattermost/bin/
@@ -219,6 +223,59 @@ LimitNOFILE=49152
 WantedBy=multi-user.target
 EOF'
 sudo chmod 664 /etc/systemd/system/mattermost.service
+
+################################
+############ HackMD ############
+################################
+
+# Install dependencies
+sudo yum install npm gcc-c++ git -y
+
+# Stage HackMD for building
+sudo npm install -g uws node-gyp tap webpack grunt yarn
+sudo yarn add -D webpack-cli
+sudo git clone https://github.com/hackmdio/hackmd.git /opt/hackmd/
+cd /opt/hackmd
+sudo bin/setup
+cd -
+
+# Set up the HackMD database
+mysql -u root -e "CREATE DATABASE hackmd;"
+mysql -u root -e "GRANT ALL PRIVILEGES ON hackmd.* TO 'hackmd'@'localhost' IDENTIFIED BY '$hackmdpassphrase';"
+
+# Update the HackMD configuration files
+sudo sed -i 's/"username":\ ""/"username":\ "hackmd"/' /opt/hackmd/config.json
+sudo sed -i 's/"password":\ ""/"password":\ "'$hackmdpassphrase'"/' /opt/hackmd/config.json
+sudo sed -i 's/5432/3306/' /opt/hackmd/config.json
+sudo sed -i 's/postgres/mysql/' /opt/hackmd/config.json
+sudo sed -i 's/change\ this/mysql:\/\/hackmd:'$hackmdpassphrase'@localhost:3306\/hackmd/' /opt/hackmd/.sequelizerc
+
+# Build HackMD
+sudo npm run build --prefix /opt/hackmd/
+
+# Add the HackMD user with no login
+sudo useradd -s /usr/sbin/nologin hackmd
+
+# Set directory permissions for HackMD
+sudo chown -R hackmd:hackmd /opt/hackmd
+
+# Creating the HackMD service
+sudo bash -c 'cat > /etc/systemd/system/hackmd.service <<EOF
+[Unit]
+Description=HackMD Service
+Requires=network-online.target
+After=network-online.target mariadb.service time-sync.target
+
+[Service]
+User=hackmd
+Group=hackmd
+WorkingDirectory=/opt/hackmd
+Type=simple
+ExecStart=/bin/npm start production --prefix /opt/hackmd/
+
+[Install]
+WantedBy=multi-user.target
+EOF'
 
 ################################
 ########## Gitea ###############
@@ -441,14 +498,14 @@ sudo sed -i "s/#server\.host: \"localhost\"/server\.host: \"0\.0\.0\.0\"/" /etc/
 ################################
 
 # Port 80 - Nginx
-# Port 3000 - Mattermost
+# Port 3000 - HackMD
 # Port 4000 - Gitea
-# Port 5000 - Vacant
+# Port 5000 - Mattermost
 # Port 5601 - Kibana
 # Port 7000 - Mumble
 # Port 9000 - TheHive
 # Port 9001 - Cortex (TheHive Analyzer Plugin)
-sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5601/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
+sudo firewall-cmd --add-port=80/tcp --add-port=3000/tcp --add-port=4000/tcp --add-port=5000/tcp --add-port=5601/tcp --add-port=9000/tcp --add-port=9001/tcp --add-port=7000/tcp --add-port=7000/udp --permanent
 sudo firewall-cmd --reload
 
 ################################
@@ -466,6 +523,7 @@ sudo systemctl enable heartbeat.service
 sudo systemctl enable filebeat.service
 sudo systemctl enable metricbeat.service
 sudo systemctl enable mariadb.service
+sudo systemctl enable hackmd.service
 sudo systemctl enable gitea.service
 sudo systemctl enable mattermost.service
 sudo systemctl enable elasticsearch.service
@@ -478,6 +536,7 @@ sudo systemctl start elasticsearch.service
 sudo systemctl start kibana.service
 sudo systemctl start cortex.service
 sudo systemctl start gitea.service
+sudo systemctl start hackmd.service
 sudo systemctl start thehive.service
 sudo systemctl start murmur.service
 sudo systemctl start nginx.service
@@ -523,7 +582,7 @@ cat /dev/null > ~/.bash_history && history -c
 clear
 echo "The Mattermost passphrase for the MariaDB database is: "$mattermostpassphrase
 echo "The Gitea passphrase for the MariaDB database is: "$giteapassphrase
-# echo "The Etherpad passphrase for the MariaDB database and the service administration account is: "$etherpadpassphrase
+echo "The HackMD passphrase for the MariaDB database and the service administration account is: "$hackmdpassphrase
 echo "The Mumble SuperUser passphrase is: "$mumblepassphrase
 echo "The CAPES landing passphrase for the account \"operator\" is: "$capespassphrase
 echo "Please see the "Build, Operate, Maintain" documentation for the post-installation steps."
