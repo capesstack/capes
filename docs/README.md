@@ -4,6 +4,7 @@ Please see below for Build, Operate, Maintain specifics on the different web app
 * [CAPES Landing Page](../landing_page/build_operate_maintain.md)  
 * [CyberChef](../cyberchef/build_operate_maintain.md)
 * [Gitea](../gitea/build_operate_maintain.md)  
+* [HackMD](../hackmd/build_operate_maintain.md)  
 * [Mattermost](../mattermost/build_operate_maintain.md)  
 * [TheHive](../thehive/build_operate_maintain.md)  
 * [Cortex](../thehive/build_operate_maintain.md)  
@@ -36,7 +37,7 @@ While there are a lot of projects that are developed using Ubuntu (many of these
     - We wanted to use a distribution that could easily be ported from an open source OS to the supported OS (RHEL)
 1. CentOS uses Security Enhanced Linux (SELinux) instead of AppArmor
     - SELinux uses context to define security controls (for example, I know a text editor shouldn't talk to the Internet because it's a text editor, not a browser)
-    - AppArmor uses prescripted rules to define security controls (for example, I know that a text editor shouldn't talk to the Internet because someone told me it shouldn't)
+    - AppArmor uses prescripted rules to define security controls (for example, I know that a text editor shouldn't talk to the Internet because someone **told** me it shouldn't)
 
 ### Implementation
 While the `firewalld` service is running on CAPES and the only ports listening have services attached to them, you should still consider using a Web Application Firewall (WAF), an Intrusion Detection System (IDS) or a Network Security Monitor (like [ROCKNSM](rocknsm.io) - which has an IDS integrated on top of a litany of other goodies) to ensure that your CAPES stack isn't being targeted.
@@ -47,7 +48,7 @@ If possible, CAPES, just like a passive NSM, should **not** be on the contested 
 It is a poor practice to deploy self-signed SSL certificates because it teaches bad behavior by "clicking through" SSL warnings; for that reason, we have decided not to deploy CAPES with SSL. [If you want to enable SSL for your own deployment](https://nginx.org/en/docs/http/configuring_https_servers.html), we encourage you to do so.
 
 ## Installation
-Generally, the CAPES ecosystem is meant to run as a whole, so the preferred usage will be to install CAPES with the `deploy_capes.sh` script in the root directory of this repository. Additionally, if there is a service that you do not want, you can comment that service out of the deploy script as they are documented with service headers.
+Generally, the CAPES ecosystem is meant to run as a whole, so the preferred usage will be to install CAPES with the `deploy_capes.sh` script in the root directory of this repository. Additionally, if there is a service that you do not want, you can comment that service out of the deploy script as they are documented with service banners.
 
 That said, there is a deploy script for each of the services that you should be able to run individually if your use case requires that.
 
@@ -90,17 +91,18 @@ This is meant to help those who need a step-by-step build of CentOS, securing SS
 1. Login using the account you created during the Anaconda setup
   - Run the following commands
     ```
-    sudo yum update -y && sudo yum install git -y #(Enter the passphrase you created in Anaconda)
+    sudo yum update -y && sudo yum install git -y
     sudo firewall-cmd --add-service=ssh --permanent
     sudo firewall-cmd --reload
     ```
-1. Secure ssh
+1. Secure ssh by removing username and password as an authentication option and don't allow the root account to log in at all
   - On your management system, create an ssh key pair
     ```
     ssh-keygen -t rsa #accept the defaults, but enter a passphrase for your keys
-    ssh-copy-id your_created_user@<ip of CAPES>
-    ssh your_created_user@<ip of CAPES>
-    sudo sed -i 's/\#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+    ssh-copy-id your_capes_user@<ip of CAPES>
+    ssh your_capes_user@<ip of CAPES>
+    # You are now logged into the shell of CAPES
+    sudo sed -i 's/\#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config #enter password for the CAPES user you created
     sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
     sudo systemctl restart sshd.service
     ```
@@ -134,6 +136,7 @@ This will start the automated build of:
 * Install Mattermost
 * Install Gitea
 * Install TheHive
+* Install HackMD
 * Install Cortex
 * Install Mumble
 * Install CyberChef
@@ -178,7 +181,7 @@ While the CAPES deploy script attempts to get you up and running, there are a fe
 1. Click on `Sign-Up` under security and change `Enable Open Server` to `True` (unless you want to create all the accounts by hand, which you can)
 1. Have new users browse to `http://<CAPES-IP>:5000`, create accounts, but no new teams
 1. From the admin, log out of the system console and into your team
-1. Click the settings dropdown in the top left and select `Add Members to Team` and add the new memebers
+1. Click the settings dropdown in the top left and select `Add Members to Team` and add the new members
 
 ### Cortex
 1. Log into Cortex and create a new Organization and an Organization Administrator, set that user's passphrase
