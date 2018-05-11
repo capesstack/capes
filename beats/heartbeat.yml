@@ -19,7 +19,7 @@ heartbeat.monitors:
 
 - type: http
   schedule: '@every 10s'
-  urls: ["http://localhost:3000"]
+  urls: ["http://localhost:5000"]
   check.response.status: 200
   name: Mattermost
 
@@ -31,9 +31,9 @@ heartbeat.monitors:
 
 - type: http
   schedule: '@every 10s'
-  urls: ["http://localhost:5000"]
+  urls: ["http://localhost:3000"]
   check.response.status: 200
-  name: Etherpad
+  name: HackMD
 
 - type: http
   schedule: '@every 10s'
