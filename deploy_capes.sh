@@ -559,6 +559,12 @@ sudo systemctl restart mariadb.service
 mysql_secure_installation
 
 ################################
+## Copy CAPES Function Check ###
+################################
+cp capes_processes /usr/bin/local/
+chmod 0755 /usr/local/bin/capes_processes
+
+################################
 ########## Remove gcc ##########
 ################################
 sudo yum -y remove gcc-c++

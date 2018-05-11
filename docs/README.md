@@ -148,8 +148,37 @@ This will start the automated build of:
 While the CAPES deploy script attempts to get you up and running, there are a few things that need to be done after installation.
 
 ### Beats
-1. Set your MariaDB root passphrase (which you set at the very end of the deployment) in `/etc/metricbeat/metricbeat.yml`, replacing `passphrase_to_be_set_post_install`  
-1. Check Filebeat and make sure it's running. If Elasticsearch doesn't start fast enough, Filebeat will fail when trying to connect to it. You can try to simply restart it with `sudo systemctl restart filebeat.service`. If Filebeat won't start )`sudo systemctl status filebeat.service`) you can look at the log file to see what the reason is (`sudo cat /var/log/filebeat/capes_filebeat`)
+1. Set your MariaDB root passphrase (which you set at the very end of the deployment) in `/etc/metricbeat/metricbeat.yml`, replacing `passphrase_to_be_set_post_install` and then `sudo systemctl restart metricbeat.service`.  
+1. Check Filebeat and make sure it's running. If Elasticsearch doesn't start fast enough, Filebeat will fail when trying to connect to it or if you don't accept the EULA during the install script, it will fail. You can try to simply restart it with `sudo systemctl restart filebeat.service`. If Filebeat won't start (`sudo systemctl status filebeat.service`) try to run `sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-geoip` and accpet the EULA. If all else fails, you can look at the log file to see what the reason is (`sudo cat /var/log/filebeat/capes_filebeat`).
+
+### Gitea
+1. When you browse to your Gitea instance, you'll need to set your database passphrase, your SSH Server Domain, your base URL, and disable Gravatar.
+1. Set the Gitea passphrase you created during installation and enter it in the `Password` field on the Gitea UI. Leave the `Username` and `Database Name`.
+1. For the `SSH Server Domain`, use your IP address
+1. For the `Gitea Base URL`, enter `http://<your_IP_address>:4000/`
+1. Go to `Server and Third-Party Service Settings` and check the `Disable Gravatar` box
+1. Click to setup Gitea
+1. After you're taken to the login page, click on `Need an account? Register now.`
+1. This will be an administrative account, pick a username, email address, and passphrase (note, you cannot use `admin`)
+1. Click `Register Account`
+1. Login in as that user
+
+### Kibana
+1. Select `heartbeat-*` or `metricbeat-*` and set that as Default by clicking on the `star` in the top right of the screen.
+
+### HackMD
+1. Click on `Sign In`
+1. Select an email address and a phassphrase and click the `Register` button
+1. Login as that user
+
+### Mattermost
+1. Enter an email address, username, and a passphrase
+1. Click on `Create a new team` and create a team
+1. Click on the `System Console` banner at the top and enter your `Site URL`. It will be `http://<CAPES-IP>:5000`, go to the bottom of the page and click `Save`.
+1. Click on `Sign-Up` under security and change `Enable Open Server` to `True` (unless you want to create all the accounts by hand, which you can)
+1. Have new users browse to `http://<CAPES-IP>:5000`, create accounts, but no new teams
+1. From the admin, log out of the system console and into your team
+1. Click the settings dropdown in the top left and select `Add Members to Team` and add the new memebers
 
 ### Cortex
 1. Log into Cortex and create a new Organization and an Organization Administrator, set that user's passphrase
