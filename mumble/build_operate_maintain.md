@@ -110,23 +110,27 @@ sudo /opt/murmur/murmur.x86 -ini /etc/murmur.ini -supw <passphrase>
 1. Install
 1. There will be considerable menus to navigate, just accept the defaults unless you have a reason not to and need a custom deployment.
 1. Start it up and connect to
-  1. Label: <unimportant>
+  1. Label: Whatever you want your channel to be called...maybe "CAPES" or something?
   1. Address: CAPES server IP address
   1. Port: 7000
   1. Username: whatever you want
   1. Password: this CAN be blank...but it shouldn't be **ahem**
+  1. Click "OK"
+  1. Select the channel you just created and click "Connect"
 1. Right click on your name and select "Register"
 
 ### Delegating Permissions
 Once a user has created an account and Registered, you can add them to the `admin` role.
 
-1. Log in as the `SuperUser`account with the passphrase you set during installation.
+1. Click on the Globe and select the channel that you created and click "Edit"
+1. For the username, use the `SuperUser` account with the passphrase you set during installation (the passphrase box will show up once you type `SuperUser`).
 1. Right-click on main channel (likely "CAPES - Mumble Server") and select `Edit`
-1 Go to the Groups tab
+1. Go to the Groups tab
 1. Select the `admin` role from the drop down
 1. Type the user account you want to delegate admin functions to in the box
 1. Click `Add` and then `Ok`
-1. Disconnect as the SuperUser and log in with your delegated account
+1. Click on the Globe and select the channel that you created and click "Edit"
+1. Enter your username (not `SuperUser`) and your passphrase, and you can log in and perform administrative functions
 
 ### Creating Channels
 1. Right-click on the main channel (likely "CAPES - Mumble Server") and select `Add`

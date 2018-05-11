@@ -178,10 +178,12 @@ While the CAPES deploy script attempts to get you up and running, there are a fe
 1. Enter an email address, username, and a passphrase
 1. Click on `Create a new team` and create a team
 1. Click on the `System Console` banner at the top and enter your `Site URL`. It will be `http://<CAPES-IP>:5000`, go to the bottom of the page and click `Save`.
-1. Click on `Sign-Up` under security and change `Enable Open Server` to `True` (unless you want to create all the accounts by hand, which you can)
-1. Have new users browse to `http://<CAPES-IP>:5000`, create accounts, but no new teams
-1. From the admin, log out of the system console and into your team
-1. Click the settings dropdown in the top left and select `Add Members to Team` and add the new members
+1. There are 2 ways to get users added to your Team
+  - Exit the System Console and go back to your Team page, at the bottom of the `Town Square` channel, there is a link `Invite others to this team`, give that to your team and they'll be added once they create accounts. **I think that this is the most convenient way to do it.**
+  - Click on `Sign-Up` under `Security` and change `Enable Open Server` to `True`, have them create accounts, and manually move them into your Team
+    - Have new users browse to `http://<CAPES-IP>:5000`, create accounts, but no new teams
+    - From the admin, log out of the system console and into your team
+    - Click the settings dropdown in the top left and select `Add Members to Team` and add the new members
 
 ### Cortex
 1. Log into Cortex and create a new Organization and an Organization Administrator, set that user's passphrase
@@ -204,6 +206,29 @@ cortex {
 1. Click "Update Database" and create an administrative account
 1. Log in and in the top right, click your username and "Report Templates"
 1. Click to "Import Templates" and upload the `report-templates.zip` file from above
+
+### Mumble
+1. Download the client of your choosing from the [Mumble client page](https://www.mumble.com/mumble-download.php)
+1. Install
+1. There will be considerable menus to navigate, just accept the defaults unless you have a reason not to and need a custom deployment.
+1. Start it up and connect to
+  - Label: Whatever you want your channel to be called...maybe "CAPES" or something?
+  - Address: CAPES server IP address
+  - Port: 7000
+  - Username: whatever you want
+  - Password: this CAN be blank...but it shouldn't be **ahem**
+  - Click "OK"
+  - Select the channel you just created and click "Connect"
+1. Right click on your name and select "Register". Once a user has created an account and Registered, you can add them to the `admin` role.
+1. Click on the Globe and select the channel that you created and click "Edit"
+1. For the username, use the `SuperUser` account with the passphrase you set during installation (the passphrase box will show up once you type `SuperUser`).
+1. Right-click on main channel (likely "CAPES - Mumble Server") and select `Edit`
+1. Go to the Groups tab
+1. Select the `admin` role from the drop down
+1. Type the user account you want to delegate admin functions to in the box
+1. Click `Add` and then `Ok`
+1. Click on the Globe and select the channel that you created and click "Edit"
+1. Enter your username (not `SuperUser`) and your passphrase, and you can log in and perform administrative functions
 
 ## Get Started
 After the CAPES installation, you should be able to browse to `http://capes_system` (or `http://capes_IP` if you don't have DNS set up) to get to the CAPES landing page and start setting up services.
