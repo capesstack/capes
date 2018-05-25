@@ -364,7 +364,7 @@ thread_pool.bulk.queue_size: 1000
 EOF'
 
 # Collect the Cortex analyzers
-sudo git clone https://github.com/capesstack/Cortex-Analyzers.git /opt/cortex/
+sudo git clone https://github.com/TheHive-Project/Cortex-Analyzers.git /opt/cortex/
 
 # Collect the Cortex Report Templates
 # This doesn't appear to work in an automated fashion anymore, it must be done manually via the UI. See Post Installation instructions in docs/README.md
