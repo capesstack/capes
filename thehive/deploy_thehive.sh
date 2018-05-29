@@ -82,7 +82,7 @@ sudo systemctl start chronyd.service
 sudo yum install java-1.8.0-openjdk.x86_64 epel-release -y && sudo yum update -y
 sudo yum groupinstall "Development Tools" -y
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-sudo yum install libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm -y
+sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip python34 python34-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
@@ -129,16 +129,17 @@ sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
 sudo firewall-cmd --reload
 
 # Update Pip...just because it's ludicrous that installing it doesn't bring the updated version
-sudo pip install --upgrade pip
+# sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
-sudo pip install future
-
-# for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
+# This is messy, but some of the Analyzers are for Python 2 and some are for Python 3. Pull Requests welcome to make this more sane.
+sudo pip2 install future cortexutils datetime requests
+sudo pip3 install future cortexutils datetime requests
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
-sudo pip install -r requirements.txt
+sudo pip2 install -r requirements.txt
+sudo pip3 install -r requirements.txt
 rm requirements.txt
 
 # Update the location of the analyzers

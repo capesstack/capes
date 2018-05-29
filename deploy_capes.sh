@@ -394,9 +394,10 @@ _EOF_
 ) | sudo tee -a /etc/cortex/application.conf
 
 # Update Pip...just because it's ludicious that installing it doesn't bring the updated version
-sudo pip install --upgrade pip
+# sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
+# This is messy, but some of the Analyzers are for Python 2 and some are for Python 3. Pull Requests welcome to make this more sane.
 sudo pip2 install future cortexutils datetime requests
 sudo pip3 install future cortexutils datetime requests
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
