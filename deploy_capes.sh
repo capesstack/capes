@@ -401,11 +401,14 @@ _EOF_
 sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
+# I think Python3 and pip3 are needed as well
+# sudo yum install -y python34 python34-pip
 sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
 sudo pip install -r requirements.txt
+# sudo pip3 install -r requirements.txt
 rm requirements.txt
 
 # Update the location of the analyzers

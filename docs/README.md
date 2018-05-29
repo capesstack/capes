@@ -152,7 +152,7 @@ While the CAPES deploy script attempts to get you up and running, there are a fe
 
 ### Beats
 1. Set your MariaDB root passphrase (which you set at the very end of the deployment) in `/etc/metricbeat/metricbeat.yml`, replacing `passphrase_to_be_set_post_install` and then `sudo systemctl restart metricbeat.service`.  
-1. Check Filebeat and make sure it's running. If Elasticsearch doesn't start fast enough, Filebeat will fail when trying to connect to it or if you don't accept the EULA during the install script, it will fail. You can try to simply restart it with `sudo systemctl restart filebeat.service`. If Filebeat won't start (`sudo systemctl status filebeat.service`) try to run `sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-geoip` and accpet the EULA. If all else fails, you can look at the log file to see what the reason is (`sudo cat /var/log/filebeat/capes_filebeat`).
+1. Check Filebeat and make sure it's running. If Elasticsearch doesn't start fast enough, Filebeat will fail when trying to connect to it or if you don't accept the EULA during the install script, it will fail. You can try to simply restart it with `sudo systemctl restart filebeat.service`. If Filebeat won't start (`sudo systemctl status filebeat.service`) try to run `sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-geoip` and accept the EULA. If all else fails, you can look at the log file to see what the reason is (`sudo cat /var/log/filebeat/capes_filebeat`).
 
 ### Gitea
 1. When you browse to your Gitea instance, you'll need to set your database passphrase, your SSH Server Domain, your base URL, and disable Gravatar.
@@ -164,14 +164,14 @@ While the CAPES deploy script attempts to get you up and running, there are a fe
 1. After you're taken to the login page, click on `Need an account? Register now.`
 1. This will be an administrative account, pick a username, email address, and passphrase (note, you cannot use `admin`)
 1. Click `Register Account`
-1. Login in as that user
+1. Login in as the user you just created
 
 ### Kibana
 1. Select `heartbeat-*` or `metricbeat-*` and set that as Default by clicking on the `star` in the top right of the screen.
 
 ### HackMD
 1. Click on `Sign In`
-1. Select an email address and a phassphrase and click the `Register` button
+1. Select an email address (it doesn't need to be valid) and a passphrase and click the `Register` button
 1. Login as that user
 
 ### Mattermost
@@ -189,6 +189,8 @@ While the CAPES deploy script attempts to get you up and running, there are a fe
 1. Log into Cortex and create a new Organization and an Organization Administrator, set that user's passphrase
 1. Log out and back into Cortex as the new Organization Administrator that you created, click on "Organization" and then click on "Users"
 1. Create a user called `TheHiveIntegration` (or the like) with the `read,analyze` roles, create an API key, copy that down
+1. Click on the Organization tab and enable the Analyzers that you want to enable
+1. Enter your Analyzer specific information (generally an API key or the like)
 
 ### TheHive
 1. Open `/opt/thehive/application.conf` and go to the very bottom of the document and add `key = <your-api-key>` to the `CORTEX-SERVER-ID` section (`your-IP-address` should already be populated). The API key is the one you created above in Cortex.
@@ -201,11 +203,11 @@ cortex {
 }
 ```
 1. Restart The Hive with `sudo systemctl restart thehive.service`
-1. Collect the Report Templates by downloading them from [here](https://dl.bintray.com/cert-bdf/thehive/report-templates.zip)
+# 1. Collect the Report Templates by downloading them from [here](https://dl.bintray.com/cert-bdf/thehive/report-templates.zip)
 1. Browse to TheHive via the Landing Page (http://CAPES_IP) or (http://CAPES_IP:9000)
 1. Click "Update Database" and create an administrative account
-1. Log in and in the top right, click your username and "Report Templates"
-1. Click to "Import Templates" and upload the `report-templates.zip` file from above
+# 1. Log in and in the top right, click your username and "Report Templates"
+# 1. Click to "Import Templates" and upload the `report-templates.zip` file from above
 
 ### Mumble
 1. Download the client of your choosing from the [Mumble client page](https://www.mumble.com/mumble-download.php)
