@@ -351,7 +351,7 @@ EOF'
 sudo yum install java-1.8.0-openjdk.x86_64 gcc-c++ -y
 sudo yum groupinstall "Development Tools" -y
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
+sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip python34 python34-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
@@ -365,10 +365,6 @@ EOF'
 
 # Collect the Cortex analyzers
 sudo git clone https://github.com/TheHive-Project/Cortex-Analyzers.git /opt/cortex/
-
-# Collect the Cortex Report Templates
-# This doesn't appear to work in an automated fashion anymore, it must be done manually via the UI. See Post Installation instructions in docs/README.md
-# sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
 
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
@@ -401,14 +397,13 @@ _EOF_
 sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
-# I think Python3 and pip3 are needed as well
-# sudo yum install -y python34 python34-pip
-sudo pip install future
+sudo pip2 install future cortexutils datetime requests
+sudo pip3 install future cortexutils datetime requests
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
-sudo pip install -r requirements.txt
-# sudo pip3 install -r requirements.txt
+sudo pip2 install -r requirements.txt
+sudo pip3 install -r requirements.txt
 rm requirements.txt
 
 # Update the location of the analyzers

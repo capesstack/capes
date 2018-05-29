@@ -97,10 +97,6 @@ EOF'
 # Collect the Cortex analyzers
 sudo git clone https://github.com/TheHive-Project/Cortex-Analyzers.git /opt/cortex/
 
-# Collect the Cortex Report Templates
-# This doesn't appear to work in an automated fashion anymore, it must be done manually via the UI. See Post Installation instructions in docs/README.md
-# sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
-
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
 # If you're going to be using this offline, you can remove the Cortex install (sudo yum install thehive -y).
