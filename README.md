@@ -45,9 +45,11 @@ $ git clone https://github.com/capesstack/capes.git
 $ cd capes
 $ sudo sh deploy_capes.sh
 ```
-## Usage
-1. See the [Build, Operate, Maintain guides](docs/README.md) to complete post-installation configuration
-1. Browse to http://capes_IP
+
+## Get Started
+After the CAPES installation, you should be able to browse to `http://your_capes_system` (or `http://your_capes_IP` if you don't have DNS set up) get get to the CAPES landing page and start setting up services by following the [post installation steps](https://github.com/capesstack/capes/tree/master/docs#post-installation).
+
+Although most of these services are fairly intuitive, I **strongly** recommend that you look at the [Build, Operate, Maintain](https://github.com/capesstack/capes/tree/master/docs#documentation) guides for these services before you get going too far. A few of the services launch a configuration pipeline that is obnoxious to restart if you don't complete it the first time (I'm looking at you TheHive and Gitea).
 
 # Troubleshooting
 Please see the [documentation](https://github.com/capesstack/capes/tree/master/docs#documentation) or feel free to open a [GitHub Issue](https://github.com/capesstack/capes/issues).

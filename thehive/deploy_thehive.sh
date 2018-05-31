@@ -82,7 +82,7 @@ sudo systemctl start chronyd.service
 sudo yum install java-1.8.0-openjdk.x86_64 epel-release -y && sudo yum update -y
 sudo yum groupinstall "Development Tools" -y
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-sudo yum install libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm -y
+sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
@@ -95,11 +95,7 @@ thread_pool.bulk.queue_size: 1000
 EOF'
 
 # Collect the Cortex analyzers
-sudo git clone https://github.com/capesstack/Cortex-Analyzers.git /opt/cortex/
-
-# Collect the Cortex Report Templates
-# This doesn't appear to work in an automated fashion anymore, it must be done manually via the UI. See Post Installation instructions in docs/README.md
-# sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
+sudo git clone https://github.com/TheHive-Project/Cortex-Analyzers.git /opt/cortex/
 
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
@@ -133,15 +129,15 @@ sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
 sudo firewall-cmd --reload
 
 # Update Pip...just because it's ludicrous that installing it doesn't bring the updated version
-sudo pip install --upgrade pip
+# sudo pip install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
 sudo pip install future
-
-# for d in /opt/cortex/analyzers/*/ ; do (sudo pip install -r $d/requirements.txt); done
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
+sed -i '/cortexutilsdatetime/d' requirements.txt
+sed -i '/requestscortexutils/d' requirements.txt
 sudo pip install -r requirements.txt
 rm requirements.txt
 

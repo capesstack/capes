@@ -364,11 +364,7 @@ thread_pool.bulk.queue_size: 1000
 EOF'
 
 # Collect the Cortex analyzers
-sudo git clone https://github.com/capesstack/Cortex-Analyzers.git /opt/cortex/
-
-# Collect the Cortex Report Templates
-# This doesn't appear to work in an automated fashion anymore, it must be done manually via the UI. See Post Installation instructions in docs/README.md
-# sudo curl -L https://dl.bintray.com/cert-bdf/thehive/report-templates.zip -o /opt/cortex/report-templates.zip
+sudo git clone https://github.com/TheHive-Project/Cortex-Analyzers.git /opt/cortex/
 
 # Install TheHive Project and Cortex
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
@@ -405,6 +401,8 @@ sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
+sed -i '/cortexutilsdatetime/d' requirements.txt
+sed -i '/requestscortexutils/d' requirements.txt
 sudo pip install -r requirements.txt
 rm requirements.txt
 
