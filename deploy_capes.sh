@@ -398,13 +398,13 @@ _EOF_
 
 # Add the future Python package and then install the Cortex Python dependencies
 # This is messy, but some of the Analyzers are for Python 2 and some are for Python 3. Pull Requests welcome to make this more sane.
-sudo pip2 install future cortexutils datetime requests
-sudo pip3 install future cortexutils datetime requests
+sudo pip2 install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
+sed -i '/cortexutilsdatetime/d' requirements.txt
+sed -i '/requestscortexutils/d' requirements.txt
 sudo pip2 install -r requirements.txt
-sudo pip3 install -r requirements.txt
 rm requirements.txt
 
 # Update the location of the analyzers
