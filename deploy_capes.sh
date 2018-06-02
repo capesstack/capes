@@ -351,7 +351,8 @@ EOF'
 sudo yum install java-1.8.0-openjdk.x86_64 gcc-c++ -y
 sudo yum groupinstall "Development Tools" -y
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
+sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm https://centos7.iuscommunity.org/ius-release.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
+sudo yum install python36u python36u-pip python36u-devel -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
@@ -393,8 +394,9 @@ play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head 
 _EOF_
 ) | sudo tee -a /etc/cortex/application.conf
 
-# Update Pip...just because it's ludicious that installing it doesn't bring the updated version
-sudo pip install --upgrade pip
+# Update Pip
+sudo /usr/bin/pip2.7 install --upgrade pip
+sudo /usr/bin/pip3.6 install --upgrade pip
 
 # Add the future Python package and then install the Cortex Python dependencies
 sudo pip install future
@@ -403,7 +405,8 @@ sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
 sed -i '/cortexutilsdatetime/d' requirements.txt
 sed -i '/requestscortexutils/d' requirements.txt
-sudo pip install -r requirements.txt
+sudo /usr/bin/pip2.7 install -r requirements.txt
+sudo /usr/bin/pip3.6 install -r requirements.txt
 rm requirements.txt
 
 # Update the location of the analyzers
