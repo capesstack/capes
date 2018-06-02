@@ -398,7 +398,7 @@ _EOF_
 sudo /usr/bin/pip2.7 install --upgrade pip
 sudo /usr/bin/pip3.6 install --upgrade pip
 
-# Add the future Python package and then install the Cortex Python dependencies
+# Add the future Python package, install the Cortex Analyzers, and adjust the Python 3 path to 3.6
 sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
@@ -408,6 +408,7 @@ sed -i '/requestscortexutils/d' requirements.txt
 sudo /usr/bin/pip2.7 install -r requirements.txt
 sudo /usr/bin/pip3.6 install -r requirements.txt
 rm requirements.txt
+for d in /opt/cortex/analyzers/* ; do (sudo /usr/bin/sed -i 's/python3/python3.6/' $d/*.py); done
 
 # Update the location of the analyzers
 sudo sed -i 's/path\/to\/Cortex\-Analyzers/\/opt\/cortex/' /etc/cortex/application.conf
