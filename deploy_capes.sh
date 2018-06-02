@@ -394,10 +394,6 @@ play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head 
 _EOF_
 ) | sudo tee -a /etc/cortex/application.conf
 
-# Update Pip
-sudo /usr/bin/pip2.7 install --upgrade pip
-sudo /usr/bin/pip3.6 install --upgrade pip
-
 # Add the future Python package, install the Cortex Analyzers, and adjust the Python 3 path to 3.6
 sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done

@@ -75,7 +75,7 @@ sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
 # Install Dependencies
-sudo yum install java-1.8.0-openjdk.x86_64 gcc-c++ -y
+sudo yum install java-1.8.0-openjdk.x86_64 gcc-c++ epel-release -y
 sudo yum groupinstall "Development Tools" -y
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm https://centos7.iuscommunity.org/ius-release.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
@@ -121,10 +121,6 @@ play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head 
 _EOF_
 ) | sudo tee -a /etc/cortex/application.conf
 
-# Update Pip
-sudo /usr/bin/pip2.7 install --upgrade pip
-sudo /usr/bin/pip3.6 install --upgrade pip
-
 # Add the future Python package, install the Cortex Analyzers, and adjust the Python 3 path to 3.6
 sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
@@ -165,6 +161,15 @@ EOF'
 
 # Prepare the service environment
 sudo systemctl daemon-reload
+
+################################
+########## Firewall ############
+################################
+
+# Port 9000 - TheHive
+# Port 9001 - Cortex (TheHive Analyzer Plugin)
+sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
+sudo firewall-cmd --reload
 
 # Set Elasticsearch and TheHive Project to start on boot
 sudo systemctl enable elasticsearch.service
