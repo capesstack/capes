@@ -74,15 +74,12 @@ EOF'
 sudo systemctl enable chronyd.service
 sudo systemctl start chronyd.service
 
-################################
-########### TheHive ############
-################################
-
-# Dependencies
-sudo yum install java-1.8.0-openjdk.x86_64 epel-release -y && sudo yum update -y
+# Install Dependencies
+sudo yum install java-1.8.0-openjdk.x86_64 gcc-c++ epel-release -y
 sudo yum groupinstall "Development Tools" -y
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
+sudo yum install https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.rpm https://centos7.iuscommunity.org/ius-release.rpm libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs perl-Image-ExifTool file-devel -y
+sudo yum install python36u python36u-pip python36u-devel -y
 
 # Configure Elasticsearch
 sudo bash -c 'cat > /etc/elasticsearch/elasticsearch.yml <<EOF
@@ -124,22 +121,17 @@ play.crypto.secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head 
 _EOF_
 ) | sudo tee -a /etc/cortex/application.conf
 
-# Make firewall changes to allow for access to TheHive Project and Cortex web applications
-sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
-sudo firewall-cmd --reload
-
-# Update Pip...just because it's ludicrous that installing it doesn't bring the updated version
-# sudo pip install --upgrade pip
-
-# Add the future Python package and then install the Cortex Python dependencies
+# Add the future Python package, install the Cortex Analyzers, and adjust the Python 3 path to 3.6
 sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
 sed -i '/cortexutilsdatetime/d' requirements.txt
 sed -i '/requestscortexutils/d' requirements.txt
-sudo pip install -r requirements.txt
+sudo /usr/bin/pip2.7 install -r requirements.txt
+sudo /usr/bin/pip3.6 install -r requirements.txt
 rm requirements.txt
+for d in /opt/cortex/analyzers/* ; do (sudo /usr/bin/sed -i 's/python3/python3.6/' $d/*.py); done
 
 # Update the location of the analyzers
 sudo sed -i 's/path\/to\/Cortex\-Analyzers/\/opt\/cortex/' /etc/cortex/application.conf
@@ -169,6 +161,15 @@ EOF'
 
 # Prepare the service environment
 sudo systemctl daemon-reload
+
+################################
+########## Firewall ############
+################################
+
+# Port 9000 - TheHive
+# Port 9001 - Cortex (TheHive Analyzer Plugin)
+sudo firewall-cmd --add-port=9000/tcp --add-port=9001/tcp --permanent
+sudo firewall-cmd --reload
 
 # Set Elasticsearch and TheHive Project to start on boot
 sudo systemctl enable elasticsearch.service
