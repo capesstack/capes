@@ -193,7 +193,7 @@ While the CAPES deploy script attempts to get you up and running, there are a fe
 1. Enter your Analyzer specific information (generally an API key or the like)
 
 ### TheHive
-1. Open `/opt/thehive/application.conf` and go to the very bottom of the document and add `key = <your-api-key>` to the `CORTEX-SERVER-ID` section (`your-IP-address` should already be populated). The API key is the one you created above in Cortex.
+1. Open `/etc/thehive/application.conf` and go to the very bottom of the document and add `key = <your-api-key>` to the `CORTEX-SERVER-ID` section (`your-IP-address` should already be populated). The API key is the one you created above in Cortex.
 ```
 cortex {
   "CORTEX-SERVER-ID" {
