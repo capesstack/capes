@@ -70,17 +70,17 @@ here's an example (showing only the `[server]` section):
 
 [server]
 LOCAL_ROOT_URL   = http://localhost:4000/
-SSH_DOMAIN       = 192.168.2.11
+SSH_DOMAIN       = <ip>
 START_SSH_SERVER = true
-DOMAIN           = 192.168.2.11
+DOMAIN           = <ip>
 HTTP_PORT        = 4000
-ROOT_URL         = http://192.168.2.11:4000/
+ROOT_URL         = http://<ip>:4000/
 DISABLE_SSH      = false
 SSH_PORT         = 4001
 SSH_LISTEN_PORT  = 4001
 LFS_START_SERVER = true
 LFS_CONTENT_PATH = /opt/gitea/data/lfs
-LFS_JWT_SECRET   = xxxxxxxxxxxxxxxxxxxxxxxxx
+LFS_JWT_SECRET   = xxxxxxxxxxxxxxxxxxx
 OFFLINE_MODE     = false
 
 ...
