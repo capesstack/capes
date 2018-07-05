@@ -48,6 +48,52 @@ When you browse to Gitea for the first time, you'll enter a post-installation co
 
 ![gitea install](img/install.png)
 
+##### Configure SSH Usage
+
+Gitea provides the ability to perform git functions via http or ssh.  In order to enable `ssh` complete the following steps:  
+
+* edit gitea's app.ini file  
+`sudo vi /opt/gitea/custom/conf/app.ini`  
+
+make the following changes & additions to the `[server]` section:  
+
+`START_SSH_SERVER = true`     # ensure this is set to true  
+`DISABLE_SSH      = false`    # ensure this is set to false  
+`SSH_PORT         = 4001`     # set this to any available port that is **NOT 22**   
+`SSH_LISTEN_PORT  = 4001`     # set this to any available port that is **NOT 22**  
+
+here's an example (showing only the `[server]` section):  
+
+```
+
+...
+
+[server]
+LOCAL_ROOT_URL   = http://localhost:4000/
+SSH_DOMAIN       = <ip>
+START_SSH_SERVER = true
+DOMAIN           = <ip>
+HTTP_PORT        = 4000
+ROOT_URL         = http://<ip>:4000/
+DISABLE_SSH      = false
+SSH_PORT         = 4001
+SSH_LISTEN_PORT  = 4001
+LFS_START_SERVER = true
+LFS_CONTENT_PATH = /opt/gitea/data/lfs
+LFS_JWT_SECRET   = xxxxxxxxxxxxxxxxxxx
+OFFLINE_MODE     = false
+
+...
+
+```
+
+* restart the gitea service:  
+`sudo systemctl restart gitea`  
+
+* restart the sshd service:  
+`sudo systemctl restart sshd`  
+
+
 ## Operate
 Immediately after you complete the post-installation configuration, you'll be presented with a login screen. Click on `Need an account? Sign up now.` This account will be the administrator.
 
