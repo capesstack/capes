@@ -203,11 +203,8 @@ cortex {
 }
 ```
 1. Restart The Hive with `sudo systemctl restart thehive.service`
-# 1. Collect the Report Templates by downloading them from [here](https://dl.bintray.com/cert-bdf/thehive/report-templates.zip)
 1. Browse to TheHive via the Landing Page (http://CAPES_IP) or (http://CAPES_IP:9000)
 1. Click "Update Database" and create an administrative account
-# 1. Log in and in the top right, click your username and "Report Templates"
-# 1. Click to "Import Templates" and upload the `report-templates.zip` file from above
 
 ### Mumble
 1. Download the client of your choosing from the [Mumble client page](https://www.mumble.com/mumble-download.php)
