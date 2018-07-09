@@ -63,9 +63,7 @@ make the following changes & additions to the `[server]` section:
 `SSH_LISTEN_PORT  = 4001`     # set this to any available port that is **NOT 22**  
 
 here's an example (showing only the `[server]` section):  
-
 ```
-
 ...
 
 [server]
@@ -83,16 +81,15 @@ LFS_CONTENT_PATH = /opt/gitea/data/lfs
 LFS_JWT_SECRET   = xxxxxxxxxxxxxxxxxxx
 OFFLINE_MODE     = false
 
-...
-
+...:
 ```
-
-* restart the gitea service:  
-`sudo systemctl restart gitea`  
-
-* restart the sshd service:  
-`sudo systemctl restart sshd`  
-
+##### Wrapping it up
+```
+sudo firewall-cmd --add-port=4001/tcp --permanent
+sudo firewall-cmd --reload
+sudo systemctl restart gitea
+sudo systemctl restart sshd
+```
 
 ## Operate
 Immediately after you complete the post-installation configuration, you'll be presented with a login screen. Click on `Need an account? Sign up now.` This account will be the administrator.
