@@ -559,8 +559,8 @@ mysql_secure_installation
 ################################
 ## Copy CAPES Function Check ###
 ################################
-cp capes_processes /usr/bin/local/
-chmod 0755 /usr/local/bin/capes_processes
+sudo cp capes_processes /usr/local/bin
+sudo chmod 0755 /usr/local/bin/capes_processes
 
 ################################
 ########## Remove gcc ##########

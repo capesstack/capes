@@ -19,10 +19,8 @@ CAPES is an operational-focused service hub for segmented, self-hosted, and offl
 1. Kibana (Data visualization)
 
 ## Roadmap
-1. Get working shell script for all services
-1. Get shell scripts combined into a singular CAPES deploy script
-1. Documentation *
-1. Convert CAPES to Docker
+1. Documentation
+1. Convert CAPES to Docker *
 
 ## Note
 \* designates current effort
@@ -54,6 +52,8 @@ Although most of these services are fairly intuitive, I **strongly** recommend t
 # Troubleshooting
 Please see the [documentation](https://github.com/capesstack/capes/tree/master/docs#documentation) or feel free to open a [GitHub Issue](https://github.com/capesstack/capes/issues).
 
+You can run `$ capes_processes` to make sure all of your processes are running.
+
 Want to join the discussion? Send a request to join our Slack Workspace to contact [at] capesstack[.]io
 
 # Swag
@@ -62,4 +62,4 @@ Interested in some CAPES swag? Send me a email to contact [at] capesstack[.]io a
 If you're interested in CAPES t-shirts, we parter with TeeSpring for those. Feel free to check out [our storefront](https://teespring.com/stores/capesstack). We don't make a penny on these - 100% of the profits go to the National Alliance to End Homelessness.
 
 # Training & Professional Services
-While CAPES is a FOSS project and we'll attempt to support deployment questions via the Issues page, if you need training or PS, please feel free to check out some options over at [Perched](http://perched.io)
+While CAPES is a FOSS project and we'll attempt to support deployment questions via the Issues page, if you need training or PS, please feel free to check out some options over at [Perched](http://www.perched.io)
