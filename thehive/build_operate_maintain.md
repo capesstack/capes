@@ -29,7 +29,7 @@ To get the custom fields with the templates, you'll need to upload the whole con
 1. Ensure you have [Python3](https://www.python.org/) installed
 1. Log into TheHive as an administrator
 1. Click on the `Admin` dropdown and select `Users`
-1. Either create a new account with `write` permissions or use an existing account, create and reveal the API key, copy this down
+1. Either create a new account with `admin` permissions or use an existing account, create and reveal the API key, copy this down
 1. Collect the [TheHive configuration manager](https://github.com/TheHive-Project/TheHive-Resources/tree/master/contrib/ManageConfig)
 1. Collect the [capes-config.conf](capes-config.conf) file
 ```
