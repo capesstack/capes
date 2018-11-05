@@ -122,11 +122,15 @@ _EOF_
 ) | sudo tee -a /etc/cortex/application.conf
 
 # Add the future Python package, install the Cortex Analyzers, and adjust the Python 3 path to 3.6
-sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
 sed -i '/cortexutilsdatetime/d' requirements.txt
+sed -i '/urllib2/d' requirements.txt
+sed -i '/oletools>=0.52/d' requirements.txt
+sed -i "s/urllib2/urllib2\;python_version<='2.7'/" requirements.txt
+sed -i "s/ssdeep/ssdeep\;python_version>='3.5'/" requirements.txt
+echo "urllib3;python_version>='3.5'" >> requirements.txt
 sed -i '/requestscortexutils/d' requirements.txt
 sudo /usr/bin/pip2.7 install -r requirements.txt
 sudo /usr/bin/pip3.6 install -r requirements.txt
