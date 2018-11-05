@@ -39,6 +39,9 @@ read -s capespassphrase
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
+# Update your Host file
+echo "$IP $HOSTNAME" | sudo tee -a /etc/hosts
+
 ################################
 ######## Configure NTP #########
 ################################
