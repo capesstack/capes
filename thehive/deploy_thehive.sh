@@ -14,6 +14,9 @@ sudo sed -i 's/localpkg_gpgcheck=1/localpkg_gpgcheck=0/' /etc/yum.conf
 # Set your IP address as a variable. This is for instructions below.
 IP="$(hostname -I | sed -e 's/[[:space:]]*$//')"
 
+# Update your Host file 
+echo "$IP $HOSTNAME" | sudo tee -a /etc/hosts
+
 ################################
 ######## Configure NTP #########
 ################################
@@ -98,7 +101,7 @@ sudo git clone https://github.com/TheHive-Project/Cortex-Analyzers.git /opt/cort
 # TheHive Project is the incident tracker, Cortex is your analysis engine.
 # If you're going to be using this offline, you can remove the Cortex install (sudo yum install thehive -y).
 sudo rpm --import https://dl.bintray.com/cert-bdf/rpm/repodata/repomd.xml.key
-sudo yum install https://dl.bintray.com/cert-bdf/rpm/thehive-project-release-1.0.0-3.noarch.rpm -y
+sudo yum install https://dl.bintray.com/thehive-project/rpm-stable/thehive-project-release-1.1.0-1.noarch.rpm -y
 sudo yum install thehive cortex -y
 
 # Configure TheHive Project secret key
@@ -122,11 +125,15 @@ _EOF_
 ) | sudo tee -a /etc/cortex/application.conf
 
 # Add the future Python package, install the Cortex Analyzers, and adjust the Python 3 path to 3.6
-sudo pip install future
 for d in /opt/cortex/analyzers/*/ ; do (cat $d/requirements.txt >> requirements.staged); done
 sort requirements.staged | uniq > requirements.txt
 rm requirements.staged
 sed -i '/cortexutilsdatetime/d' requirements.txt
+sed -i '/urllib2/d' requirements.txt
+sed -i '/oletools>=0.52/d' requirements.txt
+sed -i "s/urllib2/urllib2\;python_version<='2.7'/" requirements.txt
+sed -i "s/ssdeep/ssdeep\;python_version>='3.5'/" requirements.txt
+echo "urllib3;python_version>='3.5'" >> requirements.txt
 sed -i '/requestscortexutils/d' requirements.txt
 sudo /usr/bin/pip2.7 install -r requirements.txt
 sudo /usr/bin/pip3.6 install -r requirements.txt
