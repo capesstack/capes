@@ -37,4 +37,25 @@ $ git clone https://github.com/TheHive-Project/TheHive-Resources.git
 $ cd TheHive-Resources/contrib/ManageConfig
 $ python3 submit_config.py -k <API key> -u http://thehive-url:9000 -c capes-config.conf
 ```
-1. You'll want to refresh your browser and all of the Case Templates and Custom Fields should be in there and ready for use.Â
+1. You'll want to refresh your browser and all of the Case Templates and Custom Fields should be in there and ready for use.
+
+## Troubleshooting
+You should use the `capes_processes status` command to identify if any CAPES services aren't running as expected.
+
+### Failed Service
+If TheHive has failed, check your local host file to ensure that there is a static entry for CAPES or it is resolvable via DNS. Example:
+```
+cat /etc/hosts
+192.168.100.100 capes_hostname
+```
+If the CAPES management IP and hostnames aren't present or correct (and they should be from the build script), update that using the above format and restart the service
+```
+sudo systemctl restart thehive.service
+```
+Give it a couple of seconds and then rerun `capes_processes status` or `sudo systemctl status thehive.service`.  
+![DNS Haiku](http://i.imgur.com/eAwdKEC.png)
+
+### Web Application Available, No Database
+If you can get to the web interface, but are getting errors that the database isn't online, check to ensure that Elasticsearch is running. If you ran the `capes_processes status` command, you'll know.
+
+You can try to restart Elasticsearch with `sudo systemctl restart elasticsearch.service` and monitor it with `capes_processes status`.
