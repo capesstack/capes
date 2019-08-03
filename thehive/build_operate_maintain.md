@@ -35,6 +35,7 @@ To get the custom fields with the templates, you'll need to upload the whole con
 ```
 $ git clone https://github.com/TheHive-Project/TheHive-Resources.git
 $ cd TheHive-Resources/contrib/ManageConfig
+$ sudo pip3 install requests
 $ python3 submit_config.py -k <API key> -u http://thehive-url:9000 -c capes-config.conf
 ```
 1. You'll want to refresh your browser and all of the Case Templates and Custom Fields should be in there and ready for use.
